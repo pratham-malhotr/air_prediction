@@ -2,6 +2,11 @@
 
 CSAI Project 19 · Phase 1: Machine Learning
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-aircast--pm25.vercel.app-000000?style=for-the-badge&logo=vercel)](https://aircast-pm25.vercel.app/#forecast)
+
+> 🌐 **Live Interactive App & Analysis:** [**aircast-pm25.vercel.app/#forecast**](https://aircast-pm25.vercel.app/#forecast)  
+> Visit the live web application to test real-time 1-hour-ahead PM2.5 forecasting, compare XGBoost with baseline models, and explore interactive error analysis and historical visualizations.
+
 For our Phase 1 project, we are working on a simple question: **can past pollution readings and weather conditions help us predict PM2.5 one hour ahead?** We use XGBoost for the main model and compare it with two simple forecasts and a linear model. The comparison matters as much as the model itself: we want to see what the extra features and model complexity add over using the latest reading.
 
 ## What we predict
@@ -115,6 +120,16 @@ Further reading within the project:
 - [Validation notes](docs/verification.md)
 - [IEEE report PDF](reports/ieee/main.pdf) and [presentation PDF](reports/presentation/slides.pdf)
 - [Viva notes](docs/viva_guide.md)
+
+## 🌐 Live Interactive Demo
+
+The project is deployed and accessible online:
+🔗 **[aircast-pm25.vercel.app/#forecast](https://aircast-pm25.vercel.app/#forecast)**
+
+Visitors can use this dashboard to:
+- **Inspect Live Predictions:** Generate and examine 1-hour-ahead PM2.5 forecasts using the trained model weights.
+- **Compare Models:** Evaluate performance side-by-side across XGBoost, Ridge, Persistence, and Daily Seasonal Naive.
+- **Interactive Analysis:** Explore pollution regime breakdowns, residual diagnostics, and error distributions directly in the browser.
 
 ## Current status and limits
 
