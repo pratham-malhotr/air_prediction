@@ -1,0 +1,134 @@
+{
+  "status": "complete",
+  "completed_utc": "2026-10-23T07:26:36.766459+00:00",
+  "source": "uci381_user_supplied",
+  "is_synthetic": false,
+  "dataset_audit": {
+    "source": "uci381_user_supplied",
+    "path": "data/raw/PRSA_data_2010.1.1-2014.12.31.csv",
+    "sha256": "4127f868775e31b3956522adc0ec75af8937dde6a3896e8beed3a376c6d27f1c",
+    "input_rows": 43824,
+    "hourly_rows": 43824,
+    "inserted_missing_hours": 0,
+    "input_was_sorted": true,
+    "duplicate_timestamps": 0,
+    "start": "2010-01-01 00:00:00",
+    "end": "2014-12-31 23:00:00",
+    "timezone": "Asia/Shanghai (local clock)",
+    "missing_by_column": {
+      "pm2.5": 2067,
+      "DEWP": 0,
+      "TEMP": 0,
+      "PRES": 0,
+      "Iws": 0,
+      "Is": 0,
+      "Ir": 0,
+      "cbwd": 0
+    },
+    "provenance": {
+      "source": "uci381_user_supplied",
+      "acquisition": "User-provided local CSV; no download performed by this run",
+      "original_filename": "PRSA_data_2010.1.1-2014.12.31.csv",
+      "dataset_page": "https://archive.ics.uci.edu/dataset/381/beijing+pm2+5+data",
+      "doi": "10.24432/C5JS49",
+      "license": "CC BY 4.0",
+      "sha256": "4127f868775e31b3956522adc0ec75af8937dde6a3896e8beed3a376c6d27f1c",
+      "verified": "Expected columns and complete 2010\u20132014 hourly timestamps; 43,824 records"
+    }
+  },
+  "config": {
+    "horizon_hours": 1,
+    "seasonal_period_hours": 24,
+    "lags": [
+      0,
+      1,
+      2,
+      3,
+      6,
+      12,
+      24,
+      48,
+      72,
+      168
+    ],
+    "rolling_windows": [
+      3,
+      6,
+      12,
+      24,
+      72,
+      168
+    ],
+    "train_start": "2010-01-01",
+    "validation_start": "2013-01-01",
+    "holdout_start": "2014-01-01",
+    "holdout_end": "2015-01-01",
+    "fold_months": 3,
+    "minimum_training_rows": 1000,
+    "random_seed": 42,
+    "threads": 2,
+    "xgboost_candidates": [
+      {
+        "n_estimators": 300,
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "min_child_weight": 5,
+        "subsample": 0.8,
+        "colsample_bytree": 0.9,
+        "reg_lambda": 5.0
+      },
+      {
+        "n_estimators": 500,
+        "max_depth": 4,
+        "learning_rate": 0.03,
+        "min_child_weight": 5,
+        "subsample": 0.8,
+        "colsample_bytree": 0.9,
+        "reg_lambda": 10.0
+      },
+      {
+        "n_estimators": 350,
+        "max_depth": 5,
+        "learning_rate": 0.04,
+        "min_child_weight": 10,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "reg_lambda": 10.0
+      }
+    ]
+  },
+  "models": [
+    "xgboost",
+    "ridge"
+  ],
+  "selected_parameters": {
+    "xgboost": {
+      "n_estimators": 300,
+      "max_depth": 3,
+      "learning_rate": 0.05,
+      "min_child_weight": 5,
+      "subsample": 0.8,
+      "colsample_bytree": 0.9,
+      "reg_lambda": 5.0
+    },
+    "ridge": {
+      "alpha": 10.0
+    }
+  },
+  "versions": {
+    "python": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 11:23:37) [Clang 14.0.6 ]",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "numpy": "2.1.3",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.6.1",
+    "xgboost": "3.4.1",
+    "matplotlib": "3.10.0",
+    "joblib": "1.4.2"
+  },
+  "source_code_sha256": "8359d8aff7f41a6ee13409c7a9ef749370b38506b76ed832d47952f5a4a91471",
+  "feature_count": 70,
+  "training_p90_pm25": 218.0,
+  "protocol": "Point forecast at t+h, observed history through t, quarterly expanding refit by default, hourly updated covariates.",
+  "prediction_policy": "Regression outputs clipped to zero for nonnegative concentrations, consistently in validation/test/inference.",
+  "deployment_models": "Refitted on all available observed labels after evaluation; never used to produce backtest scores."
+}

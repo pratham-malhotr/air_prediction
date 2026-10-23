@@ -29,19 +29,21 @@ class Config:
         for name in ("horizon_hours", "seasonal_period_hours", "fold_months", "minimum_training_rows", "threads"):
             if not isinstance(getattr(self, name), int) or isinstance(getattr(self, name), bool) or getattr(self, name) < 1:
                 raise ValueError(f"{name} must be a positive integer")
-        if not self.lags or any(not isinstance(x, int) or x < 0 for x in self.lags):
+        if not self.lags or any(not isinstance(x, int) or isinstance(x, bool) or x < 0 for x in self.lags):
             raise ValueError("lags must contain nonnegative integer hour offsets")
         if len(set(self.lags)) != len(self.lags):
             raise ValueError("lags must be unique")
-        if not self.rolling_windows or any(not isinstance(x, int) or x < 2 for x in self.rolling_windows):
+        if not self.rolling_windows or any(not isinstance(x, int) or isinstance(x, bool) or x < 2 for x in self.rolling_windows):
             raise ValueError("rolling_windows must contain integers >= 2")
         if len(set(self.rolling_windows)) != len(self.rolling_windows):
             raise ValueError("rolling_windows must be unique")
         dates = [pd.Timestamp(getattr(self, name)) for name in ("train_start", "validation_start", "holdout_start", "holdout_end")]
-        if not all(a < b for a, b in zip(dates, dates[1:])):
-            raise ValueError("Require train_start < validation_start < holdout_start < holdout_end")
         if any(d.tzinfo is not None for d in dates):
             raise ValueError("Use naive Beijing local time in configuration dates")
+        if any(d != d.floor("h") for d in dates):
+            raise ValueError("Configuration dates must align to whole hours")
+        if not all(a < b for a, b in zip(dates, dates[1:])):
+            raise ValueError("Require train_start < validation_start < holdout_start < holdout_end")
         if not self.xgboost_candidates:
             raise ValueError("At least one XGBoost candidate is required")
 

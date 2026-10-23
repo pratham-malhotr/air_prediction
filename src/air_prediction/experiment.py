@@ -81,10 +81,13 @@ def source_fingerprint():
     return digest.hexdigest()
 
 
-def _write_latex_table(scores, destination):
+def _write_latex_table(scores, destination, source):
     holdout = scores.loc[scores.phase == "holdout"]
-    lines = ["% Generated from this run's real predictions; source is recorded in run_manifest.json.",
-             r"\begin{tabular}{lrrr}", r"\hline", r"Model & MAE & RMSE & $R^2$ \\", r"\hline"]
+    lines = [f"% Computed run predictions. Data source: {source}. See run_manifest.json.",
+             r"\begin{tabular}{lrrr}", r"\hline"]
+    if source == "synthetic":
+        lines.append(r"\multicolumn{4}{c}{\textbf{Synthetic demonstration only}} \\")
+    lines.extend([r"Model & MAE & RMSE & $R^2$ \\", r"\hline"])
     for row in holdout.itertuples():
         r2 = f"{row.r2:.3f}" if pd.notna(row.r2) else "--"
         lines.append(f"{row.model.replace('_', ' ')} & {row.mae:.3f} & {row.rmse:.3f} & {r2} " + r"\\")
@@ -112,7 +115,7 @@ def run_experiment(csv_path, config, output, names=("xgboost", "ridge"), ablatio
         make_model(name, data.X, config, config.xgboost_candidates[0] if name == "xgboost" else None)
     output.mkdir(parents=True, exist_ok=True)
     write_json(output / "RUNNING.json", {"source": dataset.source, "started_utc": datetime.now(timezone.utc).isoformat()})
-    run_eda(dataset, output / "eda", config.validation_start)
+    run_eda(dataset, output / "eda", config.validation_start, since=config.train_start)
     selected, candidates, validation, validation_audit = select_parameters(data, config, names)
     validation["data_source"] = dataset.source
     candidates.to_csv(output / "validation_candidates.csv", index=False)
@@ -138,7 +141,8 @@ def run_experiment(csv_path, config, output, names=("xgboost", "ridge"), ablatio
     diagnostics["hour"] = pd.to_datetime(diagnostics.target_time).dt.hour
     for grouping in ("month", "hour"):
         score_predictions(diagnostics, ("model", grouping)).to_csv(output / f"errors_by_{grouping}.csv", index=False)
-    threshold = float(frame.loc[frame.index < pd.Timestamp(config.validation_start), "pm2.5"].quantile(0.9))
+    initial_training = (frame.index >= pd.Timestamp(config.train_start)) & (frame.index < pd.Timestamp(config.validation_start))
+    threshold = float(frame.loc[initial_training, "pm2.5"].quantile(0.9))
     diagnostics["pollution_regime"] = np.where(diagnostics.actual >= threshold, "above_training_p90", "below_training_p90")
     score_predictions(diagnostics, ("model", "pollution_regime")).to_csv(output / "errors_by_pollution_regime.csv", index=False)
     # Deployment refit uses all currently observed labels, after evaluation is saved.
@@ -161,7 +165,7 @@ def run_experiment(csv_path, config, output, names=("xgboost", "ridge"), ablatio
             metric = score_predictions(ablation_predictions).iloc[0].to_dict()
             rows.append({"feature_set": feature_set, **metric})
         pd.DataFrame(rows).to_csv(output / "validation_ablation.csv", index=False)
-    _write_latex_table(scores, output / "results_table.tex")
+    _write_latex_table(scores, output / "results_table.tex", dataset.source)
     from .results import plot_results, write_summary
     plot_results(predictions, scores, output, source=dataset.source)
     manifest = {
@@ -173,7 +177,7 @@ def run_experiment(csv_path, config, output, names=("xgboost", "ridge"), ablatio
         "prediction_policy": "Regression outputs clipped to zero for nonnegative concentrations, consistently in validation/test/inference.",
         "deployment_models": "Refitted on all available observed labels after evaluation; never used to produce backtest scores.",
     }
-    write_json(output / "run_manifest.json", manifest)
     write_summary(scores, fold_scores, manifest, output)
+    write_json(output / "run_manifest.json", manifest)
     (output / "RUNNING.json").unlink(missing_ok=True)
     return {"metrics": scores, "fold_metrics": fold_scores, "predictions": predictions, "manifest": manifest, "output": output}

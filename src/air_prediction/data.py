@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 from urllib.error import URLError
 from urllib.request import urlopen
-from zipfile import ZipFile
+from zipfile import BadZipFile, ZipFile
 
 import numpy as np
 import pandas as pd
@@ -32,6 +32,20 @@ def write_json(path, value):
     path.write_text(json.dumps(value, indent=2, allow_nan=False, default=str) + "\n", encoding="utf-8")
 
 
+def validate_timestamps(raw):
+    calendar = raw[["year", "month", "day", "hour"]].apply(pd.to_numeric, errors="raise")
+    if calendar.isna().any().any() or not np.isfinite(calendar.to_numpy()).all():
+        raise ValueError("Calendar fields must be finite integers")
+    if not (calendar == np.floor(calendar)).all().all():
+        raise ValueError("Calendar fields must be integers")
+    if not calendar["hour"].between(0, 23).all():
+        raise ValueError("hour must be between 0 and 23")
+    timestamp = pd.to_datetime(calendar, errors="raise")
+    if timestamp.isna().any() or timestamp.duplicated().any():
+        raise ValueError("Timestamps must be present and unique; resolve duplicates explicitly")
+    return timestamp
+
+
 def download_dataset(destination):
     """Download the exact CSV without extracting arbitrary archive members."""
     destination = Path(destination)
@@ -43,19 +57,26 @@ def download_dataset(destination):
     except (URLError, OSError) as exc:
         raise RuntimeError(
             f"UCI download failed: {exc}. Download {FILENAME} from {DATASET_PAGE} "
-            f"and save it at {destination}, or use the self-contained Colab notebook."
+            f"and save it at {destination}."
         ) from exc
     if len(archive) > 10_000_000:
         raise ValueError("Unexpectedly large UCI archive")
-    with ZipFile(BytesIO(archive)) as bundle:
-        members = [item for item in bundle.infolist() if Path(item.filename).name == FILENAME]
-        if len(members) != 1 or members[0].file_size > 10_000_000:
-            raise ValueError("The UCI archive does not contain the expected CSV")
-        payload = bundle.read(members[0])
+    try:
+        with ZipFile(BytesIO(archive)) as bundle:
+            members = [item for item in bundle.infolist() if Path(item.filename).name == FILENAME]
+            if len(members) != 1 or members[0].file_size > 10_000_000:
+                raise ValueError("The UCI archive does not contain the expected CSV")
+            payload = bundle.read(members[0])
+    except BadZipFile as exc:
+        raise ValueError("The UCI download is not a valid ZIP archive") from exc
     # Check before publishing the file to the caller.
     raw = pd.read_csv(BytesIO(payload))
     if len(raw) != 43824 or not set(REQUIRED).issubset(raw.columns):
         raise ValueError("Downloaded file does not match the documented UCI 381 schema and size")
+    timestamps = pd.DatetimeIndex(validate_timestamps(raw)).sort_values()
+    expected = pd.date_range("2010-01-01", "2014-12-31 23:00", freq="h")
+    if not timestamps.equals(expected):
+        raise ValueError("Downloaded timestamps do not match the documented 2010–2014 hourly archive")
     destination.parent.mkdir(parents=True, exist_ok=True)
     temporary = destination.with_suffix(destination.suffix + ".part")
     temporary.write_bytes(payload)
@@ -70,18 +91,14 @@ def download_dataset(destination):
 def load_dataset(path):
     path = Path(path)
     if not path.is_file():
-        raise FileNotFoundError(f"Dataset not found: {path}. Run the download command or use Colab.")
+        raise FileNotFoundError(f"Dataset not found: {path}. Download the UCI CSV or supply its path with --data.")
     raw = pd.read_csv(path, na_values=["NA", "nan", ""], keep_default_na=True)
     missing_columns = sorted(set(REQUIRED) - set(raw.columns))
     if missing_columns:
         raise ValueError(f"Missing columns: {missing_columns}")
     if raw.empty:
         raise ValueError("Dataset is empty")
-    timestamp = pd.to_datetime(raw[["year", "month", "day", "hour"]], errors="raise")
-    if timestamp.isna().any() or timestamp.duplicated().any():
-        raise ValueError("Timestamps must be present and unique; resolve duplicates explicitly")
-    if not timestamp.eq(timestamp.dt.floor("h")).all():
-        raise ValueError("Only hourly timestamps are supported")
+    timestamp = validate_timestamps(raw)
     frame = raw.loc[:, ["pm2.5", *WEATHER_NUMERIC, "cbwd"]].copy()
     for name in ("pm2.5", *WEATHER_NUMERIC):
         frame[name] = pd.to_numeric(frame[name], errors="raise").astype(float)

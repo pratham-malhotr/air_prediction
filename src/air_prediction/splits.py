@@ -51,6 +51,7 @@ def fold_masks(data, fold: Fold, config: Config):
         "fit_time": str(first_origin), "latest_training_target": str(data.target_time[train].max()),
         "training_rows": int(train.sum()), "expected_target_hours": expected,
         "origins_in_input": int(period.sum()), "common_evaluation_rows": int(test.sum()),
+        "coverage_fraction": int(test.sum()) / expected,
         "missing_targets": int((period & data.y.isna()).sum()),
         "missing_persistence": int((period & data.baselines["persistence"].isna()).sum()),
         "missing_seasonal": int((period & data.baselines["seasonal_naive"].isna()).sum()),

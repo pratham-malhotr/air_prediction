@@ -1,4 +1,4 @@
-"""Command line entry points shared by local and Colab workflows."""
+"""Command line interface for data inspection, training, and forecasting."""
 
 import argparse
 import json
@@ -33,7 +33,8 @@ def main(argv=None):
             print(download_dataset(args.data))
         elif args.command == "eda":
             from .eda import run_eda
-            print(run_eda(load_dataset(args.data), args.output, load_config(args.config).validation_start))
+            config = load_config(args.config)
+            print(run_eda(load_dataset(args.data), args.output, config.validation_start, since=config.train_start))
         elif args.command == "train":
             from .experiment import run_experiment
             result = run_experiment(args.data, load_config(args.config), args.output, tuple(args.models), args.ablations)

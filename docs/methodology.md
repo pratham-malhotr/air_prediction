@@ -1,10 +1,10 @@
 # Phase 1 experimental protocol
 
-The task is direct supervised regression: estimate a future PM2.5 concentration from the environmental history available at issuance. The standard configuration fixes h=1 hour. The implementation also aligns larger integer horizons correctly; results at different horizons must be reported as separate experiments.
+Our task is to estimate the next PM2.5 concentration from the pollution and weather history available when the forecast is made. We use direct regression with a fixed horizon of one hour. The code also supports other integer horizons, but each horizon needs its own reported comparison.
 
 ## Time convention and features
 
-Use the dataset's Beijing local clock (Asia/Shanghai, UTC+8). At origin t, the input may include y(t), weather(t), and earlier records; the label is y(t+h). The origin's hourly measurement is assumed published before issuance. Operational sensor latency is not provided and remains a limitation.
+We use the dataset's Beijing local clock (Asia/Shanghai, UTC+8). At origin t, our input includes y(t), weather(t), and earlier records; the label is y(t+h). We assume the current hourly measurement is available before issuance. The archive does not provide publication delays, so we cannot verify that assumption for a live deployment.
 
 1. Parse the four date columns, reject duplicates, sort, and reindex to the complete hourly grid. Reindexing preserves the meaning of an hour offset. ID `No` is excluded.
 2. Keep PM2.5 lags at offsets 0, 1, 2, 3, 6, 12, 24, 48, 72, and 168 hours, with missingness indicators.
@@ -12,7 +12,7 @@ Use the dataset's Beijing local clock (Asia/Shanghai, UTC+8). At origin t, the i
 4. Encode target hour, weekday, and month using sine/cosine pairs; add a weekend indicator. Future calendar values are known at issuance. Month encoding is a coarse annual proxy; it does not encode a smooth day-of-year cycle.
 5. Use the six numeric weather variables at offsets 0, 1, and 24 and current weather-missingness flags. Encode wind direction with fold-fitted one-hot encoding; missing wind is a separate category. Unseen test categories map to all-zero indicators without changing training encoders.
 
-For a trailing window w, mean(t,w)=sum of observed y values in [t−w+1,t], divided by their observed count. No centered rolling window, backward fill, global interpolation, target imputation, or future observed weather is allowed. A perturbation test replaces every future pollutant/weather value and verifies that earlier features remain identical.
+For a trailing window w, mean(t,w) is the sum of observed y values in [t−w+1,t], divided by their observed count. We use trailing windows and keep missing observations explicit. A perturbation test changes future pollutant/weather values and checks that earlier features stay identical. [Our analysis](analysis.md) connects these choices to the measured EDA findings.
 
 ## Baselines and linear comparator
 
@@ -24,15 +24,15 @@ Ridge regression minimizes sum_i (y_i−b−x_i' beta)^2 + alpha ||beta||², wit
 
 ## XGBoost theory
 
-Boosting builds an additive predictor F_K(x)=b+sum_k eta f_k(x), where each tree refines the current prediction. For squared error, the gradients point toward residual corrections. The XGBoost objective adds tree complexity and leaf-weight penalties to the loss. A second-order expansion uses gradient g_i and Hessian h_i; a leaf's regularized optimum is −G/(H+lambda), where G and H sum derivatives in that leaf. Candidate splits trade loss reduction against complexity. Depth, minimum child weight, learning rate, subsampling, and L2 regularization limit model complexity. This is an explanation of the model class, not a derivation of a claim that it will win on this dataset. See [Chen and Guestrin](https://arxiv.org/abs/1603.02754) and the [official estimator documentation](https://xgboost.readthedocs.io/en/stable/python/sklearn_estimator.html).
+Boosting builds an additive predictor F_K(x)=b+sum_k eta f_k(x), where each tree refines the current prediction. For squared error, the gradients point toward residual corrections. The XGBoost objective adds tree complexity and leaf-weight penalties to the loss. A second-order expansion uses gradient g_i and Hessian h_i; a leaf's regularized optimum is −G/(H+lambda), where G and H sum derivatives in that leaf. Candidate splits trade loss reduction against complexity. Depth, minimum child weight, learning rate, subsampling, and L2 regularization limit model complexity. This gives us a model that can represent nonlinear feature relationships while controlling tree complexity. See [Chen and Guestrin](https://arxiv.org/abs/1603.02754) and the [official estimator documentation](https://xgboost.readthedocs.io/en/stable/python/sklearn_estimator.html).
 
-The project selects among three fixed parameter candidates by pooled chronological validation RMSE. Estimator counts are part of that grid. There is no early stopping using final holdout data. Random seeds and CPU thread counts are recorded. A small fixed grid is transparent but does not establish a global optimum.
+We compare three fixed parameter candidates using pooled chronological validation RMSE. The number of trees is included in the grid. We keep the grid small so each comparison is easy to inspect and reproduce; we are not claiming a globally optimal setting. Random seeds and thread counts are recorded. Final holdout data is not used for early stopping.
 
 ## Chronological validation and rolling backtesting
 
-Initial training spans 2010–2012. Model selection evaluates four 2013 quarters with expanding training. After selecting parameters, four 2014 quarterly evaluations use those frozen parameters. For a block whose first target time is B, the first origin is B−h. Include a training example only if its target time is at most B−h, so every label is already observed at fit time. This boundary matters for horizons greater than one.
+Our initial training period is 2010–2012. We use four expanding quarterly folds in 2013 to select parameters, then keep those settings fixed for the four 2014 evaluation blocks. For a block whose first target time is B, the first origin is B−h. A training example is eligible only if its target time is at most B−h. That ensures its label is already known when the model is fitted, including when the horizon is greater than one.
 
-Fit once per quarter, then issue a new fixed-horizon prediction each hour using updated observed histories. Later quarters may include previously observed validation/holdout records in training. This is the specified operational rolling policy, not a static model evaluated all year without updates. No model is trained on observations later than the start of its evaluation block.
+We fit once per quarter and issue a new fixed-horizon prediction each hour using the updated observed history. Later quarters can include observations from earlier quarters because those readings are already available by then. The parameter choices remain fixed. This lets us evaluate the same retraining rule throughout the test year.
 
 All models share the mask: enough timestamp history, observed target, observed persistence input, and observed seasonal-naive input. This excludes hours with unavailable baseline observations and can bias evaluation toward better-observed periods; report coverage. Native XGBoost could predict some excluded hours, but those predictions are outside this fair-comparison metric table. Missingness exclusion counts overlap. Targets are never synthesized for scoring. The first 168 elapsed hours are a warm-up even if some measurements within that history are missing.
 
@@ -53,7 +53,7 @@ Inspect prediction scatter, hourly residual histograms, and residual autocorrela
 
 ## Freeze, reproduce, and interpret
 
-Keep the initial training-only EDA and candidate grid fixed before reviewing final holdout results. If you change them afterward, call that a new exploratory analysis and obtain a new evaluation strategy rather than claiming the same holdout remains untouched. The code cannot enforce a person's research decisions; the run manifest and output directories preserve evidence.
+We keep the initial EDA scope and candidate grid fixed before reviewing the holdout. If we revise the approach after seeing those results, we need to record that as exploratory work and reconsider the evaluation. Keeping separate output directories and a run manifest helps us track which settings produced each result.
 
 Every completed run writes its data hash, source, configuration, parameters, package versions, split audits, predictions, metrics, model artifacts, and narrative summary. Final deployment models are refitted on all observed archive labels only after the backtest outputs have been computed. Their feature importance describes that deployment fit, not a held-out feature selection exercise. Inference rejects a history ending earlier than the deployment model's training endpoint.
 

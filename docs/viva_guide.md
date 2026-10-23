@@ -1,6 +1,6 @@
 # Individual viva preparation
 
-Each of the five members should be able to explain the entire pipeline, rerun it, and interpret its real results. These prompts are study aids, not a substitute for understanding or evidence of anyone's contribution.
+These are our preparation notes for explaining the project. We should all be able to trace a forecast from the raw hourly data to the final error calculation, and explain why each step is there.
 
 1. **What exactly do we predict?** A numeric PM2.5 concentration in µg/m³ at t+h, with h fixed at one hour by default. This is regression, not AQI classification.
 2. **What information exists at issuance?** PM2.5 and weather through hour t, assuming the hourly records are already published. The future weather record is unavailable; the future calendar is known.
@@ -23,9 +23,19 @@ Each of the five members should be able to explain the entire pipeline, rerun it
 19. **What does feature importance prove?** It summarizes splits in a fitted model, not causal effects or stability across all folds. Correlated features can share or obscure importance.
 20. **What do residual ACF plots reveal?** Remaining temporal structure can indicate missed dynamics. Use the complete hourly grid so absent targets do not compress time. ACF alone is not a calibrated uncertainty interval.
 21. **Why not output an AQI category?** The forecast is hourly concentration; an AQI standard has specific averaging and calculation rules. An optional AQI extension needs a valid standard and aggregation procedure.
-22. **Does this forecast today's air in India?** No. It is evaluated on one historical Beijing series. Present-day, other-city, and sensor-location transfer need new data and validation.
+22. **Does this forecast today's air in India?** Our setup uses a historical Beijing series. Present-day, other-city, and sensor-location transfer need new data and validation.
 23. **What work is Phase 2?** LSTM/temporal CNN and a technically justified hybrid. There are no Phase 2 performance claims in this submission.
-24. **What evidence makes a run reproducible?** CSV checksum, provenance, configuration, versions, forecast rows, fold boundaries, selection record and outputs. Demonstrate how to run the notebook and locate those files.
+24. **What evidence makes a run reproducible?** CSV checksum, provenance, configuration, versions, forecast rows, fold boundaries, selection record and outputs. Be ready to locate those files and explain what each records.
 25. **What if XGBoost loses to persistence?** Report it. Analyze errors, seasonality and horizon strength. Do not replace splits or cherry-pick a quarter to create a better headline.
 
-Practice: trace one concrete row through feature creation, baseline alignment, train-label eligibility, preprocessing, prediction, and metric computation. Then show your own contribution and a result or design decision you can defend from the actual run.
+For practice, choose one forecast row and explain its features, seasonal reference, eligible training labels, prediction, and error. Then use the measured plots and tables to explain one strength and one limitation of the approach.
+
+## Results we should be able to explain
+
+- The file has 43,824 hourly rows, but 2,067 PM2.5 values are missing. Explain why complete timestamps do not mean complete measurements.
+- The one-hour training autocorrelation is 0.961. Connect that to persistence's strong 2014 RMSE of 22.033.
+- XGBoost improves pooled RMSE by 4.29%, but Ridge is slightly better overall at 21.063 versus 21.088. Explain why this small gap is not proof of a decisive difference.
+- Adding temporal summaries and weather helps this XGBoost configuration on validation dates, yet its pooled 2013 RMSE is worse than persistence. Keep feature comparisons and overall model comparisons distinct.
+- At/above 218 µg/m³, XGBoost RMSE is 39.959 versus persistence 38.557. Explain why a better pooled score does not mean better peak forecasting.
+- Explain why coverage is 8,531/8,760 hours and why overlapping missingness counts cannot simply be added.
+- The final refitted model's next-hour output is for 1 January 2015. It is a historical demonstration, not a forecast for today's air.

@@ -1,10 +1,10 @@
-"""Exercises the actual estimator when installed (including Colab); explicit local skip otherwise."""
+"""Exercise the actual estimator when installed; explicitly skip otherwise."""
 
 from pathlib import Path
 
 import pytest
 
-pytest.importorskip("xgboost", reason="XGBoost is not installed; run this smoke test in Colab or after installing requirements")
+pytest.importorskip("xgboost", reason="XGBoost is not installed; its integration test requires the project dependencies")
 
 from air_prediction.config import load_config
 from air_prediction.demo import make_demo

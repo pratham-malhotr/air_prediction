@@ -1,4 +1,5 @@
 .venv/
+.dependencies/
 __pycache__/
 *.py[cod]
 .pytest_cache/
@@ -18,3 +19,4 @@ artifacts/*
 *.synctex.gz
 dist/
 .DS_Store
+.vercel/

@@ -1,0 +1,18 @@
+{
+  "criterion": "pooled validation RMSE",
+  "selected": {
+    "xgboost": {
+      "n_estimators": 300,
+      "max_depth": 3,
+      "learning_rate": 0.05,
+      "min_child_weight": 5,
+      "subsample": 0.8,
+      "colsample_bytree": 0.9,
+      "reg_lambda": 5.0
+    },
+    "ridge": {
+      "alpha": 10.0
+    }
+  },
+  "holdout_used_for_selection": false
+}

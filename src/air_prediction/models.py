@@ -22,7 +22,7 @@ def make_model(name, X, config, parameters=None):
         except (ImportError, OSError) as exc:
             raise RuntimeError(
                 "XGBoost is unavailable. Install requirements.txt (on macOS, libomp may also be required) "
-                "or run Air_Prediction_Phase1_Colab.ipynb. --models ridge is a separate diagnostic run, not an XGBoost result."
+                "before training the required regressor. --models ridge evaluates only the linear comparator."
             ) from exc
         transform = "passthrough"  # Native missing-value splits; no global imputation.
         estimator = XGBRegressor(

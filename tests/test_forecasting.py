@@ -66,6 +66,7 @@ def test_no_training_label_extends_beyond_first_forecast_origin(hourly_frame, ho
     assert data.X.index[test].min() == first_origin
     assert not (train & test).any()
     assert audit["common_evaluation_rows"] == 200
+    assert audit["coverage_fraction"] == 1.0
 
 
 def test_calendar_folds_are_nonoverlapping_and_cover_each_phase():
@@ -102,7 +103,12 @@ def test_metrics_use_rmse_and_permit_negative_r_squared():
         regression_metrics([1, np.nan], [1, 2])
 
 
-@pytest.mark.parametrize("change", [{"horizon_hours": 0}, {"lags": (-1,)}, {"rolling_windows": (1,)}, {"holdout_start": "2012-01-01"}])
+@pytest.mark.parametrize("change", [
+    {"horizon_hours": 0}, {"lags": (-1,)}, {"rolling_windows": (1,)},
+    {"holdout_start": "2012-01-01"}, {"validation_start": "2013-01-01 00:30"},
+    {"validation_start": "2013-01-01T00:00:00+00:00"},
+    {"lags": (True,)}, {"rolling_windows": (True,)},
+])
 def test_invalid_config_is_rejected(change):
     with pytest.raises(ValueError):
         replace(Config(), **change)

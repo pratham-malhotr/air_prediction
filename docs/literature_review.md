@@ -1,6 +1,6 @@
 # Phase 1 literature review
 
-These sources motivate the current experiment. Their published findings are not results from this repository. The current project does not claim a new forecasting architecture.
+We use these readings to connect the forecasting problem to the methods in our project. The Beijing pollution study helps explain why weather deserves attention, the forecasting text guides our baselines and time splits, and the model papers explain XGBoost and Ridge.
 
 | Source | Method or contribution | Connection to this project | Limitation for our comparison |
 |---|---|---|---|
@@ -11,9 +11,9 @@ These sources motivate the current experiment. Their published findings are not 
 
 ## Gap and testable question
 
-At a one-hour horizon, recent PM2.5 is likely a strong predictor. Does an environmental feature model improve MAE and RMSE over persistence and daily seasonal naive on **the same observed 2014 targets**, after selecting settings only on earlier dates? Do any improvements hold across quarters and high-pollution hours? The project will answer those questions only after a real-data run. Persistence remains a meaningful outcome even if it wins.
+Our main question is whether the environmental features improve MAE and RMSE over persistence and daily seasonal naive on **the same observed 2014 targets**, after choosing settings only from earlier dates. We also examine whether the comparison changes across quarters or high-pollution hours. The latest reading is already a strong one-hour forecast: in our measured backtests, XGBoost improves pooled RMSE by 4.29% over persistence, while Ridge is slightly better overall. XGBoost's high-pollution RMSE remains worse than persistence. [The complete findings](analysis.md) show why all three comparisons matter.
 
-Manual lags and rolling windows represent selected temporal scales; their limitations can motivate Phase 2 later. Phase 1 does not evaluate LSTM or assert that sequence models will improve on this baseline.
+Our lags and windows represent selected hourly, daily, and weekly scales. They do not cover every possible temporal relationship. For this phase, we keep the focus on understanding and evaluating the classical ML setup.
 
 ## Reading and citation links
 
@@ -23,4 +23,4 @@ Manual lags and rolling windows represent selected temporal scales; their limita
 4. Hoerl, A. E., and Kennard, R. W., Technometrics 12(1), pp. 55–67 (1970). DOI: [10.1080/00401706.1970.10488634](https://doi.org/10.1080/00401706.1970.10488634).
 5. Dataset citation: Chen, S. (2015), *Beijing PM2.5*, UCI Machine Learning Repository. DOI: [10.24432/C5JS49](https://doi.org/10.24432/C5JS49). The dataset's 2010–2014 coverage should not be conflated with every period discussed in the introductory paper.
 
-The sources here are a focused starting review, not a claim of an exhaustive systematic search. Team members should read the originals and record any additional empirical air-quality forecasting papers, their horizons, splits, and metrics before comparing reported numbers.
+When adding another forecasting study, we need to record its target, horizon, time split, and error measures. A published score from another horizon or evaluation period is useful context, but it is not a direct comparison with our experiment.

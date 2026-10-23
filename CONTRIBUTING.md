@@ -1,62 +1,44 @@
-# Contributing to Air Prediction
+# Development workflow
 
-Thank you for contributing to the Air Prediction project! We welcome code contributions, issue reports, and documentation improvements.
+The project uses Python 3.11 or newer. Install the package and development dependencies from the project root:
 
----
+```bash
+python -m pip install -e '.[dev,web]'
+```
 
-## 🛠️ Development Setup
+The XGBoost minimum is 2.1.4, which includes the [scikit-learn 1.6 compatibility fix](https://xgboost.readthedocs.io/en/stable/changes/v2.1.0.html).
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/pratham-malhotr/air_prediction.git
-   cd air_prediction
-   ```
+The command-line workflow is:
 
-2. **Create and activate a virtual environment:**
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
+```bash
+air-prediction download
+air-prediction eda
+air-prediction train
+```
 
-3. **Install dependencies in editable mode with development tools:**
-   ```bash
-   pip install -r requirements.txt
-   pip install -e ".[dev]"
-   ```
+The preparation and report scripts use the same data/configuration as the pipeline:
 
----
+```bash
+python scripts/prepare_data.py
+python scripts/build_analysis.py
+```
 
-## 🌿 Branching & Git Workflow
+The preparation script exports the cleaned hourly series, gap dates, feature dictionary and a worked preview. The analysis script requires a completed real-data run and creates supplementary tables/figures. For the full validation feature comparison, train with `air-prediction train --ablations`.
 
-1. Create a feature or bugfix branch off `main`:
-   ```bash
-   git checkout -b feature/your-feature-name
-   # or
-   git checkout -b fix/issue-description
-   ```
+With Tectonic installed, `bash scripts/build_pdfs.sh` builds the IEEE report and presentation. Its first run downloads the TeX support files into the project's cache.
 
-2. Keep commits atomic and use descriptive commit messages (following conventional commits, e.g., `feat:`, `fix:`, `docs:`, `test:`, `refactor:`).
+An existing dataset can be supplied with `--data /path/to/file.csv`. The configuration is `configs/phase1.toml`. For a new experiment, use a new `--output` directory; completed runs are preserved.
 
-3. Always run the test suite locally before pushing:
-   ```bash
-   pytest
-   ```
+Run the implementation checks before submitting changes:
 
-4. Push your branch to GitHub and open a Pull Request against `main`.
+```bash
+python -m pytest -q
+```
 
----
+Keep training-label availability, target alignment and common evaluation timestamps intact. Fit learned preprocessing on training dates only. Changes to the experimental protocol after viewing holdout results must be recorded as exploratory changes, rather than reusing the same holdout as untouched evidence.
 
-## 🧪 Testing Guidelines
+Use the actual dataset for project findings. Synthetic fixtures are for implementation tests. Preserve source attribution, input hashes, parameter settings and measured outputs. Keep datasets, model artifacts, credentials and caches out of source commits.
 
-- New modules or features must be accompanied by corresponding unit or integration tests under `tests/`.
-- Ensure tests run fast and do not depend on external network requests (mock downloads if needed).
-- Confirm all 25+ existing test cases continue to pass without regression.
+Keep the report, slides and explanations consistent with the implemented methods and measured results.
 
----
-
-## 📝 Code Style & Conventions
-
-- Follow **PEP 8** style guidelines.
-- Use explicit type annotations and dataclasses where appropriate.
-- Avoid introducing circular imports within `air_prediction`.
-- Avoid committing large dataset files (`data/raw/` is ignored by default; keep only `.gitkeep`).
+The optional dashboard lives in `frontend/` and uses the same saved model artifacts. Start it with `bash scripts/start_frontend.sh`; see `docs/frontend.md` for inputs and verification. Keep web-specific dependencies in the `web` extra so the ML pipeline remains usable independently.
