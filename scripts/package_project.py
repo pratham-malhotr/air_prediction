@@ -26,6 +26,9 @@ def main():
     destination = ROOT / "dist" / "air_prediction_phase1.zip"
     destination.parent.mkdir(parents=True, exist_ok=True)
     files = list(source_files())
+    audit = ROOT / "artifacts/prediction_audit.json"
+    if audit.exists():
+        files.append(audit)
     run = ROOT / "artifacts/phase1"
     manifest_path = run / "run_manifest.json"
     if manifest_path.exists():

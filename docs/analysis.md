@@ -65,6 +65,8 @@ Every method was evaluated on the same 8,531 observed target hours out of 8,760 
 
 XGBoost reduced RMSE by 4.29% relative to persistence; Ridge reduced it by 4.41%. Ridge's RMSE advantage over XGBoost is only 0.025. We have not performed a statistical significance test or quantified uncertainty around that difference, so we do not claim a decisive ranking between the two learned models.
 
+For XGBoost, the median absolute error is 6.88, the 90th percentile is 26.28, and the 95th percentile is 37.46 on the same 8,531 scored hours. These describe the observed backtest errors; they are not uncertainty bounds for a new prediction. The MAE of 11.83 does not mean every forecast will be within 11.83 of the observed value. Large misses remain possible, as the examples below show.
+
 The daily seasonal reference performed much worse than persistence. A daily average pattern does not mean that yesterday's concentration at the same clock hour is a good forecast for a particular pollution event. Its negative R² is retained in the table.
 
 | 2014 quarter | Persistence RMSE | Ridge RMSE | XGBoost RMSE | Scored hours |

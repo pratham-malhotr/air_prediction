@@ -34,6 +34,10 @@ Audit on 23 October 2026: **66 tests passed, none skipped**. This includes the o
 
 Full predictions, coverage, selection, models, and provenance are in `artifacts/phase1/`. [The analysis](analysis.md) explains the measured strengths and weaknesses. The report and slides use those same results.
 
+A subsequent prediction audit refitted XGBoost and Ridge for all four 2014 quarters using the frozen parameters and original training boundaries. All 17,062 learned-model predictions matched the saved backtests; the largest floating-point difference was less than `6e-14`. The audit checked actual targets against the raw CSV, both naive references, common scoring dates, lag/rolling alignment, and recalculated every pooled validation/holdout MAE, RMSE and R² with scikit-learn. This reproduces the original experiment without selecting new parameters from the holdout.
+
+The same audit checked that manual concentrations of 12, 65 and 150 change the actual model output, and that uploading the original CSV into one app instance can be used by a fresh instance to reproduce `predict_latest`. The prepared Vercel model files and inference service are byte-identical to those checked locally. The record is [prediction_audit.json](../artifacts/prediction_audit.json). These are historical and local HTTP checks; they do not establish that the hosted requests have passed.
+
 ## Final presentation checks
 
 The LaTeX report and slide sources are populated. Tectonic 0.17.0 compiled the four-page IEEE report and 15-slide presentation. Extracted PDF text was checked against the measured results, references resolve, and the rendered pages/slides were visually reviewed. The report figures use their printed column width so the labels remain readable. Both builds complete without font, layout, or unresolved-reference warnings.
