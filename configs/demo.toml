@@ -1,0 +1,18 @@
+# Synthetic integration demonstration ONLY. Not project evidence.
+horizon_hours = 1
+seasonal_period_hours = 24
+lags = [0, 1, 6, 24, 168]
+rolling_windows = [6, 24]
+train_start = "2010-01-01"
+validation_start = "2010-02-01"
+holdout_start = "2010-03-01"
+holdout_end = "2010-04-01"
+fold_months = 1
+minimum_training_rows = 400
+random_seed = 42
+threads = 2
+
+[[xgboost_candidates]]
+n_estimators = 30
+max_depth = 2
+learning_rate = 0.1

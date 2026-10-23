@@ -1,54 +1,20 @@
-# Byte-compiled / optimized / DLL files
+.venv/
 __pycache__/
 *.py[cod]
-*$py.class
-
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-share/python-wheels/
+.pytest_cache/
+.cache/
+.ipynb_checkpoints/
 *.egg-info/
-.installed.cfg
-*.egg
-
-# Virtual environments
-venv/
-.venv/
-env/
-.env
-ENV/
-env.bak/
-venv.bak/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-*/.ipynb_checkpoints/*
-
-# IDEs & OS
-.vscode/
-.idea/
+data/raw/*
+!data/raw/.gitkeep
+artifacts/*
+!artifacts/.gitkeep
+*.joblib
+*.aux
+*.log
+*.out
+*.bbl
+*.blg
+*.synctex.gz
+dist/
 .DS_Store
-*.swp
-*.swo
-
-# Models & Large Datasets
-*.h5
-*.pkl
-*.pt
-*.pth
-*.onnx
-data/raw/
