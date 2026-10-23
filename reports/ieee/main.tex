@@ -1,0 +1,96 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{amsmath,amssymb,graphicx,booktabs,url}
+\usepackage[hidelinks]{hyperref}
+\title{Short-Horizon PM2.5 Forecasting with Gradient Boosting:\\A Chronological Machine Learning Evaluation}
+\author{\IEEEauthorblockN{Team of five: names and roll numbers pending}
+\IEEEauthorblockA{CSAI Student Project 19 --- Phase 1}}
+\newcommand{\resultroot}{../../artifacts/phase1}
+\newcommand{\pending}{\textbf{Pending real-data execution.} No synthetic demonstration scores are project results.}
+\begin{document}
+\maketitle
+\begin{abstract}
+This Phase 1 project implements one-hour-ahead PM2.5 concentration forecasting from historical pollutant and weather observations. An XGBoost regressor uses lagged concentrations, trailing statistics, missingness indicators, calendar features, and weather covariates. Persistence, daily seasonal naive, and Ridge regression provide reference forecasts. A chronological protocol selects model parameters on 2013 and evaluates quarterly expanding-window backtests on 2014, after initial training on 2010--2012. Comparisons use identical observed target hours and report MAE, RMSE, and coefficient of determination, alongside coverage and residual diagnostics. This document specifies the reproducible experiment; performance conclusions require the measured run artifacts.
+\end{abstract}
+\begin{IEEEkeywords}
+PM2.5, air quality forecasting, XGBoost, time series, chronological validation
+\end{IEEEkeywords}
+
+\section{Problem and Scope}
+At an hourly forecast origin $t$, estimate $y_{t+h}$ for fixed horizon $h=1$ hour using measurements available through $t$. The target is concentration in $\mu$g/m$^3$. The problem is regression. Hourly measurements are assumed available before forecast issuance; unknown publication delays limit operational interpretation. The present deliverable covers Machine Learning only.
+
+\section{Related Work}
+Liang et al. investigate Beijing pollution and meteorological effects with statistical analyses~\cite{liang2015}. This supports examining weather and seasonality, but does not supply a directly comparable one-hour forecasting score. Chen and Guestrin describe regularized tree boosting and efficient sparse-data handling~\cite{chen2016}, motivating the required nonlinear regressor. Forecasting principles~\cite{hyndman2021} motivate simple reference forecasts and evaluation in chronological order. Ridge regression~\cite{hoerl1970} provides a regularized linear comparator when lagged predictors are correlated. Our empirical question is whether environmental features improve on simple temporal references under a common evaluation protocol, not whether a new model architecture has been invented.
+
+\section{Dataset and Exploratory Analysis}
+The selected source is UCI Beijing PM2.5, dataset 381~\cite{uci381}. The documented archive has 43,824 hourly records covering 2010--2014. It combines a Beijing PM2.5 location with airport weather. Covariates include dew point, temperature, pressure, wind direction, accumulated wind speed, and snow/rain duration. This spatial mismatch is a limitation.
+
+The loader validates the schema, rejects duplicate timestamps and invalid numeric values, sorts the index, and restores missing hourly slots. Missing observations remain explicit. The ID column is excluded. Every run records a CSV checksum and provenance. Valid extreme pollution values are retained rather than automatically removed using an outlier rule.
+
+Distribution, missingness, calendar profiles, correlation and autocorrelation plots use initial training dates only. Full-archive missingness and schema counts are descriptive audits.\par
+\pending\ Insert measured missingness counts, concentration statistics, and observations from the training EDA after execution; do not infer them from the documented row count alone.
+
+\section{Feature Engineering}
+Rows are indexed by forecast origin. Concentration lags include offsets $0,1,2,3,6,12,24,48,72,168$ hours. Lag zero is valid because the label is a future observation. For windows $w\in\{3,6,12,24,72,168\}$, compute means, population standard deviations and observed fractions over $[t-w+1,t]$. The observed fraction exposes reduced support when a window contains gaps. No future-based interpolation is performed.
+
+Known target hour, weekday and month use sine/cosine encodings, with a weekend flag. Numeric weather is supplied at offsets 0, 1 and 24; missingness and categorical wind indicators are retained. Learned encoders are fitted separately in each training fold. Ridge additionally uses fold-fitted median imputation and standardization. XGBoost uses native numeric missing-value handling. The first 168 elapsed hours are a warm-up.
+
+\section{Models and Theory}
+Persistence predicts $\hat y_{t+h|t}=y_t$. Seasonal naive with period $m=24$ predicts
+\begin{equation}
+\hat y_{t+h|t}=y_{t+h-m\lceil h/m\rceil}.
+\end{equation}
+At $h=1$, the seasonal source is $t-23$, exactly one day before the target's hour. Ridge minimizes squared residuals plus $\alpha\lVert\beta\rVert_2^2$, with fixed $\alpha=10$.
+
+Gradient boosting constructs an additive ensemble $F_K(x)=b+\sum_{k=1}^{K}\eta f_k(x)$. XGBoost penalizes tree complexity and leaf weights:
+\begin{equation}
+\mathcal L=\sum_i \ell(y_i,F_K(x_i))+\sum_k\left(\gamma T_k+\frac{\lambda}{2}\lVert w_k\rVert_2^2\right).
+\end{equation}
+A second-order expansion uses gradient and Hessian sums $G,H$, giving regularized leaf weight $-G/(H+\lambda)$~\cite{chen2016}. Tree depth, learning rate, minimum child weight, row/column sampling and regularization control complexity. A fixed three-candidate grid selects parameters by pooled validation RMSE. Early stopping never consults final holdout targets. All learned-model outputs are clipped at zero consistently.
+
+\section{Evaluation Protocol}
+Initial training uses 2010--2012. Four expanding quarterly folds in 2013 select parameters. Four quarterly 2014 folds evaluate the frozen setting. For a block beginning at target time $B$, the first origin is $B-h$. Training labels must satisfy $t_{\mathrm{label}}\le B-h$. This prevents future labels entering a fit, including at multi-hour horizons.
+
+Models are refitted once per quarter; observed histories update hourly. Later folds may use earlier observed 2014 records according to this rolling policy. Targets and baseline inputs must be observed for a row to enter the common comparison. No evaluation target is imputed. Coverage and overlapping exclusion counts accompany scores.
+
+For errors $e_i=\hat y_i-y_i$, the metrics are
+\begin{align}
+\mathrm{MAE}&=\frac1n\sum_i |e_i|,\\
+\mathrm{RMSE}&=\sqrt{\frac1n\sum_i e_i^2},\\
+R^2&=1-\frac{\sum_i e_i^2}{\sum_i(y_i-\bar y)^2}.
+\end{align}
+$R^2$ can be negative and is undefined for constant truth. Pooled metrics weight observed forecast hours equally; per-fold metrics expose temporal variability. Model selection and final evaluation are separate. Optional feature ablations use 2013 only with the same selected settings.
+
+\section{Results and Diagnostics}
+\IfFileExists{\resultroot/run_manifest.json}{
+\begin{table}[ht]
+\centering
+\caption{Measured rolling holdout errors. MAE/RMSE are in $\mu$g/m$^3$. Verify real-data provenance before submission.}
+\input{\resultroot/results_table.tex}
+\end{table}
+}{\pending}
+
+\IfFileExists{\resultroot/figures/model_comparison.png}{
+\begin{figure}[ht]\centering
+\includegraphics[width=\columnwidth]{\resultroot/figures/model_comparison.png}
+\caption{Common-target holdout comparison generated by the experiment.}\end{figure}
+}{}
+
+Complete the discussion using the actual pooled and quarterly metrics, baseline-relative RMSE changes, coverage, and error strata. Report unsuccessful improvements as well as successful ones. Inspect errors by month, hour, and a high-pollution threshold fixed at the initial training 90th percentile. Residual autocorrelation uses the complete hourly grid. Final model gain importance is descriptive and does not prove a causal weather effect. Do not tune the protocol after observing the holdout and continue to call the same holdout untouched.
+
+\section{Reproducibility and Team Contributions}
+The package and self-contained Colab notebook use the same source. Outputs record data hash, source hash, configuration, versions, parameter decisions, fold audits, predictions and metrics. Deployment models are refitted after evaluation and are distinct from models used for backtest predictions. Tests cover feature causality, horizon alignment, missingness, fold boundaries, preprocessing and artifact generation.
+
+\begin{table}[ht]\centering
+\caption{Replace with the five members' actual contributions and evidence.}
+\begin{tabular}{lll}\toprule Member & Name / roll & Actual contribution\\\midrule
+1 & Pending & Pending\\2 & Pending & Pending\\3 & Pending & Pending\\4 & Pending & Pending\\5 & Pending & Pending\\\bottomrule
+\end{tabular}\end{table}
+Every member must understand the full pipeline and individually defend their contribution. Suggested responsibilities are not completed-work claims.
+
+\section{Limitations and Conclusion}
+Historical performance at one Beijing location does not establish generalization to present-day conditions or another city. Missing baseline inputs restrict the comparison sample. Measured weather availability is assumed rather than established from an operational publication log. The finite grid does not guarantee optimal parameters. No calibrated uncertainty, causal effect, or valid daily AQI category is established.\par
+\pending\ Final conclusions must state whether XGBoost improves on each reference, how results vary across quarters and high-pollution hours, and which limits are supported by the measured run.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\end{document}

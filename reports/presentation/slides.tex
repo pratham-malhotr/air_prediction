@@ -1,0 +1,77 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usepackage{amsmath,graphicx,booktabs}
+\title{Air Quality Prediction}
+\subtitle{CSAI Project 19 --- Phase 1 Machine Learning}
+\author{Five team members: names and roll numbers pending}
+\date{}
+\newcommand{\resultroot}{../../artifacts/phase1}
+\begin{document}
+\begin{frame}\titlepage\end{frame}
+\begin{frame}{Problem and forecast contract}
+\begin{itemize}
+\item Predict PM2.5 concentration one hour ahead, in $\mu$g/m$^3$.
+\item Use only PM2.5/weather observations available through issuance time $t$.
+\item Compare XGBoost, Ridge, persistence and daily seasonal naive.
+\item This presentation covers Phase 1 only.
+\end{itemize}\end{frame}
+\begin{frame}{Data and literature}
+\begin{itemize}
+\item UCI Beijing PM2.5, dataset 381; documented hourly archive for 2010--2014.
+\item PM2.5 location and airport weather differ: retain this limitation.
+\item Liang et al. (2015): pollution/weather analysis.
+\item Chen and Guestrin (2016): regularized tree boosting.
+\item Hyndman and Athanasopoulos: baselines and chronological evaluation.
+\item Hoerl and Kennard (1970): regularized linear comparison.
+\end{itemize}\end{frame}
+\begin{frame}{Training-period EDA}
+\IfFileExists{\resultroot/eda/timeline_missingness.png}{
+\centering\includegraphics[height=0.75\textheight]{\resultroot/eda/timeline_missingness.png}
+}{Run the real-data notebook. Insert actual missingness, seasonality and distribution findings; no synthetic examples are project evidence.}
+\end{frame}
+\begin{frame}{Features and missingness}
+\begin{itemize}
+\item PM2.5 lags: 0 through selected hourly, daily and weekly scales.
+\item Trailing means/std and observed fractions; known target calendar encodings.
+\item Weather through $t$; no future measured weather.
+\item Missing targets stay missing. Fit encoders, Ridge imputation and scaling within each fold.
+\item Preserve hourly slots before lagging; retain valid pollution peaks.
+\end{itemize}\end{frame}
+\begin{frame}{Models and theoretical justification}
+\begin{itemize}
+\item Persistence: $\hat y_{t+1|t}=y_t$.
+\item Daily seasonal naive: $\hat y_{t+1|t}=y_{t-23}$.
+\item Ridge: squared loss with L2 coefficient penalty, fixed $\alpha=10$.
+\item XGBoost: additive trees, gradient/Hessian updates and complexity penalties.
+\item Three candidates selected by validation RMSE; no test-based early stopping.
+\end{itemize}\end{frame}
+\begin{frame}{Chronological comparison}
+\begin{itemize}
+\item Initial training: 2010--2012. Parameter selection: four 2013 quarters.
+\item Final rolling backtest: four 2014 quarters, frozen parameters.
+\item Fit quarterly; histories update hourly. Training labels exist by first issuance.
+\item All models score identical observed target hours; report exclusions and coverage.
+\item MAE/RMSE in concentration units; R squared and per-quarter variation.
+\end{itemize}\end{frame}
+\begin{frame}{Measured results}
+\IfFileExists{\resultroot/run_manifest.json}{\centering\input{\resultroot/results_table.tex}}{
+Real UCI/XGBoost execution pending. This slide intentionally contains no invented performance values.}
+\end{frame}
+\begin{frame}{Forecast and error analysis}
+\IfFileExists{\resultroot/figures/forecast_last_week.png}{
+\centering\includegraphics[width=\textwidth]{\resultroot/figures/forecast_last_week.png}
+}{After execution: show measured predictions, quarterly errors, pollution-peak errors, bias and residual autocorrelation.}
+\end{frame}
+\begin{frame}{Reproducibility and limitations}
+\begin{itemize}
+\item Same package in local and Colab workflows; source/data hashes and saved forecasts.
+\item Tests check causality, horizon alignment, common targets and fold boundaries.
+\item One historical location, missingness-related exclusions and weather-publication assumption.
+\item Importance is descriptive; no causal claim or daily AQI label.
+\item Complete five-member contribution evidence and individual viva preparation.
+\end{itemize}\end{frame}
+\begin{frame}{Conclusion}
+After the real run, state whether XGBoost beats persistence and seasonal naive, how robust the result is across quarters, and what the remaining errors imply. Retain negative results honestly.\par\medskip
+Questions and individual demonstrations.
+\end{frame}
+\end{document}

@@ -2,6 +2,7 @@
 
 from datetime import datetime, timezone
 from importlib.metadata import PackageNotFoundError, version
+from hashlib import sha256
 import json
 from pathlib import Path
 import platform
@@ -72,6 +73,14 @@ def _versions():
     return output
 
 
+def source_fingerprint():
+    digest = sha256()
+    for path in sorted(Path(__file__).parent.glob("*.py")):
+        digest.update(path.name.encode())
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
 def _write_latex_table(scores, destination):
     holdout = scores.loc[scores.phase == "holdout"]
     lines = ["% Generated from this run's real predictions; source is recorded in run_manifest.json.",
@@ -87,7 +96,7 @@ def run_experiment(csv_path, config, output, names=("xgboost", "ridge"), ablatio
     if not names or len(set(names)) != len(names) or any(name not in {"xgboost", "ridge"} for name in names):
         raise ValueError("Choose one or both of xgboost and ridge, without duplicates")
     output = Path(output)
-    if (output / "run_manifest.json").exists():
+    if (output / "run_manifest.json").exists() or (output / "RUNNING.json").exists():
         raise FileExistsError(f"Run already exists: {output}. Use a new output directory to preserve its results.")
     dataset = load_dataset(csv_path)
     if dataset.source == "synthetic" and output.name == "phase1":
@@ -105,6 +114,7 @@ def run_experiment(csv_path, config, output, names=("xgboost", "ridge"), ablatio
     write_json(output / "RUNNING.json", {"source": dataset.source, "started_utc": datetime.now(timezone.utc).isoformat()})
     run_eda(dataset, output / "eda", config.validation_start)
     selected, candidates, validation, validation_audit = select_parameters(data, config, names)
+    validation["data_source"] = dataset.source
     candidates.to_csv(output / "validation_candidates.csv", index=False)
     validation.to_csv(output / "validation_predictions.csv", index=False)
     # Persist the decision before opening final evaluation results.
@@ -114,6 +124,7 @@ def run_experiment(csv_path, config, output, names=("xgboost", "ridge"), ablatio
         predictions, holdout_audit = backtest(data, config, "holdout", name, selected[name] if name == "xgboost" else None)
         tables.append(predictions)
     holdout = pd.concat(tables, ignore_index=True).drop_duplicates(["origin_time", "model"])
+    holdout["data_source"] = dataset.source
     predictions = pd.concat([validation, holdout], ignore_index=True)
     predictions.to_csv(output / "predictions.csv", index=False)
     scores = score_predictions(predictions)
@@ -152,12 +163,12 @@ def run_experiment(csv_path, config, output, names=("xgboost", "ridge"), ablatio
         pd.DataFrame(rows).to_csv(output / "validation_ablation.csv", index=False)
     _write_latex_table(scores, output / "results_table.tex")
     from .results import plot_results, write_summary
-    plot_results(predictions, scores, output)
+    plot_results(predictions, scores, output, source=dataset.source)
     manifest = {
         "status": "complete", "completed_utc": datetime.now(timezone.utc).isoformat(),
         "source": dataset.source, "is_synthetic": dataset.source == "synthetic", "dataset_audit": dataset.audit,
         "config": config.to_dict(), "models": list(names), "selected_parameters": selected,
-        "versions": _versions(), "feature_count": len(data.X.columns), "training_p90_pm25": threshold,
+        "versions": _versions(), "source_code_sha256": source_fingerprint(), "feature_count": len(data.X.columns), "training_p90_pm25": threshold,
         "protocol": "Point forecast at t+h, observed history through t, quarterly expanding refit by default, hourly updated covariates.",
         "prediction_policy": "Regression outputs clipped to zero for nonnegative concentrations, consistently in validation/test/inference.",
         "deployment_models": "Refitted on all available observed labels after evaluation; never used to produce backtest scores.",

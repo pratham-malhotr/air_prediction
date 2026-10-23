@@ -11,8 +11,12 @@ import pandas as pd
 from .data import WEATHER_NUMERIC, write_json
 
 
-def _save(fig, destination):
-    fig.tight_layout()
+def _save(fig, destination, source=None):
+    if source == "synthetic":
+        fig.suptitle("SYNTHETIC DATA — INTEGRATION CHECK ONLY", color="darkred", fontsize=11)
+        fig.tight_layout(rect=(0, 0, 1, 0.95))
+    else:
+        fig.tight_layout()
     fig.savefig(destination, dpi=160, bbox_inches="tight")
     plt.close(fig)
 
@@ -50,22 +54,27 @@ def run_eda(dataset, output, until):
     fig, axes = plt.subplots(2, 1, figsize=(12, 6))
     pm.resample("D").mean().plot(ax=axes[0], color="#2563eb", linewidth=0.8)
     axes[0].set(title="Training period: daily mean PM2.5", ylabel="PM2.5 (µg/m³)", xlabel="Beijing local date")
-    frame.isna().resample("MS").mean().plot(ax=axes[1], linewidth=1)
+    monthly_missing = frame.isna().resample("MS").mean()
+    for column in monthly_missing:
+        axes[1].plot(monthly_missing.index, monthly_missing[column], linewidth=1, marker=".", label=column)
+    axes[1].legend(ncol=4, fontsize=8)
     axes[1].set(title="Monthly missing fraction (no interpolation)", ylabel="Fraction missing", xlabel="Month")
-    _save(fig, output / "timeline_missingness.png")
+    _save(fig, output / "timeline_missingness.png", dataset.source)
     fig, axes = plt.subplots(1, 2, figsize=(11, 4))
     axes[0].hist(observed, bins=60, color="#2563eb", alpha=0.85)
     axes[0].set(title="PM2.5 distribution", xlabel="PM2.5 (µg/m³)", ylabel="Observed hours")
     axes[1].boxplot([pm[pm.index.month == month].dropna().to_numpy() for month in range(1, 13)], tick_labels=range(1, 13))
     axes[1].set(title="Monthly distributions; peaks retained", xlabel="Month", ylabel="PM2.5 (µg/m³)")
-    _save(fig, output / "distribution_seasonality.png")
+    _save(fig, output / "distribution_seasonality.png", dataset.source)
     fig, axes = plt.subplots(1, 3, figsize=(13, 4))
     for axis, name, group in zip(axes, ("Hour", "Weekday (Monday=0)", "Month"), (pm.index.hour, pm.index.dayofweek, pm.index.month)):
         summary = pm.groupby(group).agg(["mean", "median", "count"])
         summary.to_csv(output / f"profile_{name.split()[0].lower()}.csv")
-        summary[["mean", "median"]].plot(ax=axis)
+        for statistic in ("mean", "median"):
+            axis.plot(summary.index, summary[statistic], marker=".", label=statistic)
+        axis.legend()
         axis.set(xlabel=name, ylabel="PM2.5 (µg/m³)")
-    _save(fig, output / "calendar_profiles.png")
+    _save(fig, output / "calendar_profiles.png", dataset.source)
     fig, axes = plt.subplots(1, 2, figsize=(12, 4))
     matrix = numeric.corr()
     heat = axes[0].imshow(matrix, vmin=-1, vmax=1, cmap="RdBu_r")
@@ -76,5 +85,5 @@ def run_eda(dataset, output, until):
     axes[1].bar(range(len(acf)), acf.values, color="#08916b")
     axes[1].set_xticks(range(len(acf)), acf.index)
     axes[1].set(title="PM2.5 autocorrelation on hourly grid", xlabel="Lag (hours)", ylabel="Correlation", ylim=(-1, 1))
-    _save(fig, output / "correlation_autocorrelation.png")
+    _save(fig, output / "correlation_autocorrelation.png", dataset.source)
     return output

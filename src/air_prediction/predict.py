@@ -2,6 +2,7 @@
 
 import joblib
 import numpy as np
+import pandas as pd
 
 from .data import load_dataset
 from .features import build_features
@@ -11,7 +12,7 @@ def predict_latest(model_path, csv_path):
     artifact = joblib.load(model_path)
     dataset = load_dataset(csv_path)
     origin = dataset.frame.index.max()
-    if origin < __import__("pandas").Timestamp(artifact["fit_through"]):
+    if origin < pd.Timestamp(artifact["fit_through"]):
         raise ValueError("History ends before model fit time; using this model would leak future training data")
     data = build_features(dataset.frame, artifact["config"])
     if not data.warm.iloc[-1]:

@@ -11,7 +11,7 @@ import pandas as pd
 from .eda import _save
 
 
-def plot_results(predictions, scores, output):
+def plot_results(predictions, scores, output, source=None):
     output = Path(output)
     figures = output / "figures"
     figures.mkdir(exist_ok=True)
@@ -21,7 +21,7 @@ def plot_results(predictions, scores, output):
     axes[0].set(title="Rolling holdout errors; common observed targets", ylabel="PM2.5 (µg/m³)", xlabel="")
     holdout_scores["r2"].plot.bar(ax=axes[1], rot=15, color="#2563eb")
     axes[1].set(title="Holdout R squared", ylabel="R²", xlabel="")
-    _save(fig, figures / "model_comparison.png")
+    _save(fig, figures / "model_comparison.png", source)
     held = predictions.loc[predictions.phase == "holdout"].copy()
     held["target_time"] = pd.to_datetime(held.target_time)
     models = sorted(set(held.model) - {"persistence", "seasonal_naive"})
@@ -34,7 +34,7 @@ def plot_results(predictions, scores, output):
         series.plot(ax=ax, linewidth=0.9, alpha=0.8, label=name)
     ax.set(title="Final seven days of rolling holdout predictions", ylabel="PM2.5 (µg/m³)", xlabel="Beijing local target time")
     ax.legend()
-    _save(fig, figures / "forecast_last_week.png")
+    _save(fig, figures / "forecast_last_week.png", source)
     fig, axes = plt.subplots(len(models), 3, figsize=(13, 3.5 * len(models)), squeeze=False)
     acf_rows = []
     for row, name in enumerate(models):
@@ -54,7 +54,7 @@ def plot_results(predictions, scores, output):
         axes[row, 2].set(title="Residual autocorrelation", xlabel="Lag (hours)", ylabel="Correlation", ylim=(-1, 1))
         acf_rows.extend({"model": name, "lag_hours": lag, "autocorrelation": value} for lag, value in zip(lags, correlations))
     pd.DataFrame(acf_rows).to_csv(output / "residual_autocorrelation.csv", index=False)
-    _save(fig, figures / "residual_diagnostics.png")
+    _save(fig, figures / "residual_diagnostics.png", source)
 
 
 def write_summary(scores, fold_scores, manifest, output):
