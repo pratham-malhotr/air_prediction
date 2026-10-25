@@ -355,5 +355,37 @@ $("#menu-button").addEventListener("click", () => { const open = $("#sidebar").c
 document.addEventListener("click", (event) => { if (window.innerWidth <= 640 && !$("#sidebar").contains(event.target) && !$("#menu-button").contains(event.target)) { $("#sidebar").classList.remove("open"); $("#menu-button").setAttribute("aria-expanded", "false"); } });
 document.addEventListener("keydown", (event) => { if (event.key === "Escape") { $("#sidebar").classList.remove("open"); $("#menu-button").setAttribute("aria-expanded", "false"); $("#chart-tooltip").hidden = true; } });
 window.addEventListener("hashchange", () => switchView(location.hash.slice(1)));
+
+function updateThemeUI(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  const isDark = theme === "dark";
+  const btn = $("#theme-toggle");
+  if (btn) {
+    btn.setAttribute("aria-pressed", String(isDark));
+    btn.setAttribute("title", isDark ? "Switch to light theme" : "Switch to dark theme");
+    const label = $("#theme-label");
+    if (label) label.textContent = isDark ? "Light" : "Dark";
+  }
+  const metaTheme = document.querySelector('meta[name="theme-color"]');
+  if (metaTheme) metaTheme.setAttribute("content", isDark ? "#101614" : "#173e35");
+  if (state.result) drawChart();
+}
+
+function initTheme() {
+  const current = document.documentElement.getAttribute("data-theme") || "light";
+  updateThemeUI(current);
+  const btn = $("#theme-toggle");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      const now = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      try { localStorage.setItem("aircast_theme", now); } catch (e) {}
+      updateThemeUI(now);
+      toast(`Switched to ${now} theme`);
+    });
+  }
+}
+
+initTheme();
 switchView(location.hash.slice(1) || "forecast");
 boot();
+

@@ -29,7 +29,19 @@
   <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
   <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
 </svg>
+<script>
+  (function(){
+    try {
+      const saved = localStorage.getItem("aircast_theme");
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const theme = saved || (prefersDark ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    } catch(e){}
+  })();
+</script>
 <a class="skip-link" href="#main">Skip to content</a>
 <aside class="sidebar" id="sidebar">
   <a href="#forecast" class="brand" aria-label="Aircast home"><span class="brand-mark"><svg class="icon"><use href="#i-air"/></svg></span><span>aircast<span class="brand-dot">.</span></span></a>
@@ -45,7 +57,15 @@
 <div class="app-shell">
   <header class="topbar">
     <div class="topbar-left"><button class="icon-button mobile-menu" id="menu-button" aria-label="Toggle navigation" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button><span class="breadcrumb">Workspace <span>/</span> <strong id="breadcrumb-current">Forecast</strong></span></div>
-    <div class="topbar-right"><span class="connection" id="connection"><span class="status-dot"></span><span id="connection-text">Connecting models</span></span><a href="/report" target="_blank" rel="noopener" class="report-link">Project report<svg class="icon"><use href="#i-external"/></svg></a></div>
+    <div class="topbar-right">
+      <span class="connection" id="connection"><span class="status-dot"></span><span id="connection-text">Connecting models</span></span>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark/light theme" title="Toggle theme (Light / Dark)">
+        <span class="theme-icon theme-icon-sun" aria-hidden="true"><svg class="icon"><use href="#i-sun"/></svg></span>
+        <span class="theme-icon theme-icon-moon" aria-hidden="true"><svg class="icon"><use href="#i-moon"/></svg></span>
+        <span class="theme-label" id="theme-label">Dark</span>
+      </button>
+      <a href="/report" target="_blank" rel="noopener" class="report-link">Project report<svg class="icon"><use href="#i-external"/></svg></a>
+    </div>
   </header>
   <main id="main">
     <section class="view" id="view-forecast" aria-labelledby="forecast-title">
