@@ -25,10 +25,17 @@ def make_model(name, X, config, parameters=None):
                 "before training the required regressor. --models ridge evaluates only the linear comparator."
             ) from exc
         transform = "passthrough"  # Native missing-value splits; no global imputation.
-        estimator = XGBRegressor(
-            objective="reg:squarederror", eval_metric="rmse", tree_method="hist",
-            random_state=config.random_seed, n_jobs=config.threads, verbosity=0, **(parameters or {}),
-        )
+        xgb_kwargs = {
+            "objective": "reg:squarederror",
+            "eval_metric": "rmse",
+            "tree_method": "hist",
+            "random_state": config.random_seed,
+            "n_jobs": config.threads,
+            "verbosity": 0,
+        }
+        if parameters:
+            xgb_kwargs.update(parameters)
+        estimator = XGBRegressor(**xgb_kwargs)
     else:
         raise ValueError(f"Unknown model: {name}")
     preprocess = ColumnTransformer([

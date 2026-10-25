@@ -4,7 +4,14 @@ const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 const state = { context: null, result: null, mode: "manual", hours: 72, ready: false, busy: false, stale: false };
 const fields = { "pm2.5": "pm25", TEMP: "temperature", DEWP: "dewpoint", PRES: "pressure", cbwd: "wind", Iws: "wind-speed", Ir: "rain", Is: "snow" };
-const modelLabels = { xgboost: "XGBoost", ridge: "Ridge regression", persistence: "Persistence", seasonal_naive: "Daily seasonal naive" };
+const modelLabels = {
+  hybrid: "Hybrid (BiLSTM + XGBoost)",
+  bilstm: "Bi-LSTM (Deep Learning)",
+  xgboost: "XGBoost",
+  ridge: "Ridge regression",
+  persistence: "Persistence",
+  seasonal_naive: "Daily seasonal naive"
+};
 const hour = 3600000;
 const dateFormat = (value, options) => new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Shanghai", ...options }).format(new Date(value));
 const dayTime = (value) => dateFormat(value, { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
@@ -299,7 +306,9 @@ async function boot(mode = "manual") {
   try {
     setBusy(true, "Loading the models");
     const data = await api("/api/bootstrap");
-    state.ready = true; setContext(data.context); $("#model").value = "xgboost";
+    state.ready = true; setContext(data.context);
+    const available = data.models || ["hybrid", "xgboost", "ridge"];
+    $("#model").value = available.includes("hybrid") ? "hybrid" : (available[0] || "xgboost");
     $("#csv-file").value = "";
     applyMode(mode, false); renderPerformance(data);
     $("#connection").classList.add("ready"); $("#connection").classList.remove("failed"); setText("#connection-text", "Models connected");

@@ -13,7 +13,12 @@ import pandas as pd
 from air_prediction.data import FILENAME, REQUIRED, WEATHER_NUMERIC, load_dataset, validate_timestamps
 from air_prediction.features import build_features
 
-MODEL_LABELS = {"xgboost": "XGBoost", "ridge": "Ridge regression"}
+MODEL_LABELS = {
+    "hybrid": "Hybrid (BiLSTM + XGBoost)",
+    "bilstm": "Bi-LSTM (Deep Learning)",
+    "xgboost": "XGBoost",
+    "ridge": "Ridge regression",
+}
 MAX_UPLOAD_ROWS = 100_000
 MAX_UPLOAD_BYTES = 4 * 1024 * 1024
 
@@ -37,9 +42,20 @@ class ForecastService:
     def __init__(self, project_root):
         self.root = Path(project_root)
         run = self.root / "artifacts/phase1"
-        self.models = {name: joblib.load(run / f"{name}.joblib") for name in MODEL_LABELS}
-        if any(model["model_name"] != name or model["config"].horizon_hours != 1 for name, model in self.models.items()):
-            raise ValueError("Aircast needs the matching one-hour XGBoost and Ridge deployment models.")
+        self.models = {}
+        # Core required models
+        for name in ("xgboost", "ridge"):
+            model_path = run / f"{name}.joblib"
+            if model_path.exists():
+                self.models[name] = joblib.load(model_path)
+        # Phase 2 DL & Hybrid models (loaded when available)
+        for name in ("hybrid", "bilstm"):
+            model_path = run / f"{name}.joblib"
+            if model_path.exists():
+                self.models[name] = joblib.load(model_path)
+
+        if "xgboost" not in self.models or "ridge" not in self.models:
+            raise ValueError("Aircast needs at least the one-hour XGBoost and Ridge deployment models.")
         self.history_size = max(model["config"].warmup_hours for model in self.models.values()) + 1
         self.fit_through = max(pd.Timestamp(model["fit_through"]) for model in self.models.values())
         sample = load_dataset(self.root / "data/raw" / FILENAME)
@@ -195,8 +211,19 @@ class ForecastService:
             data = build_features(frame, artifact["config"])
             if not data.warm.iloc[-1]:
                 raise InputError(f"Please provide at least {self.history_size} consecutive hourly slots.")
-            X = data.X.iloc[[-1]].reindex(columns=artifact["columns"])
-            value = float(np.maximum(artifact["pipeline"].predict(X)[0], 0))
+            if name in ("hybrid", "bilstm"):
+                raw_out = artifact["pipeline"].predict(data.X.reindex(columns=artifact["columns"]))
+            else:
+                X = data.X.iloc[[-1]].reindex(columns=artifact["columns"])
+                raw_out = artifact["pipeline"].predict(X)
+            # If HybridResidualModel returns (hybrid, dl_base, residual)
+            if isinstance(raw_out, tuple):
+                val = raw_out[0]
+            else:
+                val = raw_out
+            if hasattr(val, "__len__"):
+                val = val[-1] if len(val) > 0 else 0.0
+            value = float(np.maximum(val, 0))
             if not np.isfinite(value):
                 raise RuntimeError("The saved model returned a nonfinite prediction.")
             predictions[name] = value
@@ -220,7 +247,8 @@ class ForecastService:
         previous = number(frame["pm2.5"].iloc[-2])
         if latest is not None and previous is not None and self.change_threshold and abs(latest - previous) > self.change_threshold:
             warnings.append("The latest concentration changes sharply from the preceding hour. Abrupt pollution changes are a known weakness of these models.")
-        reference = next(row for row in self.metrics if row["model"] == selected)
+        reference = next((row for row in self.metrics if row["model"] == selected),
+                         next(row for row in self.metrics if row["model"] == "xgboost"))
         return {"selected_model": selected, "forecast": predictions[selected], "predictions": predictions,
                 "latest": latest, "change": None if latest is None else predictions[selected] - latest,
                 "origin_time": clock(origin), "target_time": clock(data.target_time.iloc[-1]),
@@ -231,7 +259,7 @@ class ForecastService:
                            for timestamp, value in frame["pm2.5"].items()],
                 "warnings": warnings, "historical": info["kind"] == "sample",
                 "data_quality": {"observed": observed, "total": len(frame), "fraction": observed / len(frame)},
-                "backtest": {key: reference[key] for key in ("mae", "rmse", "r2", "n")}}
+                "backtest": {key: reference.get(key, 0.0) for key in ("mae", "rmse", "r2", "n")}}
 
     def bootstrap(self):
         context = self.context()

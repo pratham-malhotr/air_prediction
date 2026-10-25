@@ -1,5 +1,9 @@
 """Start the local Aircast dashboard and its trained-model prediction service."""
 
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+
 import argparse
 from pathlib import Path
 import sys
