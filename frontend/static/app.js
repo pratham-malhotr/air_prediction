@@ -307,7 +307,9 @@ async function boot(mode = "manual") {
     setBusy(true, "Loading the models");
     const data = await api("/api/bootstrap");
     state.ready = true; setContext(data.context);
-    const available = data.models || ["hybrid", "xgboost", "ridge"];
+    const available = Array.isArray(data.models)
+      ? data.models
+      : (data.models && typeof data.models === "object" ? Object.keys(data.models) : ["hybrid", "bilstm", "xgboost", "ridge"]);
     $("#model").value = available.includes("hybrid") ? "hybrid" : (available[0] || "xgboost");
     $("#csv-file").value = "";
     applyMode(mode, false); renderPerformance(data);
