@@ -1,0 +1,104 @@
+{
+  "source": "Completed Phase 1 real-data run",
+  "dataset_sha256": "4127f868775e31b3956522adc0ec75af8937dde6a3896e8beed3a376c6d27f1c",
+  "eda_scope": "2010\u20132012 only; missingness-by-year is a descriptive archive audit",
+  "training_observations": 24418,
+  "holdout_common_targets": 8531,
+  "missingness_by_year": {
+    "2010": {
+      "slots": 8760,
+      "missing": 669,
+      "percent": 7.636986301369863
+    },
+    "2011": {
+      "slots": 8760,
+      "missing": 728,
+      "percent": 8.310502283105023
+    },
+    "2012": {
+      "slots": 8784,
+      "missing": 489,
+      "percent": 5.566939890710382
+    },
+    "2013": {
+      "slots": 8760,
+      "missing": 82,
+      "percent": 0.9360730593607306
+    },
+    "2014": {
+      "slots": 8760,
+      "missing": 99,
+      "percent": 1.13013698630137
+    }
+  },
+  "residual_plot": {
+    "ridge": {
+      "residual_view_outside_80": 75,
+      "n": 8531
+    },
+    "xgboost": {
+      "residual_view_outside_80": 78,
+      "n": 8531
+    }
+  },
+  "largest_xgboost_miss": {
+    "target_time": "2014-04-09 20:00:00",
+    "actual": 580.0,
+    "prediction": 86.80050659179688
+  },
+  "importance_scope": "Final deployment refit; not causal attribution or holdout feature selection",
+  "figures": {
+    "deployment_feature_importance": {
+      "png_sha256": "82aadf744a075dbd90fe0af9c1949d40d00d7f2d37ddc3efb91f07485ac0b508",
+      "vector_pdf": "deployment_feature_importance.pdf"
+    },
+    "forecast_last_week": {
+      "png_sha256": "e674ac99bbb84d7bb7ae666219107833565b5eb28c3a3f3fd579167ba6498c84",
+      "vector_pdf": "forecast_last_week.pdf"
+    },
+    "holdout_rmse": {
+      "png_sha256": "3f3f2ef638555e9831ee3e6c86c206b07d4cefeb509eff6e884f1bf1516442a1",
+      "vector_pdf": "holdout_rmse.pdf"
+    },
+    "largest_spike_miss": {
+      "png_sha256": "f34af7e4fd08b94292c787cf7eca48912a08209fe42eadb3411d1cd2fb36b1d2",
+      "vector_pdf": "largest_spike_miss.pdf"
+    },
+    "missingness_by_year": {
+      "png_sha256": "41a06f6cd9979508545ac8c5f9b352337e77899f70a89a3d00638d61b50b7aab",
+      "vector_pdf": "missingness_by_year.pdf"
+    },
+    "pollution_regime_errors": {
+      "png_sha256": "286df81ffc3d77718fb46b4136e769a9f0295c6eecb03405be1adb0b75228e9b",
+      "vector_pdf": "pollution_regime_errors.pdf"
+    },
+    "quarterly_rmse": {
+      "png_sha256": "3f288b0acb35df183362339b3fa56bb47e9dcae7b643990dbfd868941ced1da1",
+      "vector_pdf": "quarterly_rmse.pdf"
+    },
+    "residual_distribution": {
+      "png_sha256": "4fe7104d6a1ee19e4bf25631f5ca9431cb8b629c5cb49bbe5aa0af3cefbc35a8",
+      "vector_pdf": "residual_distribution.pdf"
+    },
+    "training_autocorrelation": {
+      "png_sha256": "ec47fcca7a89948a6673d54b8c0f6c612c3cf56c9879e4eee4b4122d27564bea",
+      "vector_pdf": "training_autocorrelation.pdf"
+    },
+    "training_distribution": {
+      "png_sha256": "8e0adc1bbf7baadd6f807e2c35a37c296dff7f7fe4650c79f63b548e830386df",
+      "vector_pdf": "training_distribution.pdf"
+    },
+    "training_hourly_profile": {
+      "png_sha256": "6de10baa2746144cf6ba74fd3d935d2d31ef7aeed63c3b6d91bc5546efcbe9f9",
+      "vector_pdf": "training_hourly_profile.pdf"
+    },
+    "training_weather_correlations": {
+      "png_sha256": "07a3f5e49c17b07b4445dd7236e6096602caf40e15992445350f2bfb4479c8f5",
+      "vector_pdf": "training_weather_correlations.pdf"
+    },
+    "validation_ablation": {
+      "png_sha256": "d37bcc1d3d7b79977bf196d39e2c1ee064f8af90c41867e9ba4f185cfaf50e65",
+      "vector_pdf": "validation_ablation.pdf"
+    }
+  }
+}
