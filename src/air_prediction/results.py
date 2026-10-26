@@ -25,7 +25,7 @@ def plot_results(predictions, scores, output, source=None):
     held["target_time"] = pd.to_datetime(held.target_time)
     models = sorted(set(held.model) - {"persistence", "seasonal_naive"})
     fig, ax = plt.subplots(figsize=(13, 4))
-    last_week = held.loc[held.target_time >= held.target_time.max() - pd.Timedelta(days=7)]
+    last_week = held.loc[held.target_time >= held.target_time.max() - pd.to_timedelta(7, unit="D")]
     truth = last_week.drop_duplicates("target_time").set_index("target_time").actual.sort_index().asfreq("h")
     truth.plot(ax=ax, color="black", linewidth=1.5, label="observed")
     for name in ["persistence", *models]:

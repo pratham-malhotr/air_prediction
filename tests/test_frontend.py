@@ -84,9 +84,9 @@ def test_manual_inputs_advance_the_clock_and_do_not_change_observed_history(web_
     response = client.post("/api/forecast", json={"mode": "manual", "inputs": values, "model": "ridge"})
     assert response.status_code == 200
     result = response.json
-    expected_origin = frame.index.max() + pd.Timedelta(hours=1)
+    expected_origin = frame.index.max() + pd.to_timedelta(1, unit="h")
     assert pd.Timestamp(result["origin_time"]).tz_localize(None) == expected_origin
-    assert pd.Timestamp(result["target_time"]).tz_localize(None) == expected_origin + pd.Timedelta(hours=1)
+    assert pd.Timestamp(result["target_time"]).tz_localize(None) == expected_origin + pd.to_timedelta(1, unit="h")
     appended = pd.concat([frame, pd.DataFrame([values], index=[expected_origin])])
     csv = tmp_path / "appended.csv"
     csv.write_bytes(csv_bytes(appended))
@@ -202,3 +202,25 @@ def test_trusted_vercel_proxy_preserves_same_origin_check(web_setup, monkeypatch
     response = client.post("/api/forecast", json={"inputs": service.context()["defaults"]},
                            headers={"Origin": "https://aircast.example", "X-Forwarded-Proto": "https", "X-Forwarded-Host": "aircast.example"})
     assert response.status_code == 200
+
+
+def test_bootstrap_returns_only_available_models(web_setup):
+    client, service, *_ = web_setup
+    response = client.get("/api/bootstrap")
+    assert response.status_code == 200
+    data = response.json
+    assert data["ready"] is True
+    # In web_setup only ridge and xgboost are trained
+    assert set(data["models"].keys()) == {"xgboost", "ridge"}
+    assert "hybrid" not in data["models"]
+    assert data["forecast"]["selected_model"] in {"xgboost", "ridge"}
+
+
+def test_forecast_rejects_unavailable_model_with_informative_error(web_setup):
+    client, service, *_ = web_setup
+    inputs = service.context()["defaults"]
+    response = client.post("/api/forecast", json={"inputs": inputs, "model": "unavailable_model"})
+    assert response.status_code == 400
+    error_msg = response.json["error"]["message"]
+    assert "unavailable_model" in error_msg
+    assert "XGBoost" in error_msg or "Ridge" in error_msg

@@ -5,9 +5,15 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-import torch
-import torch.nn as nn
-from torch.utils.data import DataLoader, Dataset
+try:
+    import torch
+    import torch.nn as nn
+    from torch.utils.data import DataLoader, Dataset
+except ImportError as exc:
+    raise ImportError(
+        "PyTorch is required for deep learning and hybrid models. "
+        "Install with `pip install -e '.[dl]'` or `pip install torch`."
+    ) from exc
 
 
 @dataclass

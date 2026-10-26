@@ -92,7 +92,7 @@ class ForecastService:
         last = frame.iloc[-1]
         return {"id": history_id, **info, "history_hours": len(frame),
                 "start": clock(frame.index.min()), "end": clock(frame.index.max()),
-                "next_observation_time": clock(frame.index.max() + pd.Timedelta(hours=1)),
+                "next_observation_time": clock(frame.index.max() + pd.to_timedelta(1, unit="h")),
                 "defaults": {"pm2.5": number(last["pm2.5"]), **{key: number(last[key]) for key in WEATHER_NUMERIC},
                              "cbwd": None if pd.isna(last["cbwd"]) else str(last["cbwd"])}}
 
@@ -113,7 +113,7 @@ class ForecastService:
             if raw.empty:
                 raise InputError("The CSV has no readings.")
             timestamps = validate_timestamps(raw)
-            span = int((timestamps.max() - timestamps.min()) / pd.Timedelta(hours=1)) + 1
+            span = int((timestamps.max() - timestamps.min()) / pd.to_timedelta(1, unit="h")) + 1
             if span > MAX_UPLOAD_ROWS:
                 raise InputError("The CSV spans too many hours. Please check its date columns.")
             if span < self.history_size:
@@ -190,15 +190,18 @@ class ForecastService:
             raise InputError("Please check the highlighted measurements.", errors)
         return row
 
-    def forecast(self, history_id="sample", mode="manual", inputs=None, selected="xgboost", history=None):
+    def forecast(self, history_id="sample", mode="manual", inputs=None, selected=None, history=None):
+        if selected is None:
+            selected = "hybrid" if "hybrid" in self.models else ("xgboost" if "xgboost" in self.models else next(iter(self.models)))
         if not isinstance(selected, str) or selected not in self.models:
-            raise InputError("Choose XGBoost or Ridge regression.")
+            valid_names = ", ".join(MODEL_LABELS.get(m, m) for m in self.models)
+            raise InputError(f"Selected model '{selected}' is unavailable. Choose from: {valid_names}.")
         if mode not in ("manual", "history"):
             raise InputError("Choose manual readings or a CSV history.")
         frame, info = self._history(history_id, history)
         if mode == "manual":
             row = self._read_inputs(inputs)
-            origin = frame.index.max() + pd.Timedelta(hours=1)
+            origin = frame.index.max() + pd.to_timedelta(1, unit="h")
             frame = frame.reindex(pd.date_range(frame.index.min(), origin, freq="h", name=frame.index.name))
             for key, value in row.items():
                 frame.at[origin, key] = value
@@ -263,8 +266,10 @@ class ForecastService:
 
     def bootstrap(self):
         context = self.context()
-        return {"ready": True, "context": context, "models": MODEL_LABELS,
+        available_models = {k: MODEL_LABELS.get(k, k.replace("_", " ").title()) for k in self.models}
+        default_model = "xgboost" if "xgboost" in self.models else next(iter(self.models))
+        return {"ready": True, "context": context, "models": available_models,
                 "required_hours": self.history_size, "metrics": self.metrics,
                 "quarters": self.quarters, "regimes": self.regimes,
                 "fit_through": clock(self.fit_through), "training_p90": self.manifest["training_p90_pm25"],
-                "forecast": self.forecast(inputs=context["defaults"])}
+                "forecast": self.forecast(inputs=context["defaults"], selected=default_model)}

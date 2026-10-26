@@ -22,7 +22,7 @@ def test_targets_and_seasonal_baseline_are_aligned(hourly_frame, horizon):
     assert data.baselines.seasonal_naive.iloc[t] == seasonal_source
     assert seasonal_source <= t
     assert data.X.pm25_lag_24.iloc[t] == t - 24
-    assert data.target_time.iloc[t] == data.X.index[t] + pd.Timedelta(hours=horizon)
+    assert data.target_time.iloc[t] == data.X.index[t] + pd.to_timedelta(horizon, unit="h")
 
 
 def test_rolling_window_ends_at_origin(hourly_frame):
@@ -61,7 +61,7 @@ def test_no_training_label_extends_beyond_first_forecast_origin(hourly_frame, ho
     data = build_features(hourly_frame, cfg)
     fold = Fold("validation", 1, hourly_frame.index[600], hourly_frame.index[800])
     train, test, audit = fold_masks(data, fold, cfg)
-    first_origin = fold.start - pd.Timedelta(hours=horizon)
+    first_origin = fold.start - pd.to_timedelta(horizon, unit="h")
     assert data.target_time[train].max() <= first_origin
     assert data.X.index[test].min() == first_origin
     assert not (train & test).any()

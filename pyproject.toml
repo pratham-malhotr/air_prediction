@@ -4,14 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "air-prediction"
-version = "0.1.0"
-description = "CSAI Project 19: reproducible Phase 1 PM2.5 forecasting"
+version = "0.2.0"
+description = "CSAI Project 19: reproducible PM2.5 forecasting with classical and deep learning models"
 requires-python = ">=3.11"
 dependencies = ["numpy>=1.26,<3", "pandas>=2.2,<3", "scikit-learn>=1.5,<2", "xgboost>=2.1.4,<4", "matplotlib>=3.9,<4", "joblib>=1.3,<2"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<9"]
 web = ["Flask>=3.1,<4"]
+dl = ["torch>=2.0,<3"]
+all = ["pytest>=8,<9", "Flask>=3.1,<4", "torch>=2.0,<3"]
 
 [project.scripts]
 air-prediction = "air_prediction.cli:main"
@@ -22,4 +24,7 @@ where = ["src"]
 [tool.pytest.ini_options]
 pythonpath = ["src", "."]
 testpaths = ["tests"]
+
+[tool.vercel]
+entrypoint = "deployment.app:app"
 

@@ -161,3 +161,33 @@ def test_failed_report_generation_does_not_mark_run_complete(tmp_path, monkeypat
         run_experiment(path, config, output, names=("ridge",))
     assert (output / "RUNNING.json").exists()
     assert not (output / "run_manifest.json").exists()
+
+
+def test_graceful_import_when_torch_unavailable(monkeypatch):
+    import sys
+    import importlib
+    # Simulate environment where torch is not installed
+    monkeypatch.setitem(sys.modules, "torch", None)
+    monkeypatch.delitem(sys.modules, "air_prediction.deep_learning", raising=False)
+    monkeypatch.delitem(sys.modules, "air_prediction", raising=False)
+
+    # Importing air_prediction root module should succeed without torch
+    import air_prediction
+    assert hasattr(air_prediction, "__version__")
+    assert not air_prediction.DLConfig
+    with pytest.raises(ImportError, match="requires PyTorch"):
+        air_prediction.DLConfig()
+    with pytest.raises(ImportError, match="requires PyTorch"):
+        air_prediction.TemporalForecaster()
+
+
+
+
+def test_build_features_no_timedelta_deprecation_warnings(hourly_frame):
+    import warnings
+    from air_prediction.config import Config
+    from air_prediction.features import build_features
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        data = build_features(hourly_frame, Config())
+        assert len(data.X) == len(hourly_frame)

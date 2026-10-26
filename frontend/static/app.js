@@ -163,15 +163,20 @@ function renderForecast(result) {
   state.result = result; state.stale = false;
   $("#results-column").classList.remove("stale");
   setText("#forecast-value", fmt(result.forecast));
-  setText("#result-model", result.selected_model === "ridge" ? "Ridge" : "XGBoost");
+  setText("#result-model", modelLabels[result.selected_model] || result.selected_model);
   const change = result.change;
   setText("#change-badge", change === null ? "Latest reading unavailable" : `${change > 0 ? "↗ +" : change < 0 ? "↘ " : "→ "}${fmt(change)} µg/m³ vs latest`);
   setText("#forecast-time", `For ${fullTime(result.target_time)}`);
   setText("#result-context", `Based on ${timeOnly(result.origin_time)} readings`);
   setText("#scenario-tag", result.historical ? "Historical scenario" : "Your uploaded history");
   $("#latest-value").replaceChildren(document.createTextNode(fmt(result.latest)), Object.assign(document.createElement("small"), { textContent: " µg/m³" }));
-  const other = result.selected_model === "xgboost" ? "ridge" : "xgboost";
-  setText("#comparison-text", `${modelLabels[other]} predicts ${fmt(result.predictions[other])} µg/m³ for the same next hour.`);
+  const otherKeys = Object.keys(result.predictions || {}).filter((k) => k !== result.selected_model);
+  const other = otherKeys.includes("xgboost") ? "xgboost" : (otherKeys.includes("ridge") ? "ridge" : otherKeys[0]);
+  if (other && result.predictions && result.predictions[other] !== undefined) {
+    setText("#comparison-text", `${modelLabels[other] || other} predicts ${fmt(result.predictions[other])} µg/m³ for the same next hour.`);
+  } else {
+    setText("#comparison-text", "All available models evaluate on the same observations.");
+  }
   setText("#history-quality", `${result.data_quality.observed} of ${result.data_quality.total} recent PM2.5 readings available`);
   setText("#reference-mae", fmt(result.backtest.mae, 2));
   setText("#reference-rmse", fmt(result.backtest.rmse, 2));
@@ -309,8 +314,19 @@ async function boot(mode = "manual") {
     state.ready = true; setContext(data.context);
     const available = Array.isArray(data.models)
       ? data.models
-      : (data.models && typeof data.models === "object" ? Object.keys(data.models) : ["hybrid", "bilstm", "xgboost", "ridge"]);
-    $("#model").value = available.includes("hybrid") ? "hybrid" : (available[0] || "xgboost");
+      : (data.models && typeof data.models === "object" ? Object.keys(data.models) : ["xgboost", "ridge"]);
+    const modelSelect = $("#model");
+    if (modelSelect && available.length) {
+      modelSelect.replaceChildren();
+      for (const m of available) {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = modelLabels[m] || (typeof data.models === "object" ? data.models[m] : m);
+        modelSelect.appendChild(opt);
+      }
+      const initial = data.forecast?.selected_model || (available.includes("xgboost") ? "xgboost" : available[0]);
+      modelSelect.value = initial;
+    }
     $("#csv-file").value = "";
     applyMode(mode, false); renderPerformance(data);
     $("#connection").classList.add("ready"); $("#connection").classList.remove("failed"); setText("#connection-text", "Models connected");

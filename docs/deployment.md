@@ -13,7 +13,7 @@ The CLI also reports Vercel Authentication protection. That message alone does n
 From this Mac's Terminal:
 
 ```bash
-bash /Users/prathammalhotra/Desktop/air_pred/scripts/deploy_vercel.sh
+bash scripts/deploy_vercel.sh
 ```
 
 The script prepares `dist/aircast-pm25`, reuses an available Vercel CLI, and requests a production deployment. Vercel account authentication must be available to that CLI. The printed deployment URL is the result to verify; preparing the folder alone does not publish anything.
@@ -45,7 +45,7 @@ Upload requests are limited to 4 MB, below Vercel's request-body limit. Temporar
 Run the hosted checks from this Mac's Terminal:
 
 ```bash
-/opt/anaconda3/bin/python /Users/prathammalhotra/Desktop/air_pred/scripts/check_vercel.py
+python scripts/check_vercel.py
 ```
 
 The checker reuses the authenticated Vercel CLI and handles protected deployment requests through `vercel curl`. It checks model readiness, current HTML/static assets, bootstrap predictions and comparison tables, edited inputs with each model, the original CSV upload and subsequent stateless forecast, invalid-input handling, and report/example downloads. Remote predictions must match the actual saved local pipelines within a small floating-point tolerance. POST requests include the production Origin so HTTPS handling is checked too.

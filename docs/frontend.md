@@ -7,7 +7,7 @@ Aircast is the interface for the project's saved XGBoost and Ridge pipelines. It
 On this Mac, double-click `Start_Aircast.command`, or run:
 
 ```bash
-bash /Users/prathammalhotra/Desktop/air_pred/scripts/start_frontend.sh
+bash scripts/start_frontend.sh
 ```
 
 The launcher opens `http://127.0.0.1:8000` in the default browser. Leave its Terminal window running; Ctrl+C stops the app. Another port can be selected with `--port 8001`.

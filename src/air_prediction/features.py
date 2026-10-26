@@ -36,7 +36,7 @@ def build_features(frame, config: Config, feature_set="full"):
             values[f"pm25_mean_{window}"] = rolling.mean()
             values[f"pm25_std_{window}"] = rolling.std(ddof=0)
             values[f"pm25_observed_fraction_{window}"] = rolling.count() / window
-        target_clock = frame.index + pd.Timedelta(hours=config.horizon_hours)
+        target_clock = frame.index + pd.to_timedelta(config.horizon_hours, unit="h")
         for label, number, period in (
             ("hour", target_clock.hour, 24),
             ("weekday", target_clock.dayofweek, 7),
@@ -55,8 +55,8 @@ def build_features(frame, config: Config, feature_set="full"):
     # For any h, repeat the latest observed seasonal cycle; never address future data.
     seasonal_shift = math.ceil(config.horizon_hours / config.seasonal_period_hours) * config.seasonal_period_hours - config.horizon_hours
     baselines = pd.DataFrame({"persistence": pm, "seasonal_naive": pm.shift(seasonal_shift)}, index=frame.index)
-    target_time = pd.Series(frame.index + pd.Timedelta(hours=config.horizon_hours), index=frame.index, name="target_time")
-    warm = pd.Series(frame.index >= frame.index.min() + pd.Timedelta(hours=config.warmup_hours), index=frame.index)
+    target_time = pd.Series(frame.index + pd.to_timedelta(config.horizon_hours, unit="h"), index=frame.index, name="target_time")
+    warm = pd.Series(frame.index >= frame.index.min() + pd.to_timedelta(config.warmup_hours, unit="h"), index=frame.index)
     return Supervised(X, pm.shift(-config.horizon_hours).rename("actual"), target_time, baselines, warm)
 
 

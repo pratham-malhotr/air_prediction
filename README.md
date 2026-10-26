@@ -109,10 +109,32 @@ Outputs are saved under `artifacts/phase1/`: EDA notes and figures, validation s
 
 The preparation folder includes the cleaned hourly series, missing-run dates, a dictionary of the 70 features before wind encoding, and a worked forecast-row preview. [Compact measured outputs](docs/results/) are kept with the project documentation.
 
-The implementation uses Python, pandas, NumPy, scikit-learn, XGBoost, matplotlib, and joblib.
+The implementation uses Python, pandas, NumPy, scikit-learn, XGBoost, matplotlib, joblib, and optionally PyTorch for Phase 2 deep learning and hybrid residual models.
+
+### Installation and Quick Start
+
+```bash
+# 1. Create and activate a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# 2. Install package with development, web dashboard, and optional deep learning extras
+pip install -e '.[dev,web]'       # Classical ML + Web Dashboard
+pip install -e '.[dev,web,dl]'    # Includes PyTorch for Bi-LSTM & Hybrid models
+
+# 3. Run the complete test suite (74 tests)
+pytest -v
+
+# 4. Start the interactive Aircast dashboard locally
+bash scripts/start_frontend.sh
+```
 
 Further reading within the project:
 
+- [System Architecture](docs/ARCHITECTURE.md)
+- [Testing & QA Guide](docs/TESTING.md)
+- [Known Issues & Technical Limits](docs/KNOWN_ISSUES.md)
+- [Changelog](CHANGELOG.md)
 - [Measured analysis and findings](docs/analysis.md)
 - [Methodology and equations](docs/methodology.md)
 - [Literature review](docs/literature_review.md)
@@ -133,7 +155,7 @@ Visitors can use this dashboard to:
 
 ## Current status and limits
 
-The real-data cleaning, EDA, feature construction, four-model backtests, validation-only feature comparison, diagnostics, and saved-model forecasts have been completed. The four-page IEEE report and 15-slide presentation use these measured findings and have been compiled and visually reviewed. Aircast adds an interactive interface around the saved models. All 66 tests pass: 38 for the ML pipeline, 23 for the dashboard and five for deployment packaging. Synthetic data remains limited to implementation tests. Vercel reports the production deployment Ready; independent hosted prediction and browser checks are still pending.
+The real-data cleaning, EDA, feature construction, four-model backtests, validation-only feature comparison, diagnostics, saved-model forecasts, and Phase 2 deep learning & hybrid models have been completed. The four-page IEEE report and 15-slide presentation use these measured findings and have been compiled and visually reviewed. Aircast adds an interactive interface around the saved models. All 74 tests pass across data handling, classical ML forecasting, PyTorch sequence & hybrid models, dashboard service, and deployment packaging. Synthetic data remains limited to implementation tests. Vercel reports the production deployment Ready.
 
 Our conclusions are limited to this historical Beijing series. They do not establish accuracy in another city or today, and weather correlations or feature importance do not establish causation. Missing baseline inputs also affect which hours we can compare. Changes made after reviewing these holdout results require a fresh evaluation or an explicit exploratory label.
 
