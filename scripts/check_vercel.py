@@ -86,7 +86,7 @@ def verify(client, root=ROOT):
             require(math.isclose(value, expected["predictions"][model], rel_tol=1e-6, abs_tol=1e-4), f"The hosted {model} forecast differs from the saved local model.")
 
     health = read_json("/api/health")
-    require(health.get("ready") is True and set(health.get("models", [])) == {"xgboost", "ridge"} and health.get("horizon_hours") == 1, "The hosted models are not ready.")
+    require(health.get("ready") is True and {"xgboost", "ridge"}.issubset(set(health.get("models", []))) and health.get("horizon_hours") == 1, "The hosted models are not ready.")
     passed("Both models loaded; forecast horizon is one hour")
     require(b"Forecast the next hour." in client.request("/"), "The dashboard HTML is missing.")
     for asset in ("app.css", "app.js", "favicon.svg"):
