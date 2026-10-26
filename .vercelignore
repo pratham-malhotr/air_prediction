@@ -1,0 +1,12 @@
+.git
+.github
+.cache
+.dependencies
+.pytest_cache
+notebooks
+tests
+docs
+reports
+*.ipynb
+*.pdf
+dist

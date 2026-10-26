@@ -25,3 +25,6 @@ where = ["src"]
 pythonpath = ["src", "."]
 testpaths = ["tests"]
 
+[tool.vercel]
+entrypoint = "deployment.app:app"
+
