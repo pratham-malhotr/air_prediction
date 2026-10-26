@@ -1,0 +1,5 @@
+# Document generation and optional visual review; separate from model dependencies.
+python-pptx>=1.0,<2
+reportlab>=4.0,<6
+PyMuPDF>=1.24,<3
+matplotlib>=3.9,<4

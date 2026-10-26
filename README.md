@@ -140,7 +140,8 @@ Further reading within the project:
 - [Literature review](docs/literature_review.md)
 - [Phase 1 checklist](docs/phase1_checklist.md)
 - [Validation notes](docs/verification.md)
-- [IEEE report PDF](reports/ieee/main.pdf) and [presentation PDF](reports/presentation/slides.pdf)
+- [Seven-page IEEE report](reports/ieee/main.pdf), [ten-slide PowerPoint with thirteen graphs](reports/presentation/Aircast_Phase1_Presentation.pptx), and [presentation PDF](reports/presentation/slides.pdf)
+- [Document sources and rebuild instructions](reports/README.md)
 - [Viva notes](docs/viva_guide.md)
 
 ## 🌐 Live Interactive Demo
@@ -155,7 +156,7 @@ Visitors can use this dashboard to:
 
 ## Current status and limits
 
-The real-data cleaning, EDA, feature construction, four-model backtests, validation-only feature comparison, diagnostics, saved-model forecasts, and Phase 2 deep learning & hybrid models have been completed. The four-page IEEE report and 15-slide presentation use these measured findings and have been compiled and visually reviewed. Aircast adds an interactive interface around the saved models. All 74 tests pass across data handling, classical ML forecasting, PyTorch sequence & hybrid models, dashboard service, and deployment packaging. Synthetic data remains limited to implementation tests. Vercel reports the production deployment Ready.
+The real-data cleaning, EDA, feature construction, four-model backtests, validation-only feature comparison, diagnostics, saved-model forecasts, and Phase 2 deep learning & hybrid models have been completed. The seven-page IEEE report and ten-slide editable PowerPoint document the classical ML Phase 1 findings and Aircast demonstration. The presentation includes thirteen graph panels covering data quality, training EDA, validation, pooled/quarterly errors, pollution regimes, forecast traces, residuals and final-refit importance. Both documents include the supplied team names and enrollment numbers; the presentation ends with a thank-you slide. A matching presentation PDF and detailed embedded speaker notes are included. Aircast adds an interactive interface around the saved models. The recorded test audit reports 74 passing checks across data handling, classical ML forecasting, PyTorch sequence & hybrid models, dashboard service, and deployment packaging. Synthetic data remains limited to implementation tests. Vercel reports the production deployment Ready.
 
 Our conclusions are limited to this historical Beijing series. They do not establish accuracy in another city or today, and weather correlations or feature importance do not establish causation. Missing baseline inputs also affect which hours we can compare. Changes made after reviewing these holdout results require a fresh evaluation or an explicit exploratory label.
 

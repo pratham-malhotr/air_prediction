@@ -26,9 +26,9 @@ We use this checklist to keep the implementation, report, and presentation align
 | Theoretical rigor | Baseline formulas, Ridge/boosting objectives, regularization, metric definitions and split logic | Explanations complete; individual justification assessed in the viva |
 | Model application | XGBoost, required naive references, Ridge comparator and chronological selection/backtests | Real four-model backtests, quarterly/peak errors and interpretation complete |
 | Repository and code quality | Modular Python source, configuration, tests, CI and provenance | Local implementation verified; GitHub publication and contribution evidence not verified |
-| Presentation | Beamer source and presenter guide | Measured findings included; 15-slide PDF compiled and visually reviewed |
+| Presentation | Editable PowerPoint, matching PDF, thirteen graph assets, Python sources and presenter guide | Ten detailed slides covering completed Phase 1 work, with team names/enrollment numbers on the final thank-you slide |
 | Individual viva | `viva_guide.md` | Preparation guide complete; individual assessment remains to be done |
-| LaTeX/IEEE report | IEEEtran source and bibliography | Measured findings included; four-page IEEE PDF compiled and visually reviewed |
+| LaTeX/IEEE report | IEEEtran source, bibliography and print-sized figures | Expanded to seven pages with measured findings, implementation details and all five team names/enrollment numbers |
 
 ## Submission checks
 

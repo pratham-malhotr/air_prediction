@@ -18,7 +18,8 @@ def source_files():
             text_source = path.suffix in {".py", ".sh", ".toml", ".md", ".tex", ".bib", ".yml", ".yaml", ".html", ".css", ".js", ".cjs", ".svg"}
             measured_summary = name == "docs" and path.parent.name == "results" and path.suffix in {".csv", ".json", ".png"}
             deployment_config = name == "deployment" and (path.suffix == ".json" or path.name in {"requirements.txt", ".python-version", ".vercelignore"})
-            if path.is_file() and "__pycache__" not in path.parts and (text_source or measured_summary or deployment_config):
+            report_resource = name == "reports" and (path.suffix in {".pdf", ".pptx", ".png", ".json"} or path.name == "requirements.txt")
+            if path.is_file() and "__pycache__" not in path.parts and (text_source or measured_summary or deployment_config or report_resource):
                 yield path
 
 

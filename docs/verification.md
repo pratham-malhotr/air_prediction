@@ -40,9 +40,9 @@ The same audit checked that manual concentrations of 12, 65 and 150 change the a
 
 ## Final presentation checks
 
-The LaTeX report and slide sources are populated. Tectonic 0.17.0 compiled the four-page IEEE report and 15-slide presentation. Extracted PDF text was checked against the measured results, references resolve, and the rendered pages/slides were visually reviewed. The report figures use their printed column width so the labels remain readable. Both builds complete without font, layout, or unresolved-reference warnings.
+The report was expanded to seven IEEE-format pages, and the presentation was further developed into ten widescreen PowerPoint slides with thirteen graph panels and detailed speaker notes. The graphs cover the concentration distribution, missingness by year, autocorrelation, hourly profile, weather correlations, validation ablation, annual RMSE, quarterly RMSE, pollution regimes, a final-week forecast trace, residual distribution, largest spike miss and deployment-refit gain importance. Plots are embedded at 300 dpi with standalone vector PDFs retained. The report includes all five supplied names and enrollment numbers; the presentation repeats them on the closing thank-you slide. No email addresses or individual contribution allocations are included. Tectonic 0.17.0 compiles the report. A shared Python layout produces the PowerPoint and matching ten-page presentation PDF; the PDF is not a Microsoft PowerPoint export. All figures and tables use the completed real-data experiment, with no retraining or changes to model selection. The residual histogram explicitly discloses the displayed ±80 range and counts outside that range; its percentages retain all common target hours as the denominator.
 
-Repository publication and the team's individual viva preparation remain separate submission tasks. Names and task allocations are intentionally omitted until the team provides them.
+Repository publication and the team's individual viva preparation remain separate submission tasks. Individual task allocations have not been supplied. Document sources, reporting dependencies and rebuild instructions are in `reports/README.md`.
 
 ## Interactive frontend
 
