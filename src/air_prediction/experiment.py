@@ -107,7 +107,7 @@ def run_experiment(csv_path, config, output, names=("xgboost", "ridge"), ablatio
     frame = dataset.frame
     if frame.index.min() > pd.Timestamp(config.train_start):
         raise ValueError("Input starts after the configured training start")
-    if frame.index.max() < pd.Timestamp(config.holdout_end) - pd.Timedelta(hours=1):
+    if frame.index.max() < pd.Timestamp(config.holdout_end) - pd.to_timedelta(1, unit="h"):
         raise ValueError("Input does not cover the full configured holdout; do not report a partial period as complete")
     data = build_features(frame, config)
     # Check model availability before costly EDA or partial result files.

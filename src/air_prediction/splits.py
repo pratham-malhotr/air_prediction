@@ -36,7 +36,7 @@ def make_folds(config: Config, phase):
 
 def fold_masks(data, fold: Fold, config: Config):
     # Fit once, immediately before the first forecast origin in this block.
-    first_origin = fold.start - pd.Timedelta(hours=config.horizon_hours)
+    first_origin = fold.start - pd.to_timedelta(config.horizon_hours, unit="h")
     train = (data.target_time <= first_origin) & (data.X.index >= pd.Timestamp(config.train_start)) & data.warm & data.y.notna()
     period = (data.target_time >= fold.start) & (data.target_time < fold.end)
     test = period & common_evaluation_mask(data)
