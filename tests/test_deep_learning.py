@@ -3,6 +3,8 @@
 import numpy as np
 import pandas as pd
 import pytest
+
+pytest.importorskip("torch", reason="PyTorch is required for deep learning tests")
 import torch
 
 from air_prediction.deep_learning import (
