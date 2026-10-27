@@ -1,0 +1,71 @@
+feature,description,availability
+pm25_lag_0,PM2.5 observed at t−0,History through origin t
+pm25_lag_0_missing,Missing indicator for PM2.5 at t−0,History through origin t
+pm25_lag_1,PM2.5 observed at t−1,History through origin t
+pm25_lag_1_missing,Missing indicator for PM2.5 at t−1,History through origin t
+pm25_lag_2,PM2.5 observed at t−2,History through origin t
+pm25_lag_2_missing,Missing indicator for PM2.5 at t−2,History through origin t
+pm25_lag_3,PM2.5 observed at t−3,History through origin t
+pm25_lag_3_missing,Missing indicator for PM2.5 at t−3,History through origin t
+pm25_lag_6,PM2.5 observed at t−6,History through origin t
+pm25_lag_6_missing,Missing indicator for PM2.5 at t−6,History through origin t
+pm25_lag_12,PM2.5 observed at t−12,History through origin t
+pm25_lag_12_missing,Missing indicator for PM2.5 at t−12,History through origin t
+pm25_lag_24,PM2.5 observed at t−24,History through origin t
+pm25_lag_24_missing,Missing indicator for PM2.5 at t−24,History through origin t
+pm25_lag_48,PM2.5 observed at t−48,History through origin t
+pm25_lag_48_missing,Missing indicator for PM2.5 at t−48,History through origin t
+pm25_lag_72,PM2.5 observed at t−72,History through origin t
+pm25_lag_72_missing,Missing indicator for PM2.5 at t−72,History through origin t
+pm25_lag_168,PM2.5 observed at t−168,History through origin t
+pm25_lag_168_missing,Missing indicator for PM2.5 at t−168,History through origin t
+pm25_mean_3,Trailing 3-hour mean; missing values remain explicit,Window ends at origin t
+pm25_std_3,Trailing 3-hour std; missing values remain explicit,Window ends at origin t
+pm25_observed_fraction_3,Trailing 3-hour observed_fraction; missing values remain explicit,Window ends at origin t
+pm25_mean_6,Trailing 6-hour mean; missing values remain explicit,Window ends at origin t
+pm25_std_6,Trailing 6-hour std; missing values remain explicit,Window ends at origin t
+pm25_observed_fraction_6,Trailing 6-hour observed_fraction; missing values remain explicit,Window ends at origin t
+pm25_mean_12,Trailing 12-hour mean; missing values remain explicit,Window ends at origin t
+pm25_std_12,Trailing 12-hour std; missing values remain explicit,Window ends at origin t
+pm25_observed_fraction_12,Trailing 12-hour observed_fraction; missing values remain explicit,Window ends at origin t
+pm25_mean_24,Trailing 24-hour mean; missing values remain explicit,Window ends at origin t
+pm25_std_24,Trailing 24-hour std; missing values remain explicit,Window ends at origin t
+pm25_observed_fraction_24,Trailing 24-hour observed_fraction; missing values remain explicit,Window ends at origin t
+pm25_mean_72,Trailing 72-hour mean; missing values remain explicit,Window ends at origin t
+pm25_std_72,Trailing 72-hour std; missing values remain explicit,Window ends at origin t
+pm25_observed_fraction_72,Trailing 72-hour observed_fraction; missing values remain explicit,Window ends at origin t
+pm25_mean_168,Trailing 168-hour mean; missing values remain explicit,Window ends at origin t
+pm25_std_168,Trailing 168-hour std; missing values remain explicit,Window ends at origin t
+pm25_observed_fraction_168,Trailing 168-hour observed_fraction; missing values remain explicit,Window ends at origin t
+target_hour_sin,Target calendar value; cycles use sine/cosine and weekend is an indicator,Calendar known at issuance
+target_hour_cos,Target calendar value; cycles use sine/cosine and weekend is an indicator,Calendar known at issuance
+target_weekday_sin,Target calendar value; cycles use sine/cosine and weekend is an indicator,Calendar known at issuance
+target_weekday_cos,Target calendar value; cycles use sine/cosine and weekend is an indicator,Calendar known at issuance
+target_month_sin,Target calendar value; cycles use sine/cosine and weekend is an indicator,Calendar known at issuance
+target_month_cos,Target calendar value; cycles use sine/cosine and weekend is an indicator,Calendar known at issuance
+target_weekend,Target calendar value; cycles use sine/cosine and weekend is an indicator,Calendar known at issuance
+weather_DEWP_lag_0,DEWP observed at t−0; original dataset units,History through origin t
+weather_DEWP_lag_1,DEWP observed at t−1; original dataset units,History through origin t
+weather_DEWP_lag_24,DEWP observed at t−24; original dataset units,History through origin t
+weather_DEWP_missing,Missing indicator for current DEWP,Observation at origin t
+weather_TEMP_lag_0,TEMP observed at t−0; original dataset units,History through origin t
+weather_TEMP_lag_1,TEMP observed at t−1; original dataset units,History through origin t
+weather_TEMP_lag_24,TEMP observed at t−24; original dataset units,History through origin t
+weather_TEMP_missing,Missing indicator for current TEMP,Observation at origin t
+weather_PRES_lag_0,PRES observed at t−0; original dataset units,History through origin t
+weather_PRES_lag_1,PRES observed at t−1; original dataset units,History through origin t
+weather_PRES_lag_24,PRES observed at t−24; original dataset units,History through origin t
+weather_PRES_missing,Missing indicator for current PRES,Observation at origin t
+weather_Iws_lag_0,Iws observed at t−0; original dataset units,History through origin t
+weather_Iws_lag_1,Iws observed at t−1; original dataset units,History through origin t
+weather_Iws_lag_24,Iws observed at t−24; original dataset units,History through origin t
+weather_Iws_missing,Missing indicator for current Iws,Observation at origin t
+weather_Is_lag_0,Is observed at t−0; original dataset units,History through origin t
+weather_Is_lag_1,Is observed at t−1; original dataset units,History through origin t
+weather_Is_lag_24,Is observed at t−24; original dataset units,History through origin t
+weather_Is_missing,Missing indicator for current Is,Observation at origin t
+weather_Ir_lag_0,Ir observed at t−0; original dataset units,History through origin t
+weather_Ir_lag_1,Ir observed at t−1; original dataset units,History through origin t
+weather_Ir_lag_24,Ir observed at t−24; original dataset units,History through origin t
+weather_Ir_missing,Missing indicator for current Ir,Observation at origin t
+wind_direction,Current cbwd category; missing has its own label,Fold-fitted one-hot encoding

@@ -1,0 +1,10 @@
+{
+  "source": "uci381_user_supplied",
+  "acquisition": "User-provided local CSV; no download performed by this run",
+  "original_filename": "PRSA_data_2010.1.1-2014.12.31.csv",
+  "dataset_page": "https://archive.ics.uci.edu/dataset/381/beijing+pm2+5+data",
+  "doi": "10.24432/C5JS49",
+  "license": "CC BY 4.0",
+  "sha256": "4127f868775e31b3956522adc0ec75af8937dde6a3896e8beed3a376c6d27f1c",
+  "verified": "Expected columns and complete 2010\u20132014 hourly timestamps; 43,824 records"
+}

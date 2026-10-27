@@ -1,6 +1,7 @@
 """Save the cleaned hourly series and an inspectable record of feature construction."""
 
 import argparse
+from hashlib import sha256
 from pathlib import Path
 import re
 
@@ -31,7 +32,7 @@ def feature_description(name):
     raise ValueError(f"Undocumented feature: {name}")
 
 
-def prepare(csv_path, config_path, output):
+def prepare(csv_path, config_path, output, feature_output=None):
     dataset = load_dataset(csv_path)
     config = load_config(config_path)
     frame = dataset.frame
@@ -52,10 +53,34 @@ def prepare(csv_path, config_path, output):
     for column in data.X:
         description, availability = feature_description(column)
         dictionary.append({"feature": column, "description": description, "availability": availability})
-    pd.DataFrame(dictionary).to_csv(output / "feature_dictionary.csv", index=False)
-    sample = data.X.loc[data.warm & data.y.notna()].head(48).copy()
-    sample.insert(0, "target_time", data.target_time.loc[sample.index])
-    sample.insert(1, "target_pm25", data.y.loc[sample.index])
+    dictionary_frame = pd.DataFrame(dictionary)
+    dictionary_frame.to_csv(output / "feature_dictionary.csv", index=False)
+    supervised = data.X.loc[data.warm & data.y.notna()].copy()
+    supervised.insert(0, "target_time", data.target_time.loc[supervised.index])
+    supervised.insert(1, "target_pm25", data.y.loc[supervised.index])
+    if feature_output is not None:
+        feature_output = Path(feature_output)
+        feature_output.parent.mkdir(parents=True, exist_ok=True)
+        supervised.to_csv(feature_output, index_label="origin_time")
+        dictionary_frame.to_csv(feature_output.parent / "feature_dictionary.csv", index=False)
+        write_json(feature_output.with_suffix(".provenance.json"), {
+            "source": dataset.source,
+            "source_csv": str(csv_path),
+            "source_sha256": dataset.audit["sha256"],
+            "dataset_page": dataset.audit["provenance"].get("dataset_page"),
+            "doi": dataset.audit["provenance"].get("doi"),
+            "license": dataset.audit["provenance"].get("license"),
+            "sha256": sha256(feature_output.read_bytes()).hexdigest(),
+            "rows": len(supervised),
+            "features_before_wind_encoding": len(data.X.columns),
+            "columns": ["origin_time", *supervised.columns],
+            "config": config.to_dict(),
+            "timezone": dataset.audit["timezone"],
+            "row_selection": "History warmup complete and observed target available",
+            "preprocessing": "Preserve missing inputs; imputation, scaling and wind encoding remain fitted inside training folds",
+        })
+        print(f"Saved {len(supervised):,} feature-engineered rows to {feature_output}")
+    sample = supervised.head(48).copy()
     sample["reference_persistence"] = data.baselines.loc[sample.index, "persistence"]
     sample["reference_seasonal_naive"] = data.baselines.loc[sample.index, "seasonal_naive"]
     sample.to_csv(output / "feature_preview.csv", index_label="origin_time")
@@ -88,5 +113,6 @@ if __name__ == "__main__":
     parser.add_argument("--data", default=f"data/raw/{FILENAME}")
     parser.add_argument("--config", default="configs/phase1.toml")
     parser.add_argument("--output", default="artifacts/phase1/preparation")
+    parser.add_argument("--feature-output", help="Also export the full supervised feature CSV, feature dictionary and provenance")
     args = parser.parse_args()
-    prepare(args.data, args.config, args.output)
+    prepare(args.data, args.config, args.output, args.feature_output)

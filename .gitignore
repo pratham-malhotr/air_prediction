@@ -8,6 +8,12 @@ __pycache__/
 *.egg-info/
 data/raw/*
 !data/raw/.gitkeep
+!data/raw/PRSA_data_2010.1.1-2014.12.31.csv
+!data/raw/PRSA_data_2010.1.1-2014.12.31.provenance.json
+data/processed/*
+!data/processed/feature_engineered.csv
+!data/processed/feature_engineered.provenance.json
+!data/processed/feature_dictionary.csv
 artifacts/*
 !artifacts/.gitkeep
 *.joblib

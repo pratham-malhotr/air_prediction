@@ -27,6 +27,8 @@ The supplied CSV matches all 43,824 expected hourly timestamps, with no duplicat
 
 Dataset citation: Chen, S. (2015), *Beijing PM2.5*, UCI Machine Learning Repository, DOI [10.24432/C5JS49](https://doi.org/10.24432/C5JS49), CC BY 4.0.
 
+Download the committed [raw CSV](data/raw/PRSA_data_2010.1.1-2014.12.31.csv) or [full feature-engineered CSV](data/processed/feature_engineered.csv). The engineered file contains 41,612 supervised rows with 70 features plus timestamps and the target. The [data guide](data/README.md) includes the feature dictionary, provenance, and regeneration command.
+
 ## How we approach the problem
 
 ### Start with the training data
