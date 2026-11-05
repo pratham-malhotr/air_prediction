@@ -1,4 +1,8 @@
-# Phase 1 submission documents
+# Submission documents
+
+The [Phase 2 submission](phase2/README.md) includes the independent-model research report, editable presentation, notebook and package. The original Phase 1 documents are listed below.
+
+## Phase 1 documents
 
 - **Report:** [`ieee/main.pdf`](ieee/main.pdf), exactly seven pages in IEEE conference format. Editable source: [`ieee/main.tex`](ieee/main.tex), with the bibliography and print-sized figures alongside it.
 - **PowerPoint:** [`presentation/Aircast_Phase1_Presentation.pptx`](presentation/Aircast_Phase1_Presentation.pptx), ten widescreen slides with thirteen detailed graph panels. Text, tables, and diagrams are editable PowerPoint objects. Scientific plots are embedded at 300 dpi, with standalone vector PDFs and PNGs in [`presentation/figures/`](presentation/figures/). Detailed speaker notes are embedded.

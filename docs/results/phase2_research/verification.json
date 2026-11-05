@@ -1,0 +1,70 @@
+{
+  "verified_utc": "2026-11-05T04:07:26.671550+00:00",
+  "source_code_sha256": "5749d38089d06b443f67e314aedfb08813bdcbc50867e9cf54cf970894e9250c",
+  "tests": {
+    "passed": 101,
+    "failures": 0,
+    "errors": 0
+  },
+  "browser": {
+    "status": "passed",
+    "checks": [
+      "real model forecast",
+      "chart ranges and tooltips",
+      "manual changes",
+      "model selection",
+      "invalid input",
+      "measured metrics",
+      "CSV upload",
+      "CSV export",
+      "mobile layout",
+      "mobile navigation",
+      "report link",
+      "no JavaScript errors"
+    ],
+    "screenshots": [
+      "desktop-forecast.png",
+      "desktop-performance.png",
+      "desktop-upload.png",
+      "mobile-forecast.png",
+      "mobile-performance.png"
+    ]
+  },
+  "models": [
+    "xgboost",
+    "ridge",
+    "bilstm",
+    "lstm",
+    "hybrid"
+  ],
+  "default_model": "lstm",
+  "required_history_hours": 192,
+  "cli_dashboard_forecasts": {
+    "bilstm": 11.78113842010498,
+    "lstm": 12.197717666625977,
+    "hybrid": 12.48949247598648
+  },
+  "report_pages": 5,
+  "presentation_slides": 12,
+  "executed_notebook_cells": 7,
+  "document_sha256": {
+    "Aircast_Phase2_Report.pdf": "62f1ce82022fccfbb17c8d11d9840319afac2251317d19e01304726b75b1ca79",
+    "Aircast_Phase2_Report.tex": "ef06b65317e084c1917202787068696d1cb7c265a8354f348f2cd4d41001e578",
+    "Aircast_Phase2_Presentation.pptx": "77e3bce34884ff59da1345c2409c4e3b5cfe7a4998368c45dfff5197ea5f11a8",
+    "slides.pdf": "1068e773e77dd5e32363f3cfdad27212a842bb4960c2eeb8bd9d12b90d4f10fd",
+    "presenter_guide.md": "d60c0d60615e48581aef88b9d75cab25c744d698c9e1e245ffaa424b7697bbd7"
+  },
+  "checks": [
+    "source/input/model hashes",
+    "frozen validation selection and evidence",
+    "original Phase 1 preservation",
+    "common hours and recomputed metrics",
+    "label/calibration boundaries",
+    "full-window independent training",
+    "real CLI/dashboard forecast parity",
+    "paper/team/score consistency",
+    "editable slide count and embedded notes",
+    "executed notebook",
+    "tests and browser checks"
+  ]
+}

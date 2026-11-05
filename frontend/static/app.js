@@ -7,6 +7,7 @@ const fields = { "pm2.5": "pm25", TEMP: "temperature", DEWP: "dewpoint", PRES: "
 const modelLabels = {
   hybrid: "Hybrid (BiLSTM + XGBoost)",
   bilstm: "Bi-LSTM (Deep Learning)",
+  lstm: "LSTM (Deep Learning)",
   xgboost: "XGBoost",
   ridge: "Ridge regression",
   persistence: "Persistence",
@@ -269,22 +270,30 @@ function appendCell(row, text, className) {
 
 function renderPerformance(data) {
   const metrics = Object.fromEntries(data.metrics.map((row) => [row.model, row]));
+  const models = ["xgboost", "ridge", "bilstm", "lstm", "hybrid", "persistence", "seasonal_naive"].filter((name) => metrics[name]);
+  const lowestRmse = Math.min(...models.map((name) => metrics[name].rmse));
   setText("#performance-xgb", fmt(metrics.xgboost.rmse, 2)); setText("#performance-ridge", fmt(metrics.ridge.rmse, 2));
   setText("#performance-gain", fmt((metrics.persistence.rmse - metrics.xgboost.rmse) / metrics.persistence.rmse * 100, 2) + "%");
   const body = $("#metrics-body"); body.replaceChildren();
-  for (const model of ["xgboost", "ridge", "persistence", "seasonal_naive"]) {
+  for (const model of models) {
     const values = metrics[model], row = document.createElement("tr"); if (model === "xgboost") row.className = "main-model";
     const label = appendCell(row, "");
     const dot = document.createElement("span"); dot.className = "metric-model-dot"; label.append(dot, document.createTextNode(modelLabels[model]));
-    if (model === "xgboost" || model === "ridge") { const badge = document.createElement("span"); badge.className = "metric-tag"; badge.textContent = model === "xgboost" ? "MAIN MODEL" : "LOWEST RMSE"; label.append(badge); }
+    const tag = values.rmse === lowestRmse ? "LOWEST RMSE" : (["bilstm", "lstm", "hybrid"].includes(model) ? "PHASE 2" : (model === "xgboost" ? "MAIN MODEL" : null));
+    if (tag) { const badge = document.createElement("span"); badge.className = "metric-tag"; badge.textContent = tag; label.append(badge); }
     appendCell(row, fmt(values.mae, 3)); appendCell(row, fmt(values.rmse, 3)); appendCell(row, fmt(values.r2, 4)); body.append(row);
   }
   const quarters = $("#quarter-body"); quarters.replaceChildren();
+  const quarterModels = ["persistence", "ridge", "xgboost", "bilstm", "lstm", "hybrid"].filter((name) => metrics[name]);
+  const heading = $("#quarter-head"); heading.replaceChildren();
+  for (const text of ["2014", ...quarterModels.map((name) => modelLabels[name])]) {
+    const cell = document.createElement("th"); cell.scope = "col"; cell.textContent = text; heading.append(cell);
+  }
   for (let quarter = 1; quarter <= 4; quarter++) {
     const rows = data.quarters.filter((row) => row.fold === `holdout_0${quarter}`);
     const row = document.createElement("tr"); appendCell(row, "Q" + quarter);
     const best = Math.min(...rows.filter((entry) => entry.model !== "seasonal_naive").map((entry) => entry.rmse));
-    for (const model of ["persistence", "ridge", "xgboost"]) { const value = rows.find((entry) => entry.model === model).rmse; appendCell(row, fmt(value, 3), value === best ? "quarter-best" : ""); }
+    for (const model of quarterModels) { const value = rows.find((entry) => entry.model === model)?.rmse; appendCell(row, fmt(value, 3), value === best ? "quarter-best" : ""); }
     quarters.append(row);
   }
   const peak = (name) => data.regimes.find((row) => row.model === name && row.pollution_regime === "above_training_p90").rmse;
@@ -312,6 +321,7 @@ async function boot(mode = "manual") {
     setBusy(true, "Loading the models");
     const data = await api("/api/bootstrap");
     state.ready = true; setContext(data.context);
+    setText("#upload-requirements", `Below 4 MB · at least ${data.required_hours} hourly slots`);
     const available = Array.isArray(data.models)
       ? data.models
       : (data.models && typeof data.models === "object" ? Object.keys(data.models) : ["xgboost", "ridge"]);

@@ -13,7 +13,7 @@ CSAI Project 19 (`air-prediction`) forecasts hourly PM2.5 concentrations ($\mu\t
                                       v
                        +-----------------------------+
                        |    data.py: Regularize &    |
-                       | Validate (Zero Imputation)  |
+                       | Validate (Preserve Gaps)    |
                        +-----------------------------+
                                       |
                                       v
@@ -46,7 +46,7 @@ CSAI Project 19 (`air-prediction`) forecasts hourly PM2.5 concentrations ($\mu\t
                                       v
                        +-----------------------------+
                        |    Saved Model Artifacts    |
-                       |    (artifacts/phase1/*.joblib)|
+                       |    (artifacts/phase1 + phase2)|
                        +-----------------------------+
                                       |
                  +--------------------+--------------------+
@@ -96,10 +96,24 @@ CSAI Project 19 (`air-prediction`) forecasts hourly PM2.5 concentrations ($\mu\t
 ### `deep_learning.py`
 - **SequenceAirDataset**: PyTorch sliding window generator producing 3D sequence tensors of shape `(batch, seq_len, features)`.
 - **TemporalForecaster**: Modular neural forecaster supporting LSTM, GRU, and Bidirectional LSTM (`Bi-LSTM`) coupled with additive Temporal Attention.
-- **HybridResidualModel**: Dual-stage architecture:
+- **DeepLearningPipeline**: Training-window-only median imputation, category encoding and scaling; standardized targets and seeded neural training.
+- **HybridResidualModel**: Dual-stage architecture with a chronological calibration block:
   1. Deep learning sequence model predicts base trajectory $y_{\text{dl}}$.
-  2. Tabular gradient boosted trees fit the residual errors $r = y_{\text{actual}} - y_{\text{dl}}$.
+  2. Freeze the base; tabular gradient boosted trees use a later, disjoint calibration block to fit the residual errors $r = y_{\text{actual}} - y_{\text{dl}}$.
   3. Combined forecast: $\hat{y} = \max(y_{\text{dl}} + \hat{r}, 0)$.
+
+### `phase2.py`
+- Freezes one fixed experiment configuration before scoring four validation and four comparison quarters.
+- Checks common hours, labels and folds against saved Phase 1 comparison predictions.
+- Saves independent predictions, metrics, fold audits, model hashes and provenance under `artifacts/phase2/`.
+- Records 2014 results as exploratory, since the Phase 1 evaluation had already been viewed.
+
+### `phase2_research.py`
+- Independently trains full-window LSTM and Bi-LSTM benchmarks with level/delta targets and configurable attention.
+- Screens eight Bi-LSTM candidates on 2013, compares matched directionality/attention variants across three seeds, then selects chronological calibration fraction, residual regularization and correction shrinkage.
+- Persists validation selection before the exploratory 2014 comparison and retains checkpoints for matching interrupted runs.
+- Saves the selected research models and complete evidence under `artifacts/phase2_research/`; the local service prefers a completed, verified real-data research run and defaults to its validation-selected model.
+- Scientific figures, the IEEE report, editable deck and executed notebook are generated from saved evidence. The package builder verifies payload hashes and excludes environments and checkpoints.
 
 ---
 
@@ -109,7 +123,7 @@ CSAI Project 19 (`air-prediction`) forecasts hourly PM2.5 concentrations ($\mu\t
 - Encapsulates prediction, history management, and validation.
 - Loads only available models from disk, reporting active models via `/api/bootstrap`.
 - Validates manual numeric inputs against physical bounds (nonnegative PM2.5, positive pressure, finite measurements).
-- Stateless history protocol: returns the normalized recent 169-hour window to the browser; subsequent predictions submit this window, enabling seamless multi-instance horizontal scaling without shared sessions.
+- Stateless history protocol: returns the normalized recent window (169 hours for classical models, 192 with the 24-step Phase 2 models) to the browser; subsequent predictions submit this window, enabling seamless multi-instance horizontal scaling without shared sessions.
 
 ### `frontend/static/` & `frontend/templates/`
 - Zero-build vanilla architecture: Semantic HTML5, pure CSS3 with custom properties and dark/light themes, and vanilla ECMAScript.
@@ -119,10 +133,10 @@ CSAI Project 19 (`air-prediction`) forecasts hourly PM2.5 concentrations ($\mu\t
 
 ## 4. Concurrency & Runtime Safety
 
-On macOS ARM64 systems, simultaneous use of PyTorch and XGBoost multi-threading can cause OpenMP thread pool deadlocks due to conflicting `libomp.dylib` shared libraries. The system prevents this by setting:
+On the audited macOS ARM64 environment, unrestricted numerical threads caused a native crash while loading the hybrid correction model. Package startup initializes CPU defaults before numerical imports, with matching settings in the launchers:
 ```bash
 OMP_NUM_THREADS=1
 OPENBLAS_NUM_THREADS=1
 MKL_NUM_THREADS=1
 ```
-in test fixtures (`tests/conftest.py`) and application launch scripts (`scripts/serve_frontend.py`, `scripts/train_phase2_hybrid.py`).
+The same defaults apply in test fixtures (`tests/conftest.py`) and application launch scripts (`scripts/serve_frontend.py`, `scripts/train_phase2_hybrid.py`). Optional neural exports load lazily, so classical imports do not initialize PyTorch.

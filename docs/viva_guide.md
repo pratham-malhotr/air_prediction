@@ -24,7 +24,7 @@ These are our preparation notes for explaining the project. We should all be abl
 20. **What do residual ACF plots reveal?** Remaining temporal structure can indicate missed dynamics. Use the complete hourly grid so absent targets do not compress time. ACF alone is not a calibrated uncertainty interval.
 21. **Why not output an AQI category?** The forecast is hourly concentration; an AQI standard has specific averaging and calculation rules. An optional AQI extension needs a valid standard and aggregation procedure.
 22. **Does this forecast today's air in India?** Our setup uses a historical Beijing series. Present-day, other-city, and sensor-location transfer need new data and validation.
-23. **What work is Phase 2?** LSTM/temporal CNN and a technically justified hybrid. There are no Phase 2 performance claims in this submission.
+23. **What work is Phase 2?** Phase 2 independently trains LSTM and Bi-LSTM, selects settings on 2013, compares attention and directionality across three seeds, and calibrates an XGBoost residual correction on a later block. LSTM without attention is validation-preferred; 2014 RMSE is 20.726 for LSTM, 20.799 for Bi-LSTM and 20.919 for the hybrid, versus 21.063 for Ridge. The 2014 comparison remains exploratory. See phase2_research.md.
 24. **What evidence makes a run reproducible?** CSV checksum, provenance, configuration, versions, forecast rows, fold boundaries, selection record and outputs. Be ready to locate those files and explain what each records.
 25. **What if XGBoost loses to persistence?** Report it. Analyze errors, seasonality and horizon strength. Do not replace splits or cherry-pick a quarter to create a better headline.
 

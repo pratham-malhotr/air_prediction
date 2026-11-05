@@ -2,20 +2,22 @@
 
 ## 1. Test Suite Overview
 
-The repository features 74 automated unit, integration, and regression tests ensuring data integrity, chronological timing validity, machine learning accuracy, frontend correctness, and deployment safety.
+The repository features 101 automated unit, integration, and regression tests ensuring data integrity, chronological timing validity, machine learning accuracy, frontend correctness, and deployment safety.
 
 ### Test Catalog Summary
 
 | Test File | Test Count | Scope |
 |---|---|---|
 | `tests/test_data_and_integration.py` | 14 | Dataset loading, calendar validation, provenance checksums, full synthetic backtests, corruption detection, PyTorch graceful degradation, and timedelta warnings. |
-| `tests/test_deep_learning.py` | 4 | Sequence dataset 3D shape generation, LSTM/GRU/Bi-LSTM forecaster architectures, temporal attention weights, and hybrid residual training. |
+| `tests/test_deep_learning.py` | 23 | Sequence dataset 3D shape generation, LSTM/GRU/Bi-LSTM forecaster architectures, temporal attention, future-data invariance, frozen preprocessing, strict masks, chronological calibration, serialization and error propagation. |
 | `tests/test_deployment.py` | 5 | Vercel package bundling, asset isolation, secret omission, and project link preservation. |
 | `tests/test_eda_notes.py` | 2 | EDA metric calculation within training bounds without future leakage. |
 | `tests/test_forecasting.py` | 23 | Target alignment, rolling window boundaries, missing value non-leakage, chronological fold boundaries, and configuration validation. |
-| `tests/test_frontend.py` | 25 | Web dashboard endpoints, manual form validation, CSV upload limits, stateless context revalidation, available model discovery, and error reporting. |
+| `tests/test_frontend.py` | 28 | Web dashboard endpoints, manual form validation, CSV upload limits, stateless context revalidation, available model discovery, and error reporting. |
 | `tests/test_xgboost_optional.py` | 1 | End-to-end XGBoost integration backtest, parameter selection, and saved model inference. |
-| **Total** | **74** | **100% Pass Rate** |
+| `tests/test_phase2.py` | 3 | Complete synthetic Phase 2 runs, baseline preservation, identical-hour comparisons, provenance, saved-model inference, overwrite refusal and direct CLI inference without launcher thread settings. |
+| `tests/test_phase2_research.py` | 2 | Selection freezes before comparison, independent full-window training, calibration boundaries, seed summaries and saved LSTM/Bi-LSTM/hybrid inference. |
+| **Total** | **101** | **100% Pass Rate** |
 
 ---
 
@@ -69,3 +71,7 @@ Requirements:
 - Playwright (`npm install --no-save playwright && npx playwright install chromium`)
 
 The script launches a temporary service on port 8016, simulates user interactions (range toggle, manual PM2.5 entry, model selection, CSV upload), verifies server responses, and saves screenshots to `artifacts/frontend_review/`.
+
+## GitHub CI
+
+The classical matrix checks Python 3.11/3.12 without optional PyTorch. A dedicated Python 3.13 job installs the recorded CPU PyTorch environment, runs the full suite with deprecation warnings as errors, and rejects skipped neural tests. Both jobs upload JUnit evidence. Remote job results are reviewed after publication.

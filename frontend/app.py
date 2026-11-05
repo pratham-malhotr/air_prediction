@@ -53,7 +53,7 @@ def create_app(project_root=None, service=None):
             raise InputError("Please send the forecast measurements as a JSON object.")
         return jsonify(engine.forecast(history_id=values.get("history_id", "sample"),
                                        mode=values.get("mode", "manual"), inputs=values.get("inputs"),
-                                       selected=values.get("model", "xgboost"), history=values.get("history")))
+                                       selected=values.get("model"), history=values.get("history")))
 
     @app.post("/api/history")
     def upload_history():
@@ -69,6 +69,9 @@ def create_app(project_root=None, service=None):
 
     @app.get("/report")
     def report():
+        phase2_report = root / "reports/phase2/Aircast_Phase2_Report.pdf"
+        if "lstm" in engine.models and phase2_report.is_file():
+            return send_file(phase2_report, mimetype="application/pdf")
         return send_file(root / "reports/ieee/main.pdf", mimetype="application/pdf")
 
     @app.errorhandler(InputError)

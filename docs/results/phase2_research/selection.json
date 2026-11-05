@@ -1,0 +1,88 @@
+{
+  "criterion": "Mean pooled 2013 RMSE across predefined validation seeds",
+  "preferred_model": "lstm",
+  "holdout_used_for_selection": false,
+  "search_winner": "delta_24h_no_attention",
+  "neural_candidates": {
+    "bilstm": "bilstm_no_attention",
+    "lstm": "lstm_no_attention"
+  },
+  "neural_configurations": {
+    "bilstm": {
+      "seq_len": 24,
+      "hidden_dim": 32,
+      "num_layers": 1,
+      "dropout": 0.1,
+      "batch_size": 128,
+      "learning_rate": 0.001,
+      "epochs": 6,
+      "device": "cpu",
+      "architecture": "bilstm",
+      "random_seed": 42,
+      "use_attention": false,
+      "target_mode": "delta"
+    },
+    "lstm": {
+      "seq_len": 24,
+      "hidden_dim": 32,
+      "num_layers": 1,
+      "dropout": 0.1,
+      "batch_size": 128,
+      "learning_rate": 0.001,
+      "epochs": 6,
+      "device": "cpu",
+      "architecture": "lstm",
+      "random_seed": 42,
+      "use_attention": false,
+      "target_mode": "delta"
+    }
+  },
+  "hybrid_candidate": "cal0.2_head2_weight0.5",
+  "hybrid": {
+    "calibration_fraction": 0.2,
+    "parameters": {
+      "n_estimators": 80,
+      "max_depth": 2,
+      "learning_rate": 0.03,
+      "min_child_weight": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_lambda": 30.0
+    },
+    "correction_weight": 0.5
+  },
+  "ranking": [
+    {
+      "model": "persistence",
+      "validation_rmse_mean": 24.86958157709312
+    },
+    {
+      "model": "ridge",
+      "validation_rmse_mean": 23.8089311121724
+    },
+    {
+      "model": "seasonal_naive",
+      "validation_rmse_mean": 110.18309690206061
+    },
+    {
+      "model": "xgboost",
+      "validation_rmse_mean": 26.77232238108137
+    },
+    {
+      "model": "bilstm",
+      "validation_rmse_mean": 23.613075917423373
+    },
+    {
+      "model": "lstm",
+      "validation_rmse_mean": 23.501534267445066
+    },
+    {
+      "model": "hybrid",
+      "validation_rmse_mean": 23.614236101656648
+    }
+  ],
+  "comparison_seed": 42,
+  "search_metrics_sha256": "4ca3442dcbfebe92a7b66c7e68c004fca42abf6c4e1bb58ac095692e5b875a3c",
+  "ablation_metrics_sha256": "6116dbcef848f296046876e16ef54705f8abc156d20209f5ac88f1701cc800ea",
+  "hybrid_search_metrics_sha256": "4c588be11ed5bb83a350df99c861a3dca3dcdbe0443af18178627247973da344"
+}

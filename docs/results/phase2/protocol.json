@@ -1,0 +1,29 @@
+{
+  "deep_learning": {
+    "seq_len": 24,
+    "hidden_dim": 32,
+    "num_layers": 1,
+    "dropout": 0.1,
+    "batch_size": 128,
+    "learning_rate": 0.001,
+    "epochs": 6,
+    "device": "cpu",
+    "architecture": "bilstm",
+    "random_seed": 42
+  },
+  "residual_model": {
+    "n_estimators": 100,
+    "max_depth": 3,
+    "learning_rate": 0.05,
+    "min_child_weight": 5,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "reg_lambda": 5.0,
+    "n_jobs": 1
+  },
+  "calibration_fraction": 0.2,
+  "parameter_policy": "Single fixed configuration; no holdout tuning or early stopping.",
+  "base_policy": "Both models share the Bi-LSTM fitted before the calibration block.",
+  "residual_policy": "Last fraction of eligible training origins; base labels available at first calibration origin.",
+  "evaluation_status": "Exploratory historical comparison: 2014 results were previously viewed in Phase 1."
+}

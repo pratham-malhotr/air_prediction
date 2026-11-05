@@ -1,6 +1,6 @@
 # Aircast forecast workspace
 
-Aircast is the interface for the project's saved XGBoost and Ridge pipelines. It can run locally or use the prepared Vercel deployment. It uses the original Python feature construction and preprocessing; the browser does not approximate the models or replace their predictions with a formula.
+Aircast is the interface for the project's saved XGBoost and Ridge pipelines and, locally, completed Phase 2 Bi-LSTM/hybrid models. It can run locally or use the prepared Vercel deployment. It uses the original Python feature construction and preprocessing; the browser does not approximate the models or replace their predictions with a formula.
 
 ## Open the app
 
@@ -25,9 +25,9 @@ The real dataset and trained artifacts must be present under `data/raw/` and `ar
 
 The form adds one new hour to the selected history. PM2.5 is required; unknown weather fields may stay blank. Numeric inputs are checked before prediction, and missing measurements remain explicit.
 
-The initial context is the final 169 hourly slots of the Beijing archive. The form starts with example values copied from the last recorded hour. Since the archive ends at 23:00 on 31 December 2014, those example inputs represent a new scenario at 00:00 on 1 January 2015. Its forecast is for 01:00. The interface labels this as a historical scenario, rather than live air quality.
+The initial context is the final 169 hourly slots (192 when the 24-step Phase 2 models are loaded) of the Beijing archive. The form starts with example values copied from the last recorded hour. Since the archive ends at 23:00 on 31 December 2014, those example inputs represent a new scenario at 00:00 on 1 January 2015. Its forecast is for 01:00. The interface labels this as a historical scenario, rather than live air quality.
 
-Both trained models run on the same inputs. The selected model supplies the main forecast; the other appears as a comparison. Editing a field marks the old result as stale until another forecast is generated. The app does not alter the recorded history or retrain the models.
+All available trained models run on the same observed inputs. The selected model supplies the main forecast; the other appears as a comparison. Editing a field marks the old result as stale until another forecast is generated. The app does not alter the recorded history or retrain the models.
 
 ## Upload a history
 
@@ -37,7 +37,7 @@ The CSV upload uses the same schema as the selected dataset:
 year,month,day,hour,pm2.5,DEWP,TEMP,PRES,cbwd,Iws,Is,Ir
 ```
 
-The `No` column is optional and is not used for prediction. Times follow the Beijing local clock. `NA` or empty measurements remain missing. The upload needs at least 169 hourly slots, unique valid timestamps, and enough recent observed PM2.5 values. Missing timestamp rows are restored before lagging.
+The `No` column is optional and is not used for prediction. Times follow the Beijing local clock. `NA` or empty measurements remain missing. The upload needs at least 169 hourly slots (192 with the Phase 2 sequence models), unique valid timestamps, and enough recent observed PM2.5 values. Missing timestamp rows are restored before lagging.
 
 The upload is limited to 4 MB and 100,000 rows/hourly slots. Its last timestamp must be on or after the models' fit date, 31 December 2014 at 23:00. This prevents a model trained on later data from being used to present an earlier forecast as a valid historical prediction.
 
@@ -47,7 +47,7 @@ Uploading forecasts directly from the file's last hour. Switching to the form le
 
 The forecast card shows PM2.5 in µg/m³, the target time, and the change from the latest reading. The chart shows 24 hours, 72 hours, or seven days of history. Missing observations break the line; the app does not draw an interpolated measurement. Hovering shows the timestamp and value.
 
-The export contains both model predictions and the two naive references, together with the origin, target, source and input mode. It is a forecast file, not a measured accuracy result for the new hour. The forecast screen shows the history's completeness and selected model's measured 2014 MAE/RMSE. These past errors are not an uncertainty interval. Inputs outside the initial training range or following a sharp change are flagged. The performance view shows the full comparisons and peak-error limitation. The report link opens the compiled IEEE paper.
+The export contains all available model predictions and the two naive references, together with the origin, target, source and input mode. It is a forecast file, not a measured accuracy result for the new hour. The forecast screen shows the history's completeness and selected model's measured 2014 MAE/RMSE. These past errors are not an uncertainty interval. Inputs outside the initial training range or following a sharp change are flagged. The performance view shows the full comparisons and peak-error limitation. The report link opens the compiled IEEE paper.
 
 The app does not assign AQI categories or confidence intervals. Historical Beijing performance does not establish accuracy for another city or a present-day deployment.
 
@@ -66,6 +66,10 @@ node scripts/check_frontend_browser.cjs
 
 It starts a temporary service on port 8016, uses the actual saved models, exercises the main interactions, and saves screenshots/results under `artifacts/frontend_review/`. The temporary service is stopped afterward.
 
-The dashboard has 23 passing Python tests, alongside 38 original ML checks and five deployment-package checks. Browser execution is blocked by the restricted development workspace; the browser check above is provided for execution in a normal local Terminal.
+The dashboard has 28 passing Python tests within the 101-test project suite. Phase 2 checks verify CLI parity for both saved sequence models, complete feature history, optional PyTorch behavior and artifact integrity. The browser check also exercises the available Phase 2 models and the six-model comparison.
 
 See [the Vercel deployment guide](deployment.md) for the inference-only bundle and production command.
+
+The dashboard prefers a completed, verified real-data run in `artifacts/phase2_research/` when present, exposing the independent LSTM, Bi-LSTM and calibrated hybrid. Until that run is complete, it uses the preserved `artifacts/phase2/` baseline. Required history is derived from the loaded models, including a longer selected sequence if applicable.
+
+The completed research run defaults to the model selected from mean 2013 validation RMSE (LSTM in the recorded run). The report link opens the Phase 2 report when that run and report are available.

@@ -2,6 +2,7 @@
 
 from hashlib import sha256
 from io import BytesIO
+from importlib.util import find_spec
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -12,10 +13,12 @@ import pandas as pd
 
 from air_prediction.data import FILENAME, REQUIRED, WEATHER_NUMERIC, load_dataset, validate_timestamps
 from air_prediction.features import build_features
+from air_prediction.predict import predict_last, required_history_hours
 
 MODEL_LABELS = {
     "hybrid": "Hybrid (BiLSTM + XGBoost)",
     "bilstm": "Bi-LSTM (Deep Learning)",
+    "lstm": "LSTM (Deep Learning)",
     "xgboost": "XGBoost",
     "ridge": "Ridge regression",
 }
@@ -48,17 +51,32 @@ class ForecastService:
             model_path = run / f"{name}.joblib"
             if model_path.exists():
                 self.models[name] = joblib.load(model_path)
-        # Phase 2 DL & Hybrid models (loaded when available)
-        for name in ("hybrid", "bilstm"):
-            model_path = run / f"{name}.joblib"
-            if model_path.exists():
-                self.models[name] = joblib.load(model_path)
+        phase2 = self.root / "artifacts/phase2"
+        research = self.root / "artifacts/phase2_research"
+        research_manifest = research / "run_manifest.json"
+        if research_manifest.exists():
+            candidate = json.loads(research_manifest.read_text())
+            if candidate.get("status") == "complete" and not candidate.get("is_synthetic", True):
+                phase2 = research
+        phase2_manifest = phase2 / "run_manifest.json"
+        extra_metrics = None
+        if phase2_manifest.exists() and find_spec("torch") is not None:
+            metadata = json.loads(phase2_manifest.read_text())
+            if metadata.get("status") == "complete" and not metadata.get("is_synthetic", True):
+                for name in metadata.get("models", ("hybrid", "bilstm")):
+                    model_path = phase2 / f"{name}.joblib"
+                    if sha256(model_path.read_bytes()).hexdigest() != metadata["model_sha256"][name]:
+                        raise ValueError(f"Phase 2 {name} artifact differs from the completed run")
+                    self.models[name] = joblib.load(model_path)
+                extra_metrics = phase2
 
         if "xgboost" not in self.models or "ridge" not in self.models:
             raise ValueError("Aircast needs at least the one-hour XGBoost and Ridge deployment models.")
-        self.history_size = max(model["config"].warmup_hours for model in self.models.values()) + 1
+        self.history_size = max(required_history_hours(model) for model in self.models.values())
         self.fit_through = max(pd.Timestamp(model["fit_through"]) for model in self.models.values())
         sample = load_dataset(self.root / "data/raw" / FILENAME)
+        if extra_metrics and metadata["dataset_audit"]["sha256"] != sample.audit["sha256"]:
+            raise ValueError("Phase 2 was evaluated using a different dataset")
         self.sample = sample.frame.tail(self.history_size).copy()
         config = self.models["xgboost"]["config"]
         training = sample.frame.loc[(sample.frame.index >= pd.Timestamp(config.train_start)) &
@@ -70,6 +88,16 @@ class ForecastService:
         self.metrics = pd.read_csv(run / "metrics.csv").query("phase == 'holdout'").to_dict("records")
         self.quarters = pd.read_csv(run / "fold_metrics.csv").query("phase == 'holdout'").to_dict("records")
         self.regimes = pd.read_csv(run / "errors_by_pollution_regime.csv").to_dict("records")
+        if extra_metrics:
+            for attribute, filename in (("metrics", "metrics.csv"), ("quarters", "fold_metrics.csv"),
+                                        ("regimes", "errors_by_pollution_regime.csv")):
+                table = pd.read_csv(extra_metrics / filename)
+                table = table.loc[table.model.isin(set(self.models) - {"ridge", "xgboost"})]
+                if "phase" in table:
+                    table = table.query("phase == 'holdout'")
+                getattr(self, attribute).extend(table.to_dict("records"))
+        preferred = metadata.get("selection", {}).get("preferred_model") if extra_metrics else None
+        self.default_model = preferred if preferred in self.models else "xgboost"
         self.manifest = json.loads((run / "run_manifest.json").read_text())
 
     def _history(self, history_id, history=None):
@@ -117,7 +145,7 @@ class ForecastService:
             if span > MAX_UPLOAD_ROWS:
                 raise InputError("The CSV spans too many hours. Please check its date columns.")
             if span < self.history_size:
-                raise InputError(f"We need at least {self.history_size} hourly slots (just over seven days).")
+                raise InputError(f"We need at least {self.history_size} consecutive hourly slots.")
             if timestamps.max() < self.fit_through:
                 raise InputError("This history ends before the saved models' training period. Use data ending on or after "
                                  + self.fit_through.strftime("%d %b %Y, %H:%M") + " Beijing time.")
@@ -192,7 +220,7 @@ class ForecastService:
 
     def forecast(self, history_id="sample", mode="manual", inputs=None, selected=None, history=None):
         if selected is None:
-            selected = "hybrid" if "hybrid" in self.models else ("xgboost" if "xgboost" in self.models else next(iter(self.models)))
+            selected = self.default_model
         if not isinstance(selected, str) or selected not in self.models:
             valid_names = ", ".join(MODEL_LABELS.get(m, m) for m in self.models)
             raise InputError(f"Selected model '{selected}' is unavailable. Choose from: {valid_names}.")
@@ -214,22 +242,7 @@ class ForecastService:
             data = build_features(frame, artifact["config"])
             if not data.warm.iloc[-1]:
                 raise InputError(f"Please provide at least {self.history_size} consecutive hourly slots.")
-            if name in ("hybrid", "bilstm"):
-                raw_out = artifact["pipeline"].predict(data.X.reindex(columns=artifact["columns"]))
-            else:
-                X = data.X.iloc[[-1]].reindex(columns=artifact["columns"])
-                raw_out = artifact["pipeline"].predict(X)
-            # If HybridResidualModel returns (hybrid, dl_base, residual)
-            if isinstance(raw_out, tuple):
-                val = raw_out[0]
-            else:
-                val = raw_out
-            if hasattr(val, "__len__"):
-                val = val[-1] if len(val) > 0 else 0.0
-            value = float(np.maximum(val, 0))
-            if not np.isfinite(value):
-                raise RuntimeError("The saved model returned a nonfinite prediction.")
-            predictions[name] = value
+            predictions[name] = predict_last(artifact, data)
         chosen = self.models[selected]
         data = build_features(frame, chosen["config"])
         latest = number(frame["pm2.5"].iloc[-1])
@@ -267,7 +280,7 @@ class ForecastService:
     def bootstrap(self):
         context = self.context()
         available_models = {k: MODEL_LABELS.get(k, k.replace("_", " ").title()) for k in self.models}
-        default_model = "xgboost" if "xgboost" in self.models else next(iter(self.models))
+        default_model = self.default_model
         return {"ready": True, "context": context, "models": available_models,
                 "required_hours": self.history_size, "metrics": self.metrics,
                 "quarters": self.quarters, "regimes": self.regimes,

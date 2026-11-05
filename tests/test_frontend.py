@@ -224,3 +224,83 @@ def test_forecast_rejects_unavailable_model_with_informative_error(web_setup):
     error_msg = response.json["error"]["message"]
     assert "unavailable_model" in error_msg
     assert "XGBoost" in error_msg or "Ridge" in error_msg
+
+
+@pytest.fixture
+def phase2_web_setup(web_setup):
+    pytest.importorskip('torch')
+    from air_prediction.deep_learning import DLConfig, DeepLearningPipeline, HybridResidualModel
+    from hashlib import sha256
+
+    _, _, data_path, run, frame = web_setup
+    artifact = joblib.load(run / 'ridge.joblib')
+    config = artifact['config']
+    data = build_features(frame, config)
+    eligible = data.warm & data.y.notna() & (data.target_time <= pd.Timestamp(artifact['fit_through']))
+    dl = DeepLearningPipeline(DLConfig(architecture='bilstm', seq_len=8, hidden_dim=4,
+                                     num_layers=1, epochs=1, batch_size=64))
+    hybrid = HybridResidualModel(dl, make_model('ridge', data.X, config))
+    hybrid.fit(data.X, data.y, eligible, data.target_time)
+    output = run.parent / 'phase2'
+    output.mkdir()
+    for name, pipeline in (('bilstm', dl), ('hybrid', hybrid)):
+        joblib.dump({**artifact, 'model_name': name, 'pipeline': pipeline,
+                     'required_history_hours': config.warmup_hours + 8}, output / f'{name}.joblib')
+    rows = [{'phase': 'holdout', 'model': name, 'n': 10, 'mae': 3.0, 'rmse': 4.0, 'r2': .4}
+            for name in ('bilstm', 'hybrid')]
+    pd.DataFrame(rows).to_csv(output / 'metrics.csv', index=False)
+    pd.DataFrame([{**row, 'fold': 'holdout_01'} for row in rows]).to_csv(output / 'fold_metrics.csv', index=False)
+    pd.DataFrame([{**row, 'pollution_regime': 'above_training_p90'} for row in rows]).to_csv(
+        output / 'errors_by_pollution_regime.csv', index=False)
+    (output / 'run_manifest.json').write_text(json.dumps({
+        'status': 'complete', 'is_synthetic': False,
+        'dataset_audit': {'sha256': sha256(data_path.read_bytes()).hexdigest()},
+        'model_sha256': {name: sha256((output / f'{name}.joblib').read_bytes()).hexdigest()
+                         for name in ('bilstm', 'hybrid')}}))
+    return ForecastService(run.parents[1]), output, data_path
+
+
+def test_phase2_dashboard_matches_cli_with_complete_sequence_features(phase2_web_setup, tmp_path):
+    service, output, data_path = phase2_web_setup
+    assert service.history_size == 176
+    assert set(service.bootstrap()['models']) == {'ridge', 'xgboost', 'bilstm', 'hybrid'}
+    for name in ('bilstm', 'hybrid'):
+        response = service.forecast(mode='history', selected=name)
+        expected = predict_latest(output / f'{name}.joblib', data_path)
+        assert response['forecast'] == pytest.approx(expected['pm25_ug_m3'], abs=1e-5)
+        assert response['backtest']['mae'] == 3.0
+        inputs = service.context()['defaults']
+        manual = service.forecast(inputs=inputs, selected=name)
+        frame = service.sample.copy()
+        origin = frame.index.max() + pd.Timedelta(hours=1)
+        appended = pd.concat([frame, pd.DataFrame([inputs], index=[origin])])
+        path = tmp_path / 'manual.csv'
+        path.write_bytes(csv_bytes(appended))
+        expected_manual = predict_latest(output / f'{name}.joblib', path)
+        assert manual['forecast'] == pytest.approx(expected_manual['pm25_ug_m3'], abs=1e-5)
+
+
+def test_phase2_remains_optional_and_rejects_changed_artifacts(phase2_web_setup, monkeypatch):
+    service, output, _ = phase2_web_setup
+    monkeypatch.setattr('frontend.service.find_spec', lambda _: None)
+    classical = ForecastService(service.root)
+    assert set(classical.models) == {'ridge', 'xgboost'}
+    monkeypatch.undo()
+    with (output / 'hybrid.joblib').open('ab') as stream:
+        stream.write(b'changed')
+    with pytest.raises(ValueError, match='differs from the completed run'):
+        ForecastService(service.root)
+
+
+def test_completed_phase2_uses_validation_preference_for_default_forecasts(phase2_web_setup):
+    service, output, _ = phase2_web_setup
+    path = output / 'run_manifest.json'
+    metadata = json.loads(path.read_text())
+    metadata['selection'] = {'preferred_model': 'bilstm', 'holdout_used_for_selection': False}
+    path.write_text(json.dumps(metadata))
+    fresh = ForecastService(service.root)
+    assert fresh.bootstrap()['forecast']['selected_model'] == 'bilstm'
+    client = create_app(service.root, fresh).test_client()
+    response = client.post('/api/forecast', json={'inputs': fresh.context()['defaults']})
+    assert response.status_code == 200
+    assert response.json['selected_model'] == 'bilstm'

@@ -29,16 +29,23 @@ This document records technical limitations, scientific assumptions, and known s
 
 2. **Ridge vs. XGBoost Marginal Performance**:
    - On the 2014 holdout backtest (8,531 hours), Ridge achieved an RMSE of 21.063, while XGBoost achieved 21.088.
-   - The 0.025 $\mu\text{g/m}^3$ difference is not statistically significant. Ridge's competitive performance demonstrates that linear regularized lags capture the majority of the short-term autoregressive signal.
+   - No significance test was performed; the small observed difference does not establish statistical significance. Ridge's competitive performance shows that regularized linear lags are a strong reference for this series.
+
+3. **Phase 2 historical comparisons and hybrid limitations**:
+   - The completed independent-model continuation has 2014 RMSE 20.726 for LSTM, 20.799 for Bi-LSTM and 20.919 for the hybrid, compared with 21.063 for Ridge on the same 8,531 hours.
+   - LSTM is selected using mean 2013 validation RMSE across three neural seeds. The new 2014 ranking is exploratory and is not a statistical-significance claim.
+   - Against its own frozen base, the selected correction reduces below-threshold error but increases peak error; pooled RMSE is nearly unchanged (20.917 to 20.919).
+   - The independently trained networks and hybrid base have different training windows. Comparing them alone does not isolate the correction's effect.
+   - The earlier shared-base baseline is preserved separately. See [the selected research report](phase2_research.md) and [the first corrected audit](phase2.md).
 
 ---
 
 ## 3. Runtime & Platform Boundaries
 
-1. **Dual OpenMP Runtime on macOS ARM64**:
-   - PyTorch and XGBoost bundle separate `libomp.dylib` libraries.
-   - Unconstrained multithreading can cause `libomp` barrier deadlocks in child worker threads on macOS.
-   - Single-thread environment flags (`OMP_NUM_THREADS=1`) must be maintained when running both frameworks in a single process.
+1. **Mixed numerical runtimes on macOS ARM64**:
+   - XGBoost requires the external OpenMP runtime (`brew install libomp` on this Mac).
+   - Loading a hybrid with unrestricted numerical thread settings caused a reproducible native crash during XGBoost deserialization in the audit environment.
+   - Package startup now initializes single-thread CPU defaults before numerical imports, and optional neural exports load lazily. Training and dashboard launchers use the same policy; a clean-subprocess CLI test covers this failure.
 
 2. **Serverless Deployment Size Limits**:
    - Vercel serverless Python functions enforce a 250 MB unzipped bundle limit.

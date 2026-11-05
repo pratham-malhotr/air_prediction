@@ -1,0 +1,178 @@
+{
+  "status": "complete",
+  "started_utc": "2026-11-04T19:23:24.613937+00:00",
+  "completed_utc": "2026-11-04T19:24:51.100396+00:00",
+  "source": "uci381_user_supplied",
+  "is_synthetic": false,
+  "dataset_audit": {
+    "source": "uci381_user_supplied",
+    "path": "/Users/prathammalhotra/Desktop/air_pred/data/raw/PRSA_data_2010.1.1-2014.12.31.csv",
+    "sha256": "4127f868775e31b3956522adc0ec75af8937dde6a3896e8beed3a376c6d27f1c",
+    "input_rows": 43824,
+    "hourly_rows": 43824,
+    "inserted_missing_hours": 0,
+    "input_was_sorted": true,
+    "duplicate_timestamps": 0,
+    "start": "2010-01-01 00:00:00",
+    "end": "2014-12-31 23:00:00",
+    "timezone": "Asia/Shanghai (local clock)",
+    "missing_by_column": {
+      "pm2.5": 2067,
+      "DEWP": 0,
+      "TEMP": 0,
+      "PRES": 0,
+      "Iws": 0,
+      "Is": 0,
+      "Ir": 0,
+      "cbwd": 0
+    },
+    "provenance": {
+      "source": "uci381_user_supplied",
+      "acquisition": "User-provided local CSV; no download performed by this run",
+      "original_filename": "PRSA_data_2010.1.1-2014.12.31.csv",
+      "dataset_page": "https://archive.ics.uci.edu/dataset/381/beijing+pm2+5+data",
+      "doi": "10.24432/C5JS49",
+      "license": "CC BY 4.0",
+      "sha256": "4127f868775e31b3956522adc0ec75af8937dde6a3896e8beed3a376c6d27f1c",
+      "verified": "Expected columns and complete 2010\u20132014 hourly timestamps; 43,824 records"
+    }
+  },
+  "config": {
+    "horizon_hours": 1,
+    "seasonal_period_hours": 24,
+    "lags": [
+      0,
+      1,
+      2,
+      3,
+      6,
+      12,
+      24,
+      48,
+      72,
+      168
+    ],
+    "rolling_windows": [
+      3,
+      6,
+      12,
+      24,
+      72,
+      168
+    ],
+    "train_start": "2010-01-01",
+    "validation_start": "2013-01-01",
+    "holdout_start": "2014-01-01",
+    "holdout_end": "2015-01-01",
+    "fold_months": 3,
+    "minimum_training_rows": 1000,
+    "random_seed": 42,
+    "threads": 2,
+    "xgboost_candidates": [
+      {
+        "n_estimators": 300,
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "min_child_weight": 5,
+        "subsample": 0.8,
+        "colsample_bytree": 0.9,
+        "reg_lambda": 5.0
+      },
+      {
+        "n_estimators": 500,
+        "max_depth": 4,
+        "learning_rate": 0.03,
+        "min_child_weight": 5,
+        "subsample": 0.8,
+        "colsample_bytree": 0.9,
+        "reg_lambda": 10.0
+      },
+      {
+        "n_estimators": 350,
+        "max_depth": 5,
+        "learning_rate": 0.04,
+        "min_child_weight": 10,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "reg_lambda": 10.0
+      }
+    ]
+  },
+  "protocol": {
+    "deep_learning": {
+      "seq_len": 24,
+      "hidden_dim": 32,
+      "num_layers": 1,
+      "dropout": 0.1,
+      "batch_size": 128,
+      "learning_rate": 0.001,
+      "epochs": 6,
+      "device": "cpu",
+      "architecture": "bilstm",
+      "random_seed": 42
+    },
+    "residual_model": {
+      "n_estimators": 100,
+      "max_depth": 3,
+      "learning_rate": 0.05,
+      "min_child_weight": 5,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_lambda": 5.0,
+      "n_jobs": 1
+    },
+    "calibration_fraction": 0.2,
+    "parameter_policy": "Single fixed configuration; no holdout tuning or early stopping.",
+    "base_policy": "Both models share the Bi-LSTM fitted before the calibration block.",
+    "residual_policy": "Last fraction of eligible training origins; base labels available at first calibration origin.",
+    "evaluation_status": "Exploratory historical comparison: 2014 results were previously viewed in Phase 1."
+  },
+  "models": [
+    "bilstm",
+    "hybrid"
+  ],
+  "source_code_sha256": "dd03c5c89ae45790d6bfa75718064a75dcedfdeff5b51809277128caed39aa57",
+  "model_sha256": {
+    "bilstm": "8de65c43d17298257ca7935f29cf6c2fc03b381d2d8f49f4a659f909bf799b1c",
+    "hybrid": "8d9a6ee5cf6d8d4e52a17f5608ac6a626ece432effbaa6b163199764013a0937"
+  },
+  "baseline_provenance": {
+    "directory": "/Users/prathammalhotra/Desktop/air_pred/artifacts/phase1",
+    "predictions_sha256": "b03b3a1a3b3df627d26f32f4bf77f341a8f9f686ca34369c04286de283e70081",
+    "manifest_sha256": "b2a88405b2261bba0faa4251172de9cc491da6f5f3d770da4ac5ab4d9280e425",
+    "versions": {
+      "python": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 11:23:37) [Clang 14.0.6 ]",
+      "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+      "numpy": "2.1.3",
+      "pandas": "2.2.3",
+      "scikit-learn": "1.6.1",
+      "xgboost": "3.4.1",
+      "matplotlib": "3.10.0",
+      "joblib": "1.4.2"
+    },
+    "source_code_sha256": "8359d8aff7f41a6ee13409c7a9ef749370b38506b76ed832d47952f5a4a91471",
+    "note": "Classical metrics reuse saved Phase 1 predictions; classical models were not retrained."
+  },
+  "training_p90_pm25": 218.0,
+  "versions": {
+    "numpy": "2.1.3",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.6.1",
+    "xgboost": "3.4.1",
+    "torch": "2.15.0",
+    "joblib": "1.4.2"
+  },
+  "deployment_fit": {
+    "base_training_rows": 33289,
+    "base_last_origin": "2014-01-15 05:00:00",
+    "base_latest_target": "2014-01-15 06:00:00",
+    "calibration_start": "2014-01-15 06:00:00",
+    "calibration_end": "2014-12-31 22:00:00",
+    "calibration_rows": 8323,
+    "calibration_latest_target": "2014-12-31 23:00:00",
+    "preprocessing_fit_end": "2014-01-15 05:00:00",
+    "calibration_fraction": 0.2,
+    "residual_training": "chronological out-of-sample calibration; base frozen"
+  },
+  "required_history_hours": 192
+}

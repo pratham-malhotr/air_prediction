@@ -1,0 +1,41 @@
+{
+  "verified_utc": "2026-11-04T19:26:28.059178+00:00",
+  "source_code_sha256": "dd03c5c89ae45790d6bfa75718064a75dcedfdeff5b51809277128caed39aa57",
+  "tests": {
+    "command": ".venv/bin/python -m pytest -q -W error::DeprecationWarning",
+    "passed": 95
+  },
+  "browser": {
+    "command": "node scripts/check_frontend_browser.cjs",
+    "status": "passed",
+    "checks": [
+      "real model forecast",
+      "chart ranges and tooltips",
+      "manual changes",
+      "model selection",
+      "invalid input",
+      "measured metrics",
+      "CSV upload",
+      "CSV export",
+      "mobile layout",
+      "mobile navigation",
+      "report link",
+      "no JavaScript errors"
+    ],
+    "screenshots": [
+      "desktop-forecast.png",
+      "desktop-performance.png",
+      "desktop-upload.png",
+      "mobile-forecast.png",
+      "mobile-performance.png"
+    ]
+  },
+  "additional_checks": [
+    "source and model hashes match completed run",
+    "all fold base/calibration/evaluation label boundaries verified",
+    "repeat run metrics exactly match the initial corrected experiment",
+    "saved Bi-LSTM and hybrid CLI/dashboard predictions exactly match",
+    "original Phase 1 prediction and manifest hashes unchanged",
+    "192 raw hours retained for 24-step sequence features"
+  ]
+}

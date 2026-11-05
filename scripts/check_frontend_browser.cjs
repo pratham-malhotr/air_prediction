@@ -40,6 +40,10 @@ async function main() {
     await page.goto('http://127.0.0.1:8016', {waitUntil: 'networkidle'});
     await page.locator('#connection-text').filter({hasText: 'Models connected'}).waitFor();
     await page.locator('#forecast-button:not([disabled])').waitFor();
+    const bootstrap = await (await page.request.get('http://127.0.0.1:8016/api/bootstrap')).json();
+    const availableModels = Object.keys(bootstrap.models);
+    assert.equal(await page.locator('#model option').count(), availableModels.length);
+    assert((await page.locator('#upload-requirements').innerText()).includes(String(bootstrap.required_hours)));
     assert(Number(await page.locator('#forecast-value').innerText()) > 0);
     await page.click('.chart-ranges button[data-hours="24"]');
     assert.equal(await page.locator('.chart-ranges button[data-hours="24"]').getAttribute('aria-pressed'), 'true');
@@ -54,9 +58,19 @@ async function main() {
     await page.click('#forecast-button');
     const manual = await (await manualResponse).json();
     assert.equal(manual.latest, 65);
-    assert.equal(manual.selected_model, 'xgboost');
+    assert.equal(manual.selected_model, bootstrap.forecast.selected_model);
     assert.equal(new Date(manual.target_time) - new Date(manual.origin_time), 3600000);
     await page.locator('#forecast-button:not([disabled])').waitFor();
+    for (const name of ['bilstm', 'lstm', 'hybrid'].filter(name => availableModels.includes(name))) {
+      await page.selectOption('#model', name);
+      const response = page.waitForResponse(response => response.url().endsWith('/api/forecast'));
+      await page.click('#forecast-button');
+      const result = await (await response).json();
+      assert.equal(result.selected_model, name);
+      assert(Number.isFinite(result.forecast));
+      assert.equal(result.backtest.n, 8531);
+      await page.locator('#forecast-button:not([disabled])').waitFor();
+    }
     await page.selectOption('#model', 'ridge');
     const ridgeResponse = page.waitForResponse(response => response.url().endsWith('/api/forecast'));
     await page.click('#forecast-button');
@@ -69,7 +83,10 @@ async function main() {
     await page.fill('#pm25', '65');
 
     await page.click('.nav-item[data-view="performance"]');
-    assert.equal(await page.locator('#metrics-body tr').count(), 4);
+    assert.equal(await page.locator('#metrics-body tr').count(), bootstrap.metrics.length);
+    for (const name of ['bilstm', 'lstm', 'hybrid'].filter(name => availableModels.includes(name))) {
+      assert((await page.locator('#metrics-body').innerText()).includes(bootstrap.models[name]));
+    }
     assert((await page.locator('#metrics-body').innerText()).includes('21.088'));
     assert((await page.locator('#metrics-body').innerText()).includes('21.063'));
     await page.screenshot({path: path.join(output, 'desktop-performance.png'), fullPage: true});

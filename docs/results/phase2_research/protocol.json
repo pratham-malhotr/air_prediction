@@ -1,0 +1,246 @@
+{
+  "settings": {
+    "seeds": [
+      42,
+      137,
+      2026
+    ],
+    "comparison_seed": 42,
+    "calibration_fractions": [
+      0.1,
+      0.2
+    ],
+    "correction_weights": [
+      0.0,
+      0.25,
+      0.5,
+      1.0
+    ],
+    "candidates": [
+      {
+        "name": "level_24h_attention",
+        "config": {
+          "seq_len": 24,
+          "hidden_dim": 32,
+          "num_layers": 1,
+          "dropout": 0.1,
+          "batch_size": 128,
+          "learning_rate": 0.001,
+          "epochs": 6,
+          "device": "cpu",
+          "architecture": "bilstm",
+          "random_seed": 42,
+          "use_attention": true,
+          "target_mode": "level"
+        }
+      },
+      {
+        "name": "level_24h_longer_training",
+        "config": {
+          "seq_len": 24,
+          "hidden_dim": 32,
+          "num_layers": 1,
+          "dropout": 0.1,
+          "batch_size": 128,
+          "learning_rate": 0.001,
+          "epochs": 10,
+          "device": "cpu",
+          "architecture": "bilstm",
+          "random_seed": 42,
+          "use_attention": true,
+          "target_mode": "level"
+        }
+      },
+      {
+        "name": "level_48h_attention",
+        "config": {
+          "seq_len": 48,
+          "hidden_dim": 32,
+          "num_layers": 1,
+          "dropout": 0.1,
+          "batch_size": 128,
+          "learning_rate": 0.001,
+          "epochs": 6,
+          "device": "cpu",
+          "architecture": "bilstm",
+          "random_seed": 42,
+          "use_attention": true,
+          "target_mode": "level"
+        }
+      },
+      {
+        "name": "level_24h_wider",
+        "config": {
+          "seq_len": 24,
+          "hidden_dim": 64,
+          "num_layers": 1,
+          "dropout": 0.1,
+          "batch_size": 128,
+          "learning_rate": 0.001,
+          "epochs": 6,
+          "device": "cpu",
+          "architecture": "bilstm",
+          "random_seed": 42,
+          "use_attention": true,
+          "target_mode": "level"
+        }
+      },
+      {
+        "name": "level_24h_no_attention",
+        "config": {
+          "seq_len": 24,
+          "hidden_dim": 32,
+          "num_layers": 1,
+          "dropout": 0.1,
+          "batch_size": 128,
+          "learning_rate": 0.001,
+          "epochs": 6,
+          "device": "cpu",
+          "architecture": "bilstm",
+          "random_seed": 42,
+          "use_attention": false,
+          "target_mode": "level"
+        }
+      },
+      {
+        "name": "delta_24h_no_attention",
+        "config": {
+          "seq_len": 24,
+          "hidden_dim": 32,
+          "num_layers": 1,
+          "dropout": 0.1,
+          "batch_size": 128,
+          "learning_rate": 0.001,
+          "epochs": 6,
+          "device": "cpu",
+          "architecture": "bilstm",
+          "random_seed": 42,
+          "use_attention": false,
+          "target_mode": "delta"
+        }
+      },
+      {
+        "name": "delta_24h_longer_training",
+        "config": {
+          "seq_len": 24,
+          "hidden_dim": 32,
+          "num_layers": 1,
+          "dropout": 0.1,
+          "batch_size": 128,
+          "learning_rate": 0.001,
+          "epochs": 10,
+          "device": "cpu",
+          "architecture": "bilstm",
+          "random_seed": 42,
+          "use_attention": false,
+          "target_mode": "delta"
+        }
+      },
+      {
+        "name": "delta_48h_no_attention",
+        "config": {
+          "seq_len": 48,
+          "hidden_dim": 32,
+          "num_layers": 1,
+          "dropout": 0.1,
+          "batch_size": 128,
+          "learning_rate": 0.001,
+          "epochs": 6,
+          "device": "cpu",
+          "architecture": "bilstm",
+          "random_seed": 42,
+          "use_attention": false,
+          "target_mode": "delta"
+        }
+      }
+    ],
+    "residual_candidates": [
+      {
+        "n_estimators": 100,
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "min_child_weight": 5,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "reg_lambda": 5.0
+      },
+      {
+        "n_estimators": 80,
+        "max_depth": 2,
+        "learning_rate": 0.03,
+        "min_child_weight": 20,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "reg_lambda": 30.0
+      }
+    ]
+  },
+  "config": {
+    "horizon_hours": 1,
+    "seasonal_period_hours": 24,
+    "lags": [
+      0,
+      1,
+      2,
+      3,
+      6,
+      12,
+      24,
+      48,
+      72,
+      168
+    ],
+    "rolling_windows": [
+      3,
+      6,
+      12,
+      24,
+      72,
+      168
+    ],
+    "train_start": "2010-01-01",
+    "validation_start": "2013-01-01",
+    "holdout_start": "2014-01-01",
+    "holdout_end": "2015-01-01",
+    "fold_months": 3,
+    "minimum_training_rows": 1000,
+    "random_seed": 42,
+    "threads": 2,
+    "xgboost_candidates": [
+      {
+        "n_estimators": 300,
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "min_child_weight": 5,
+        "subsample": 0.8,
+        "colsample_bytree": 0.9,
+        "reg_lambda": 5.0
+      },
+      {
+        "n_estimators": 500,
+        "max_depth": 4,
+        "learning_rate": 0.03,
+        "min_child_weight": 5,
+        "subsample": 0.8,
+        "colsample_bytree": 0.9,
+        "reg_lambda": 10.0
+      },
+      {
+        "n_estimators": 350,
+        "max_depth": 5,
+        "learning_rate": 0.04,
+        "min_child_weight": 10,
+        "subsample": 0.8,
+        "colsample_bytree": 0.8,
+        "reg_lambda": 10.0
+      }
+    ]
+  },
+  "source_code_sha256": "5749d38089d06b443f67e314aedfb08813bdcbc50867e9cf54cf970894e9250c",
+  "dataset_sha256": "4127f868775e31b3956522adc0ec75af8937dde6a3896e8beed3a376c6d27f1c",
+  "parameter_policy": "Search on 2013 only; paired architecture/attention variants averaged across validation seeds.",
+  "comparison_policy": "One predeclared comparison/deployment seed; never select a seed using 2014.",
+  "standalone_policy": "Independent neural models use the complete eligible outer training window.",
+  "hybrid_policy": "Separate chronological calibration; frozen base; validation-selected correction shrinkage.",
+  "evaluation_status": "Exploratory historical comparison; the 2014 Phase 1 results were already viewed."
+}

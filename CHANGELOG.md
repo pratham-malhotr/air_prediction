@@ -2,6 +2,22 @@
 
 All notable changes to the Air Quality Prediction project are documented here.
 
+## 2026-11-05 — Independent Phase 2 research and submission
+
+- Added full-window independent recurrent benchmarks, an eight-configuration validation search, matched LSTM/Bi-LSTM attention ablations, and three-seed stability checks.
+- Added level/delta targets, corrected bidirectional terminal-state extraction, and selected hybrid calibration/regularization/correction weight using validation only.
+- Frozen selection prefers LSTM; exploratory 2014 RMSE is 20.726 (LSTM), 20.799 (Bi-LSTM), 20.919 (hybrid) and 21.063 (Ridge). The correction still worsens peaks relative to its own frozen base.
+- Added the IEEE report, twelve-slide editable deck and PDF, executed notebook, scientific figures and verified package builder.
+- Local demo prefers the validation-selected model, exposes all five saved models, and opens the Phase 2 report. Expanded verification to 101 passing tests and completed browser checks.
+
+## 2026-11-04 — Phase 2 audit and measured baseline
+
+- Corrected future-data leakage in neural preprocessing, batch-dependent imputation, permissive training-mask fallback and omitted wind encoding.
+- Added chronological out-of-sample residual calibration, seeded/standardized neural training, explicit correction failures and isolated Phase 2 experiment provenance.
+- Completed real-data quarterly validation/comparison, saved both models and published compact results and five report figures. Ridge remains better overall; the hybrid does not improve pooled RMSE.
+- Fixed sequence history and CLI/dashboard prediction parity; added dynamic Phase 2 comparison tables and mobile table containment.
+- Expanded verification to 95 passing tests and added Phase 2 browser scenarios.
+
 ## [0.2.0] - 2026-10-25
 
 ### Fixed

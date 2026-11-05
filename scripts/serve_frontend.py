@@ -32,7 +32,8 @@ def main():
     url = f"http://127.0.0.1:{args.port}"
     server = make_server("127.0.0.1", args.port, app, threaded=True)
     print(f"\nAircast is ready: {url}", flush=True)
-    print("XGBoost and Ridge are loaded. Press Ctrl+C to stop the app.\n", flush=True)
+    names = ", ".join(app.extensions["forecast_service"].models)
+    print(f"Loaded models: {names}. Press Ctrl+C to stop the app.\n", flush=True)
     if not args.no_open:
         Timer(0.6, lambda: webbrowser.open(url)).start()
     try:
