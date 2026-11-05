@@ -2,7 +2,7 @@
 
 ## 1. Test Suite Overview
 
-The repository features 101 automated unit, integration, and regression tests ensuring data integrity, chronological timing validity, machine learning accuracy, frontend correctness, and deployment safety.
+The repository features 115 automated unit, integration, and regression tests ensuring data integrity, chronological timing validity, machine learning accuracy, frontend correctness, and deployment safety.
 
 ### Test Catalog Summary
 
@@ -15,9 +15,11 @@ The repository features 101 automated unit, integration, and regression tests en
 | `tests/test_forecasting.py` | 23 | Target alignment, rolling window boundaries, missing value non-leakage, chronological fold boundaries, and configuration validation. |
 | `tests/test_frontend.py` | 28 | Web dashboard endpoints, manual form validation, CSV upload limits, stateless context revalidation, available model discovery, and error reporting. |
 | `tests/test_xgboost_optional.py` | 1 | End-to-end XGBoost integration backtest, parameter selection, and saved model inference. |
-| `tests/test_phase2.py` | 3 | Complete synthetic Phase 2 runs, baseline preservation, identical-hour comparisons, provenance, saved-model inference, overwrite refusal and direct CLI inference without launcher thread settings. |
+| `tests/test_phase2.py` | 4 | Complete synthetic Phase 2 runs, baseline preservation, identical-hour comparisons, provenance, saved-model inference, overwrite refusal and direct CLI inference without launcher thread settings. |
 | `tests/test_phase2_research.py` | 2 | Selection freezes before comparison, independent full-window training, calibration boundaries, seed summaries and saved LSTM/Bi-LSTM/hybrid inference. |
-| **Total** | **101** | **100% Pass Rate** |
+| `tests/test_phase2_external.py` | 6 | Archive selection, field compatibility, declared target boundaries, common rows, immutable pre-download protocol and cached provenance. |
+| `tests/test_phase2_production.py` | 7 | Post-fork Gunicorn factory, port validation, HTTPS proxy/origin enforcement and rejection of source/data/model drift or synthetic bundles. |
+| **Total** | **115** | **100% Pass Rate** |
 
 ---
 
@@ -75,3 +77,9 @@ The script launches a temporary service on port 8016, simulates user interaction
 ## GitHub CI
 
 The classical matrix checks Python 3.11/3.12 without optional PyTorch. A dedicated Python 3.13 job installs the recorded CPU PyTorch environment, runs the full suite with deprecation warnings as errors, and rejects skipped neural tests. Both jobs upload JUnit evidence. Remote job results are reviewed after publication.
+
+## Phase 2 production and transfer evidence
+
+`python scripts/check_phase2_production.py --launch` exercises a real local Gunicorn worker, all five saved forecasts, model readiness, the selected default, measured comparisons, PDF delivery, invalid-input handling and HTTP headers. It writes its result only after all checks pass. The manual CI workflow additionally builds the release-backed Docker image and repeats HTTP parity on Linux.
+
+`python scripts/build_phase2_external_report.py` independently recomputes pooled and station scores from the frozen UCI 501 transfer predictions and checks common target hours, protocol/model/evaluator hashes, timestamps and the pre-download declaration. The external observations are evaluation data and are never used for fitting or selection.

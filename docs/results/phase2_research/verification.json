@@ -1,8 +1,8 @@
 {
-  "verified_utc": "2026-11-05T04:07:26.671550+00:00",
-  "source_code_sha256": "5749d38089d06b443f67e314aedfb08813bdcbc50867e9cf54cf970894e9250c",
+  "verified_utc": "2026-11-05T04:36:42.258621+00:00",
+  "source_code_sha256": "ba686e2f1da9f2bf60982912d08d0d9d1aa71df1efa48caf288ba52c7dc7eec5",
   "tests": {
-    "passed": 101,
+    "passed": 115,
     "failures": 0,
     "errors": 0
   },
@@ -42,16 +42,18 @@
   "cli_dashboard_forecasts": {
     "bilstm": 11.78113842010498,
     "lstm": 12.197717666625977,
-    "hybrid": 12.48949247598648
+    "hybrid": 12.48949247598648,
+    "ridge": 13.639784709097256,
+    "xgboost": 11.92273235321045
   },
   "report_pages": 5,
   "presentation_slides": 12,
   "executed_notebook_cells": 7,
   "document_sha256": {
-    "Aircast_Phase2_Report.pdf": "62f1ce82022fccfbb17c8d11d9840319afac2251317d19e01304726b75b1ca79",
+    "Aircast_Phase2_Report.pdf": "97ab3379a7e9beda53fd92264da7e428c60c051ba3cd7062a49a25fac3a86c94",
     "Aircast_Phase2_Report.tex": "ef06b65317e084c1917202787068696d1cb7c265a8354f348f2cd4d41001e578",
-    "Aircast_Phase2_Presentation.pptx": "77e3bce34884ff59da1345c2409c4e3b5cfe7a4998368c45dfff5197ea5f11a8",
-    "slides.pdf": "1068e773e77dd5e32363f3cfdad27212a842bb4960c2eeb8bd9d12b90d4f10fd",
+    "Aircast_Phase2_Presentation.pptx": "737392298252f645b25f007c2c948104ee2c5d07fb5bb3c4ac434c674ab7fae4",
+    "slides.pdf": "d85af78ecad541d9e8812551d45b4f4014c6c4a096e5a3e152bfa00cc578b1b9",
     "presenter_guide.md": "d60c0d60615e48581aef88b9d75cab25c744d698c9e1e245ffaa424b7697bbd7"
   },
   "checks": [

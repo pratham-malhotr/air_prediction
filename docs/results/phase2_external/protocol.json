@@ -1,0 +1,46 @@
+{
+  "declared_utc": "2026-11-05T04:27:10.095009+00:00",
+  "evaluation_kind": "external_station_and_feature_transfer",
+  "dataset_page": "https://archive.ics.uci.edu/dataset/501/beijing+multi+site+air+quality+data",
+  "download_url": "https://archive.ics.uci.edu/static/public/501/beijing%2Bmulti%2Bsite%2Bair%2Bquality%2Bdata.zip",
+  "doi": "10.24432/C5RK5G",
+  "license": "CC BY 4.0",
+  "target_start": "2015-01-01",
+  "target_end_exclusive": "2017-03-01",
+  "station_policy": "All 12 canonical station CSV members; no outcome-based station selection",
+  "models": [
+    "ridge",
+    "xgboost",
+    "bilstm",
+    "lstm",
+    "hybrid"
+  ],
+  "model_sha256": {
+    "ridge": "8879ef6ecf9ab4c361579f9e974a445b6d96952533ea660592216947314fc514",
+    "xgboost": "e760354b2a93400a2bf7bc0344bf012559b9728368013cf35e8a19fc8f0ab1a7",
+    "bilstm": "2f4c3f75ae25ac9817eadc9643e0ef5dc6a29fc430170b43b914071200572074",
+    "lstm": "8dc3ccf69092172750a51603e20cfd17d5175040998488950900f632a053d9ae",
+    "hybrid": "aa1e165fab273c8ddcfb9e9bbfe615b77d0a207c1362b3d1fe1c015cfce762bd"
+  },
+  "training_source_sha256": "5749d38089d06b443f67e314aedfb08813bdcbc50867e9cf54cf970894e9250c",
+  "runtime_source_sha256": "ba686e2f1da9f2bf60982912d08d0d9d1aa71df1efa48caf288ba52c7dc7eec5",
+  "evaluator_sha256": "b263bbce58c1cbf7e0689ac0cdd33f3911319ffb2a79c4b6c805a31c4fe0e39a",
+  "field_mapping": {
+    "PM2.5": "pm2.5",
+    "TEMP": "TEMP",
+    "DEWP": "DEWP",
+    "PRES": "PRES",
+    "wd": "cbwd"
+  },
+  "unavailable_inputs": [
+    "Iws",
+    "Ir",
+    "Is"
+  ],
+  "unavailable_policy": "Leave unknown; use existing fitted handling. Never relabel WSPM as Iws or RAIN as Ir.",
+  "wind_policy": "Keep original compass labels; unseen categories use frozen unknown-category handling.",
+  "fit_policy": "No fitting, recalibration, hyperparameter search or seed selection on external observations.",
+  "threshold_pm25": 218.0,
+  "scoring": "Common observed target/current/seasonal hours within each station; pooled and station-macro scores",
+  "interpretation": "Different monitoring sites and nearest weather stations plus missing legacy features; not a same-station temporal validation."
+}

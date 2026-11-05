@@ -236,7 +236,7 @@
       }
     ]
   },
-  "source_code_sha256": "5749d38089d06b443f67e314aedfb08813bdcbc50867e9cf54cf970894e9250c",
+  "source_code_sha256": "ba686e2f1da9f2bf60982912d08d0d9d1aa71df1efa48caf288ba52c7dc7eec5",
   "dataset_sha256": "4127f868775e31b3956522adc0ec75af8937dde6a3896e8beed3a376c6d27f1c",
   "parameter_policy": "Search on 2013 only; paired architecture/attention variants averaged across validation seeds.",
   "comparison_policy": "One predeclared comparison/deployment seed; never select a seed using 2014.",

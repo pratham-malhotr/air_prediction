@@ -30,4 +30,6 @@ Completed runs cannot be overwritten. Use a new `--output` for independent exper
 
 The generated ZIP is `dist/air_prediction_phase2.zip`, also provided as the [verified GitHub release package](https://github.com/pratham-malhotr/air_prediction/releases/download/phase2-research-2026-11-05/air_prediction_phase2.zip). It includes source, data attribution, selected weights, evaluation evidence, reports and the notebook. It excludes environments, credentials, Git metadata and training checkpoints, and includes a checksum manifest for every packaged file.
 
-The recorded handoff has 101 passing automated tests, completed browser checks, a five-page report, twelve presentation slides with notes and seven executed notebook cells. `deliverable_manifest.json` records document hashes and the saved verification evidence.
+The recorded handoff has 115 passing automated tests, completed browser checks, a five-page report, twelve presentation slides with notes and seven executed notebook cells. `deliverable_manifest.json` records document hashes and the saved verification evidence.
+
+The later [external transfer supplement](../../docs/phase2_external_validation.md) evaluates all 12 UCI 501 stations under a frozen protocol. It is separate from the five-page historical-study paper. [Production runtime instructions](../../deployment/phase2/README.md) accompany the runnable release.

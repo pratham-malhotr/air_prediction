@@ -1,0 +1,182 @@
+[
+  {
+    "station": "Aotizhongxin",
+    "archive_member_sha256": "a94fbcfc71708b6ffdc033360163d91efb7f675e496f6b5860929aa96b96351b",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 18032,
+    "coverage_fraction": 0.9510548523206751,
+    "missing_targets": 409,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.7497362869198312
+  },
+  {
+    "station": "Changping",
+    "archive_member_sha256": "a2e21402a6d95fb7043f87959e6e3dcbecb957aac356a6f8028a85b047c772e7",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 18059,
+    "coverage_fraction": 0.9524789029535865,
+    "missing_targets": 460,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.7794831223628692
+  },
+  {
+    "station": "Dingling",
+    "archive_member_sha256": "3d8dff81f18a80d9f455876a785642bffe1e9b9924ec1e6b7ce8cca790432eeb",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 18084,
+    "coverage_fraction": 0.9537974683544304,
+    "missing_targets": 424,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.7794831223628692
+  },
+  {
+    "station": "Dongsi",
+    "archive_member_sha256": "9c0020214425e5ee2a64d42f97a1f632e1d8f6b53ad50edd85a686cc7999f27e",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 17900,
+    "coverage_fraction": 0.9440928270042194,
+    "missing_targets": 510,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.7499472573839663
+  },
+  {
+    "station": "Guanyuan",
+    "archive_member_sha256": "59390fee3b032597b387491f5230e7edb90a8558e30217ebd6d9befbe669fbf9",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 18261,
+    "coverage_fraction": 0.9631329113924051,
+    "missing_targets": 310,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.7497362869198312
+  },
+  {
+    "station": "Gucheng",
+    "archive_member_sha256": "10ae48801ea55869fee56a48b885fb1127859c130551888d71673f34216ba951",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 18184,
+    "coverage_fraction": 0.9590717299578059,
+    "missing_targets": 331,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.7436708860759493
+  },
+  {
+    "station": "Huairou",
+    "archive_member_sha256": "812dcbe848b3ba2c2d25731064797bff803c46eb0c602156a1fa044df136dc26",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 18154,
+    "coverage_fraction": 0.9574894514767932,
+    "missing_targets": 331,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.6973628691983123
+  },
+  {
+    "station": "Nongzhanguan",
+    "archive_member_sha256": "572cf87b65ef543cd55d3a711b28474def224a46b0ec3fc8add8aaf13b67a487",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 18074,
+    "coverage_fraction": 0.9532700421940928,
+    "missing_targets": 400,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.7499472573839663
+  },
+  {
+    "station": "Shunyi",
+    "archive_member_sha256": "520b59e4ead3b0cfe7f1ed673e30275de8441e999db6f413d5172d2277b8c15a",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 17908,
+    "coverage_fraction": 0.9445147679324895,
+    "missing_targets": 460,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.7583333333333333
+  },
+  {
+    "station": "Tiantan",
+    "archive_member_sha256": "0743e34799cf1ee36195b73321b91baa5625276532e7263c588f68cdef3b4daa",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 18230,
+    "coverage_fraction": 0.9614978902953587,
+    "missing_targets": 299,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.7499472573839663
+  },
+  {
+    "station": "Wanliu",
+    "archive_member_sha256": "0b1a6d754a07f0def2f55434ddfa3870dcd0063b7f766a6f66b6c11bb05a377a",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 18320,
+    "coverage_fraction": 0.9662447257383966,
+    "missing_targets": 268,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.732753164556962
+  },
+  {
+    "station": "Wanshouxigong",
+    "archive_member_sha256": "ab1d6a356d6997a45f6d657ad47de1e05a4a08d4a7015b38a329a90665ab74d0",
+    "source_rows": 35064,
+    "expected_target_hours": 18960,
+    "common_target_hours": 17950,
+    "coverage_fraction": 0.9467299578059072,
+    "missing_targets": 446,
+    "unavailable_legacy_inputs": [
+      "Iws",
+      "Ir",
+      "Is"
+    ],
+    "unseen_wind_fraction": 0.7524789029535865
+  }
+]

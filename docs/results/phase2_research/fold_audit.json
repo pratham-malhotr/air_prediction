@@ -29,9 +29,9 @@
       0.03230251594567576,
       0.031239847716881628
     ],
-    "checkpoint": "eca5def87641e28cd56d730bd5aad52231fa84a265883e88cee43f2427ed1d8c.joblib",
+    "checkpoint": "dac51bcc5fc29f6aa6b038a18d153521eee996c091e50da6886241c7ce6dd6c5.joblib",
     "cached": false,
-    "elapsed_seconds": 9.718246500007808,
+    "elapsed_seconds": 11.291624250006862,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -64,9 +64,9 @@
       0.031802098793032973,
       0.030654470619071117
     ],
-    "checkpoint": "0b18484839c5f972ee3b1657f8599753596c1be955e2f8aa471c7e255c6f2e9d.joblib",
+    "checkpoint": "29c995481ab05a280a2d34c883f09efe91040e1198a9e45779fda577daddb848.joblib",
     "cached": false,
-    "elapsed_seconds": 9.267010124982335,
+    "elapsed_seconds": 10.814170917030424,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -99,9 +99,9 @@
       0.031056741328918988,
       0.03043159165664476
     ],
-    "checkpoint": "b9cdcd15ddeead15515827f194f2a959fa2a2fe1bb45abc9a6e6bd632da43798.joblib",
+    "checkpoint": "fca7b47b48f015a81e3621d46a1707588b05cfeaf96485e933401068dc002ccf.joblib",
     "cached": false,
-    "elapsed_seconds": 9.457056291983463,
+    "elapsed_seconds": 11.804264792008325,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -134,9 +134,9 @@
       0.031025885516186655,
       0.03044582512175807
     ],
-    "checkpoint": "d5adba02fb040bdd51238bf987e27f16cf7c4c0e524e2e770de6016c7e3bd122.joblib",
+    "checkpoint": "05d242b8746214eeefef7e01d2f70671d57e12408997bcfac0a0e577a47e995b.joblib",
     "cached": false,
-    "elapsed_seconds": 10.223975125001743,
+    "elapsed_seconds": 15.819373334059492,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -173,9 +173,9 @@
       0.02922712934712176,
       0.028419083430402354
     ],
-    "checkpoint": "44602e6304ef8877be4bd0e8b7ae40174ad6592b3e780486168af0ae23998566.joblib",
+    "checkpoint": "7d17520d46bad1c521768e0603d6e3067bead825a772f55f16933c421a173fd4.joblib",
     "cached": false,
-    "elapsed_seconds": 15.680801499984227,
+    "elapsed_seconds": 13.760150708025321,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -212,9 +212,9 @@
       0.02871606692404737,
       0.028247198191330477
     ],
-    "checkpoint": "adaffeeb2cc61654ab051f51b76bfea091b50255556da1b5582971aa4cebabd3.joblib",
+    "checkpoint": "b5dc526a7809c60be56ddf2d1c6a2edc5e2889fd9b95c23f542cb729bbc0f907.joblib",
     "cached": false,
-    "elapsed_seconds": 15.010249499930069,
+    "elapsed_seconds": 14.42401204095222,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -251,9 +251,9 @@
       0.028864168582132085,
       0.02819891366488529
     ],
-    "checkpoint": "cb148f1fce27385de3578a9bf093ab8bd1d3118060734f31ea10978ed8232699.joblib",
+    "checkpoint": "529670ee18299af7b5a75c7fb5a891905b1e3316334576d1fff3c7dcc6de4af1.joblib",
     "cached": false,
-    "elapsed_seconds": 15.18600291700568,
+    "elapsed_seconds": 15.881930749979801,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -290,9 +290,9 @@
       0.028626545975439063,
       0.028548909333614713
     ],
-    "checkpoint": "f26401dd9dfc59dc4a1339cd4d5c85c49cdcccd0cd9908f022e7e19c018ee889.joblib",
+    "checkpoint": "49692047cdff3cd7926f9d3fa6302e6cb8843aec9a25ebe92af56880d3671de6.joblib",
     "cached": false,
-    "elapsed_seconds": 16.135184542043135,
+    "elapsed_seconds": 17.760471165995114,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -325,9 +325,9 @@
       0.032980579259139185,
       0.03161101113300862
     ],
-    "checkpoint": "a0ca8308029d9aba3483109ba34236ccaede192932ce9f2b07e0eda73c9885ae.joblib",
+    "checkpoint": "749d2c41abf4ea123b64274e87dac2e825c851d992935ba531fa0e33b2d5ed86.joblib",
     "cached": false,
-    "elapsed_seconds": 15.271295291022398,
+    "elapsed_seconds": 16.135840500006452,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -360,9 +360,9 @@
       0.03191962430903457,
       0.030872619471740227
     ],
-    "checkpoint": "1af5095f4cc6b72299b3e5f1044b1aead02ee3e358d43961beb512ba8862a4b8.joblib",
+    "checkpoint": "bd16061e67bb111939cf103d5fdb665a47e6790091730a3ac89317a793345b3b.joblib",
     "cached": false,
-    "elapsed_seconds": 16.61095825000666,
+    "elapsed_seconds": 17.837788374978118,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -395,9 +395,9 @@
       0.03155851774397315,
       0.030843056086952612
     ],
-    "checkpoint": "db1ce95a7a9feae7d96bdce12a09eab08a2622dd90071575a9f001704a3bb581.joblib",
+    "checkpoint": "c86a984368753c6147b754d9dc7d62810fc24664edc146f87fc63dec11020032.joblib",
     "cached": false,
-    "elapsed_seconds": 17.82541512500029,
+    "elapsed_seconds": 18.75458912504837,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -430,9 +430,9 @@
       0.03113929888093773,
       0.030517849296012763
     ],
-    "checkpoint": "7a9a836b203762f3cbdbd603a732f8af40f9ee2bde9de1f17b43f3a5613d351b.joblib",
+    "checkpoint": "14806e05812f3fe45e2a8ef24a038c3139649236b8a899460b5a58f006d68c43.joblib",
     "cached": false,
-    "elapsed_seconds": 19.323368457960896,
+    "elapsed_seconds": 20.45365150005091,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -465,9 +465,9 @@
       0.02923766324627408,
       0.028363176122588943
     ],
-    "checkpoint": "622d98098a2e1819cc588b9f4fef0cb230568290cf1e36c070488f931a59f16a.joblib",
+    "checkpoint": "9a8e69ba8b3711f53c79ac36077238f66d3ebd28a2d0100f339595fc8b9d4e75.joblib",
     "cached": false,
-    "elapsed_seconds": 13.884541334002279,
+    "elapsed_seconds": 13.401756958919577,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -500,9 +500,9 @@
       0.02812826018114988,
       0.027721389901279574
     ],
-    "checkpoint": "86b213a06171c2ac983ad4033878da32fa4a574300e3cfd21bb133145febb4fd.joblib",
+    "checkpoint": "49cbcc3a2f00df63bd35914c28aab01ebc99a4ad6619e404474d7cb13e5e2627.joblib",
     "cached": false,
-    "elapsed_seconds": 13.996881791972555,
+    "elapsed_seconds": 14.595155208022334,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -535,9 +535,9 @@
       0.02885205007411269,
       0.027884910226188334
     ],
-    "checkpoint": "61b7b14f7aac006457ad45ef5680dbc78b41f18c785e51970d4dfd748cbc90aa.joblib",
+    "checkpoint": "2a24ca4fb521eef90db9cf30f02ff972e801d6934bf437a00a71cd413d58c5d8.joblib",
     "cached": false,
-    "elapsed_seconds": 14.95012333302293,
+    "elapsed_seconds": 15.79912829096429,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -570,9 +570,9 @@
       0.02848729656136426,
       0.027714992181575124
     ],
-    "checkpoint": "66997d4db80b5d59424f12f35c35ac8723eb62d390169fb7b6e83d1fc47c378b.joblib",
+    "checkpoint": "cb14cbc8ad1f5bbe02ca127cb0373fd2d6124c04cda32292eb99bd7b4faefdc0.joblib",
     "cached": false,
-    "elapsed_seconds": 16.033132042037323,
+    "elapsed_seconds": 17.55363104096614,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -605,9 +605,9 @@
       0.031125752954320865,
       0.03032291159666091
     ],
-    "checkpoint": "d538482c80378b888034e71e15af2f33ef883bf6d894d567e7136922ed9c34a2.joblib",
+    "checkpoint": "b5363f11d4fc1464702894eed1758fff3257f0974ad4b1ab5f49e462dfae146f.joblib",
     "cached": false,
-    "elapsed_seconds": 6.69068433297798,
+    "elapsed_seconds": 7.106630792026408,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -640,9 +640,9 @@
       0.03108869796041739,
       0.029597473488283815
     ],
-    "checkpoint": "5525034845c37366a594742b55792b854eb072ed031cce1eede1b4df2d9065bc.joblib",
+    "checkpoint": "ce91398c2078678aba8fada41d5934f85bbf9a1278ad026bd461676935cb6ea4.joblib",
     "cached": false,
-    "elapsed_seconds": 7.4005117090418935,
+    "elapsed_seconds": 8.258432041970082,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -675,9 +675,9 @@
       0.030753722434185567,
       0.02991664016958331
     ],
-    "checkpoint": "fa3da1fbb9e150bd137788177e72ef685bdfdcc535c288f88012c7b90fbe7efb.joblib",
+    "checkpoint": "050e39a2f1b93ce0603fcbfbf467a0f4c056427f7e1921f4978f897bac17c084.joblib",
     "cached": false,
-    "elapsed_seconds": 7.959676917060278,
+    "elapsed_seconds": 8.512991000083275,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -710,9 +710,9 @@
       0.030693195327442812,
       0.029793234627665685
     ],
-    "checkpoint": "4da105fd67d97ab33ff94dd50fe2ead8738fe2eb67a11ea8bf1dd9ba612f1e72.joblib",
+    "checkpoint": "8aa915bd887c081542311acf46294d88af1dddf8419fcf5e13fc6e65a82ab7af.joblib",
     "cached": false,
-    "elapsed_seconds": 8.605500749894418,
+    "elapsed_seconds": 9.064300458063371,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -745,9 +745,9 @@
       0.2277874715952527,
       0.2221621917801268
     ],
-    "checkpoint": "155a77bfdb06dfdabe3d8dcf5187fe3416d3cfdc2cf0798e617157b2386520eb.joblib",
+    "checkpoint": "be8aa36e9a2ffcc4387ccd5265397a7264acf6a3fee2a3ae6aad726be1ad4114.joblib",
     "cached": false,
-    "elapsed_seconds": 6.656744207954034,
+    "elapsed_seconds": 7.394713749992661,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -780,9 +780,9 @@
       0.22448333291331676,
       0.21973487830725566
     ],
-    "checkpoint": "33c2b39cf0522fd4eabd731221250fd49dc484b54b9cf08046e3d58c65c6c709.joblib",
+    "checkpoint": "72cccbf4851e3e31572f78ffcf78f29beb830d9280b4bdf1564ff2775fc1f177.joblib",
     "cached": false,
-    "elapsed_seconds": 7.437152917031199,
+    "elapsed_seconds": 7.9002662090351805,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -815,9 +815,9 @@
       0.22712993626101224,
       0.22259404888705955
     ],
-    "checkpoint": "8508f1ed930d78f21cf08a5d165ed4bc44b63b52c0abb2f7413c89a3de599f53.joblib",
+    "checkpoint": "138179327ee4250aec0629aad2e49e39f7d85db073f4e9244920d47659f04a0f.joblib",
     "cached": false,
-    "elapsed_seconds": 9.160192665993236,
+    "elapsed_seconds": 8.469944749958813,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -850,9 +850,9 @@
       0.22597891355495667,
       0.22171818040080588
     ],
-    "checkpoint": "4b68c5b63495f61d67dc425848938a8d61547f2c6fcfcec6a2325f4ab042ff5e.joblib",
+    "checkpoint": "704ac62978ab06183040b00bad1a7243a191cd476fdee3060e7231e065c770d7.joblib",
     "cached": false,
-    "elapsed_seconds": 8.568039249978028,
+    "elapsed_seconds": 9.498900958918966,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -889,9 +889,9 @@
       0.2095809349291346,
       0.2055945605836437
     ],
-    "checkpoint": "02f05c6085d50226200f0ad2714901e3d037dee91bc4fa03b84c733a014748e6.joblib",
+    "checkpoint": "e4262b449c1720abfea3b36338877ca185407174c75c013beb861fef3b5901e3.joblib",
     "cached": false,
-    "elapsed_seconds": 11.88822391605936,
+    "elapsed_seconds": 12.018324957927689,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -928,9 +928,9 @@
       0.20708808840453585,
       0.2022509719514078
     ],
-    "checkpoint": "c5942a4cc43d48be222837ebf2dc74c3faaed43e2032a0839aa3f6337f4e5001.joblib",
+    "checkpoint": "cff77e1be0dee34698126bd4f738af83fea0f8d58d089f2f9f8cbfe9bbd683da.joblib",
     "cached": false,
-    "elapsed_seconds": 13.932124125072733,
+    "elapsed_seconds": 12.928512542042881,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -967,9 +967,9 @@
       0.2095529015857856,
       0.20522014745850317
     ],
-    "checkpoint": "c8f7d0d44a2038f191aafbdb9e8e162efd5af8e59a774ec75d15e30d591e1be7.joblib",
+    "checkpoint": "db7405b9cdbed0ce09caf3e557a42823a52b9ec38aecaceeb3ba0b03eca5b5f8.joblib",
     "cached": false,
-    "elapsed_seconds": 13.714477916015312,
+    "elapsed_seconds": 14.479220250039361,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -1006,9 +1006,9 @@
       0.20828147644008133,
       0.2036659887476926
     ],
-    "checkpoint": "3dee2b92b78ec43c9431ce88d585613f63aa341833aa5688e1aec8ee52fe4b85.joblib",
+    "checkpoint": "18cbe9ec41147c16165cc925dc516f42b7847d45384414039f762ad3d2abe3e0.joblib",
     "cached": false,
-    "elapsed_seconds": 14.925454291980714,
+    "elapsed_seconds": 15.982317334041,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -1041,9 +1041,9 @@
       0.22802574002825765,
       0.22254148261565654
     ],
-    "checkpoint": "bb3a0df308958b70b781be833babb7b241ce92661dc91045ffb25823b6cd2965.joblib",
+    "checkpoint": "91ecd50735fc64bdfef8e5d85bee0acddc94f69d8100efb403886d6773139377.joblib",
     "cached": false,
-    "elapsed_seconds": 14.523557249922305,
+    "elapsed_seconds": 13.759952709078789,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -1076,9 +1076,9 @@
       0.2248549843802693,
       0.22032441971010755
     ],
-    "checkpoint": "3a8becc48fc52d1ecb309afe4ffcbbc25d2da075ad7687c9580b4ce27085b663.joblib",
+    "checkpoint": "276c663a3a16403aaf5cd25c214ee5f197e9ae9726367f397c6afcf246be6642.joblib",
     "cached": false,
-    "elapsed_seconds": 14.611724750022404,
+    "elapsed_seconds": 15.502048082998954,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -1111,9 +1111,9 @@
       0.22691773127687043,
       0.2220937821162472
     ],
-    "checkpoint": "3a911a530f030a75bea73af005df7e40578f6943578f133266a71a863811f853.joblib",
+    "checkpoint": "e329f8716ad7b5fd4fb7e28da108606bd6bc181ba1643db705431e7220110b3f.joblib",
     "cached": false,
-    "elapsed_seconds": 17.488330332911573,
+    "elapsed_seconds": 19.86379166704137,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -1146,9 +1146,9 @@
       0.22704998956642922,
       0.22303920717731543
     ],
-    "checkpoint": "8ca7793d39e18e52709666bc8fe31de39ea96d01a34dee170996da5accaacc5f.joblib",
+    "checkpoint": "166ee654f2d3aa3d5093fca429f7c0e1bca5b12eb7a1d2189cc65a355f54dfb7.joblib",
     "cached": false,
-    "elapsed_seconds": 18.16620983404573,
+    "elapsed_seconds": 18.41454300004989,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -1181,9 +1181,9 @@
       0.2377590168375995,
       0.23381434212339502
     ],
-    "checkpoint": "9d05907b42a97d19bb674835adc85a4c1c713bf36af947fdb23b5a5c8b7ef825.joblib",
+    "checkpoint": "6866e20c3d379498e73fcdba87ccf724a89a82a12adc9a3142da2e43d9143b46.joblib",
     "cached": false,
-    "elapsed_seconds": 8.252135833026841,
+    "elapsed_seconds": 8.234583541983739,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -1216,9 +1216,9 @@
       0.23488465778405007,
       0.23122651114226309
     ],
-    "checkpoint": "840fd51081dd498a6bd2318caf9a97b59855d006ea762352dfe0d7bea7daed26.joblib",
+    "checkpoint": "93bf2cfc2e1784cd005708500e449860827109fcb5f79de5900584951f43be53.joblib",
     "cached": false,
-    "elapsed_seconds": 8.151141999987885,
+    "elapsed_seconds": 8.645901457988657,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -1251,9 +1251,9 @@
       0.2364819629636457,
       0.23333990185791798
     ],
-    "checkpoint": "0fcffaac3f129e058fc5ca2649ef7b17d86965fafbd0d6c378ec06eaef9e3864.joblib",
+    "checkpoint": "7005e2f508e66c441caf6670236c410cf17988d7011bf3111b8c798166b12655.joblib",
     "cached": false,
-    "elapsed_seconds": 9.680519875022583,
+    "elapsed_seconds": 9.48724275000859,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -1286,9 +1286,9 @@
       0.23553256599461306,
       0.23222485005396482
     ],
-    "checkpoint": "cc1d6cfaf3008be3a488bce29db7e86708000c956f7383b6b64d68f3306da190.joblib",
+    "checkpoint": "4bd2189d4a5b71ee3330f9f0b22aca5287cdc3b426307587c18903f08ed8df7c.joblib",
     "cached": false,
-    "elapsed_seconds": 11.081854208023287,
+    "elapsed_seconds": 10.761928500025533,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -1321,9 +1321,9 @@
       0.23986111981648822,
       0.23534452494671096
     ],
-    "checkpoint": "af6c5921b45ad17fd2135f9144141a999a588894dfbd4a180f38efdeda321521.joblib",
+    "checkpoint": "05c79aff4634a51ee4ea33ad27ecfeb8e732e9801021b1d04345a8b5de55c104.joblib",
     "cached": false,
-    "elapsed_seconds": 8.324875375023112,
+    "elapsed_seconds": 8.252556915977038,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -1356,9 +1356,9 @@
       0.2363779356848525,
       0.2325695759662121
     ],
-    "checkpoint": "b730db608d1ce08b51de776c896e3ec0368d66c70633fbc3693b73817eb27b2c.joblib",
+    "checkpoint": "dfb1eba01c55764b320268a4f4f2add9f4c89196fddf6cda47f2c78388fb4753.joblib",
     "cached": false,
-    "elapsed_seconds": 8.610750416992232,
+    "elapsed_seconds": 8.896781665971503,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -1391,9 +1391,9 @@
       0.23611559937500518,
       0.2325282754761937
     ],
-    "checkpoint": "1c4abb777ad19c0a9f5ea84a80583a6ef69d80288fd7165e58fc71a9d0780ae9.joblib",
+    "checkpoint": "dde2ca77ef195c7544f02d00c4e23a01f8fb72f4b7b87dc51377c2f4ee05c90e.joblib",
     "cached": false,
-    "elapsed_seconds": 9.007817000034265,
+    "elapsed_seconds": 9.71659887500573,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -1426,9 +1426,9 @@
       0.23660674204519064,
       0.2326407296217622
     ],
-    "checkpoint": "61bdae3e9c8d2133e7e30c58c2a36a94fa70445e18dc6af5c512332a6121ebc6.joblib",
+    "checkpoint": "a9bbf24873de92cdf9fe0b62dfab15172e27c409b93b021ec673450a32c1e780.joblib",
     "cached": false,
-    "elapsed_seconds": 11.354219041066244,
+    "elapsed_seconds": 12.977020084043033,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -1461,9 +1461,9 @@
       0.24036729534012777,
       0.23750534679201818
     ],
-    "checkpoint": "a87dea1c6a4a908dc6e9304efd0677345c6c4c4abf663ac820685205ec80e005.joblib",
+    "checkpoint": "9abb3dcbbc8a2a59b6bb9e8110121da97c2e731c6c3fb94164a348d0870ad9c4.joblib",
     "cached": false,
-    "elapsed_seconds": 11.205840999959037,
+    "elapsed_seconds": 24.877305833040737,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -1496,9 +1496,9 @@
       0.23582475734112546,
       0.23288790903290127
     ],
-    "checkpoint": "f65c611200efc32f12525c8beefe448f4a685134d1b09bd5bbc041bb89b3a5d0.joblib",
+    "checkpoint": "16f1b4055b5e7dfa1577337e45632e03cbc9ed4344d68f6a058a1bc58388d29c.joblib",
     "cached": false,
-    "elapsed_seconds": 9.836797416908666,
+    "elapsed_seconds": 12.421691499999724,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -1531,9 +1531,9 @@
       0.23961798271883628,
       0.23630088308258992
     ],
-    "checkpoint": "1dd430253d320bb953e5f1855991ed2618ae10c018aba2d917828a42c7eee307.joblib",
+    "checkpoint": "09528f21153ef56002d6e8f89ca21b489c24709a7b705b276aa10320326d4a4d.joblib",
     "cached": false,
-    "elapsed_seconds": 10.466038124985062,
+    "elapsed_seconds": 10.105872249929234,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -1566,9 +1566,9 @@
       0.23840840782103728,
       0.23493944104854225
     ],
-    "checkpoint": "b1794d9b3b0bd3fdbf4baad623c0fee5a712db3814488233df658302301d96ff.joblib",
+    "checkpoint": "afbfa903d2810bc356c2d7757f06ff27ceffe205a40ed025db7c0edd66b95c57.joblib",
     "cached": false,
-    "elapsed_seconds": 10.24982483300846,
+    "elapsed_seconds": 10.065063875052147,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -1601,9 +1601,9 @@
       0.2277874715952527,
       0.2221621917801268
     ],
-    "checkpoint": "155a77bfdb06dfdabe3d8dcf5187fe3416d3cfdc2cf0798e617157b2386520eb.joblib",
+    "checkpoint": "be8aa36e9a2ffcc4387ccd5265397a7264acf6a3fee2a3ae6aad726be1ad4114.joblib",
     "cached": true,
-    "elapsed_seconds": 0.08432891592383385,
+    "elapsed_seconds": 0.06392141699325293,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -1636,9 +1636,9 @@
       0.22448333291331676,
       0.21973487830725566
     ],
-    "checkpoint": "33c2b39cf0522fd4eabd731221250fd49dc484b54b9cf08046e3d58c65c6c709.joblib",
+    "checkpoint": "72cccbf4851e3e31572f78ffcf78f29beb830d9280b4bdf1564ff2775fc1f177.joblib",
     "cached": true,
-    "elapsed_seconds": 0.004015707992948592,
+    "elapsed_seconds": 0.0039256669115275145,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -1671,9 +1671,9 @@
       0.22712993626101224,
       0.22259404888705955
     ],
-    "checkpoint": "8508f1ed930d78f21cf08a5d165ed4bc44b63b52c0abb2f7413c89a3de599f53.joblib",
+    "checkpoint": "138179327ee4250aec0629aad2e49e39f7d85db073f4e9244920d47659f04a0f.joblib",
     "cached": true,
-    "elapsed_seconds": 0.0038029589923098683,
+    "elapsed_seconds": 0.004378624958917499,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -1706,9 +1706,9 @@
       0.22597891355495667,
       0.22171818040080588
     ],
-    "checkpoint": "4b68c5b63495f61d67dc425848938a8d61547f2c6fcfcec6a2325f4ab042ff5e.joblib",
+    "checkpoint": "704ac62978ab06183040b00bad1a7243a191cd476fdee3060e7231e065c770d7.joblib",
     "cached": true,
-    "elapsed_seconds": 0.003573457943275571,
+    "elapsed_seconds": 0.0037756250239908695,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -1741,9 +1741,9 @@
       0.2278760450759433,
       0.2231570910669319
     ],
-    "checkpoint": "c1a8d587ee2986fb3be3b642968b777885ec5c0f97ffdbedf257e5e454afb4f8.joblib",
+    "checkpoint": "d8fa8c6a11076eb42b94bbd4daed5897cc6292927b8b048dbbf647cb45aa1a85.joblib",
     "cached": false,
-    "elapsed_seconds": 6.802986041991971,
+    "elapsed_seconds": 7.015102333039977,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -1776,9 +1776,9 @@
       0.22436011715201856,
       0.21975216082255744
     ],
-    "checkpoint": "9374ad973291baa201faf92fef28b3b2d9271bb840eb334972f4cf6ab928c59d.joblib",
+    "checkpoint": "2275c634afb67245833dbfb69735e88df4b5df2031319d27da1310f23e8a4c2a.joblib",
     "cached": false,
-    "elapsed_seconds": 7.277868999983184,
+    "elapsed_seconds": 7.742636000039056,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -1811,9 +1811,9 @@
       0.22627617191979754,
       0.22152442614440446
     ],
-    "checkpoint": "d5a21796523e0fd879d19815a646543762e31855d6b33fef8cd45b6107be071e.joblib",
+    "checkpoint": "86b8269bafa87b19fb0c74892b6ea7192ecdef9d9af6b2b0d3474a21644e9651.joblib",
     "cached": false,
-    "elapsed_seconds": 8.87560258305166,
+    "elapsed_seconds": 8.406455792021006,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -1846,9 +1846,9 @@
       0.22635081834135426,
       0.22086771596991273
     ],
-    "checkpoint": "7e35013eb4a8856648c8166b04c5179f8d1d8992aa47f13e1696501b7045fbc7.joblib",
+    "checkpoint": "514327b9d0e3ae3d67a34dec3a6f1f54c2665adbae8bc50aa83d6bdadac6c50f.joblib",
     "cached": false,
-    "elapsed_seconds": 9.803004958084784,
+    "elapsed_seconds": 9.43914562498685,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -1881,9 +1881,9 @@
       0.22791230772484838,
       0.2236347971476775
     ],
-    "checkpoint": "cd046aaa49e05087e56c785e71f138b345d3e30a5dca1b7cd594459f7c5d7f90.joblib",
+    "checkpoint": "82e0497725a82783dd85b88ef71b316a7d649319a75bdb9020c0148486b1c0f5.joblib",
     "cached": false,
-    "elapsed_seconds": 6.625777875073254,
+    "elapsed_seconds": 8.88816874998156,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -1916,9 +1916,9 @@
       0.22512745799714037,
       0.2206200750130292
     ],
-    "checkpoint": "68c22e81b24c1e8995d488b32782990bf6bdf2d101fd4fc552d6cef0fe8f8f41.joblib",
+    "checkpoint": "8352569b5e50e1db97b067bb460a9213a2ba58e4e9b07cf8fafd1e7dd80e6cba.joblib",
     "cached": false,
-    "elapsed_seconds": 7.469345374964178,
+    "elapsed_seconds": 45.34751333389431,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -1951,9 +1951,9 @@
       0.22745000427902543,
       0.2228736404511228
     ],
-    "checkpoint": "8feaddbdf45c4f79990e77789e18c1685a75d17db19827cf2589bfce106ea194.joblib",
+    "checkpoint": "6d7f4402ebf7283177dc192a0b0c74c64596c29dc5d74c822dbb92f9b669b0d2.joblib",
     "cached": false,
-    "elapsed_seconds": 8.009918625000864,
+    "elapsed_seconds": 13.051011458039284,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -1986,9 +1986,9 @@
       0.22663873801716883,
       0.2225819341827464
     ],
-    "checkpoint": "51d4e3952af7fa79bd800b7442c1b1f959653b9cf976466a4fd3dbf559bf8aa1.joblib",
+    "checkpoint": "c9c3cdee8cbfbfda484b5fffac182604737a567e27eb6f8b4dd6f83a5fef0229.joblib",
     "cached": false,
-    "elapsed_seconds": 8.325387666933239,
+    "elapsed_seconds": 9.123143917066045,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -2021,9 +2021,9 @@
       0.24924852964583213,
       0.245791820584328
     ],
-    "checkpoint": "921f52ce4d660e376833e404643b8190d1414b17d0bfd67d52b9c45d75de860e.joblib",
+    "checkpoint": "7b39ef10ffe57fc4ad3e1660785fc6d91f1f48eadebdfa81dbfc73d04a6ce26d.joblib",
     "cached": false,
-    "elapsed_seconds": 4.082986458088271,
+    "elapsed_seconds": 4.087502958951518,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -2056,9 +2056,9 @@
       0.2441068503749911,
       0.24153005255844598
     ],
-    "checkpoint": "b9f715e6110c6693af176f14fc8ec7ca945c665a0574ae7b0844e60facf9b991.joblib",
+    "checkpoint": "2eb58b5d1278c8eef3aef8e92ae5cc47aca96d0d2421dc69d3eb211214a7c1fa.joblib",
     "cached": false,
-    "elapsed_seconds": 4.355723166023381,
+    "elapsed_seconds": 4.477196833002381,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -2091,9 +2091,9 @@
       0.24603248218397808,
       0.24378227550474094
     ],
-    "checkpoint": "1ec1bd77d1a733870b97a35a335f7b7ffdf7106f6e86938a7bbf7badd21450b0.joblib",
+    "checkpoint": "ba39a8324cb7d6e9267474801bfcee2a41e8c869102e2a62d99f5fb096927da7.joblib",
     "cached": false,
-    "elapsed_seconds": 4.632185291033238,
+    "elapsed_seconds": 4.915990374982357,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -2126,9 +2126,9 @@
       0.24656323133225538,
       0.244038601791904
     ],
-    "checkpoint": "cb80f27b9605fed888a0ad05003b6a64f921206bd847dad967ccf57f88061d3e.joblib",
+    "checkpoint": "0cf43161bfa364a4fc0cf4bd3d893d0b0361bf577a266f7c64b2ebcafb14b830.joblib",
     "cached": false,
-    "elapsed_seconds": 5.484139749896713,
+    "elapsed_seconds": 5.588463666033931,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -2161,9 +2161,9 @@
       0.249816450519251,
       0.2470027108281189
     ],
-    "checkpoint": "c6bb178d432b255872a922f5457d62ef9f92e59ad096df4c080bb6784552d8d1.joblib",
+    "checkpoint": "180b53eabb3288fc9170325af4703b8ffea3d3a7617f09f1a49d528c7f961bf9.joblib",
     "cached": false,
-    "elapsed_seconds": 3.970550833037123,
+    "elapsed_seconds": 4.5247820829972625,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -2196,9 +2196,9 @@
       0.24502700061479024,
       0.24210488377318737
     ],
-    "checkpoint": "5ef5c3427f5967c299c1a8072e029621ce1480a711614183af7be4f6428e6e8d.joblib",
+    "checkpoint": "fcd1094e387f2a96e2654cfd95896bfc95728dea3438cab99de4d6500fd88d1a.joblib",
     "cached": false,
-    "elapsed_seconds": 4.328095000004396,
+    "elapsed_seconds": 5.620043000089936,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -2231,9 +2231,9 @@
       0.2467794961402051,
       0.24409283500327147
     ],
-    "checkpoint": "a0dd3ec5e4f9eddb0ef799f541feac4dd86cde8b9a94afc27971936c9fe3d4a8.joblib",
+    "checkpoint": "41a3a714fdcfa921885db3d120bdb1528839b56383e0b8247e048a88ec523636.joblib",
     "cached": false,
-    "elapsed_seconds": 4.729418582981452,
+    "elapsed_seconds": 5.86093766707927,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -2266,9 +2266,9 @@
       0.24620715368363913,
       0.24253838935252003
     ],
-    "checkpoint": "f0a020a41a70825f3e37d3aaa362374b0d5ec172bee435f7d2954581cc7139e4.joblib",
+    "checkpoint": "e1fc438e33e731dcbdf27e43103998606db7067ab41e509ec94b29ec866b2e7d.joblib",
     "cached": false,
-    "elapsed_seconds": 5.043063292047009,
+    "elapsed_seconds": 5.9346363339573145,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -2301,9 +2301,9 @@
       0.25152923956716605,
       0.24824276822132818
     ],
-    "checkpoint": "b5e3e645c44c8267da767031e67326ee9b5a7144d12985aa75e137f106296512.joblib",
+    "checkpoint": "0f0df762dabedee9ad9da18cee6faff888584f1033be24abe5ef669471562437.joblib",
     "cached": false,
-    "elapsed_seconds": 4.0800357080297545,
+    "elapsed_seconds": 4.619187459000386,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -2336,9 +2336,9 @@
       0.246590261617803,
       0.24327654912013197
     ],
-    "checkpoint": "733fae5633d039d0aa939ba82a4b305e517065ac8ee9994ac890475799861243.joblib",
+    "checkpoint": "95bee4e6ca5794f9a7cd4c3e40af9c7ffa6170399a4de0a0547b79f665aae553.joblib",
     "cached": false,
-    "elapsed_seconds": 4.354902792023495,
+    "elapsed_seconds": 4.84067437495105,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -2371,9 +2371,9 @@
       0.24805304799084232,
       0.24549295800422555
     ],
-    "checkpoint": "faafd33a58e9de3fcbec5364c297ab5eac56254e40ce314df17c8b32e0dc3be1.joblib",
+    "checkpoint": "77be1d86ec18d3c6f13c5de944d1d2d6700dcb2616613929977f855eaafd64a0.joblib",
     "cached": false,
-    "elapsed_seconds": 4.780008334084414,
+    "elapsed_seconds": 5.107544625061564,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -2406,9 +2406,9 @@
       0.2473949104153313,
       0.2445449838355769
     ],
-    "checkpoint": "7717b37f13e9658aac43ae4a6fccf3112affbfb9c0614b535468e9c5cb484e53.joblib",
+    "checkpoint": "70d7f5bee322456be86e44b7bf4e1bf03dab3250134fafbe22621b5db488046b.joblib",
     "cached": false,
-    "elapsed_seconds": 5.307303959038109,
+    "elapsed_seconds": 5.89049008290749,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -2441,9 +2441,9 @@
       0.23284454702722007,
       0.2298913854415463
     ],
-    "checkpoint": "547780f132fa25c8fb8ad1489341e3a671fb06dc047ff2e4414f65b94af8e99c.joblib",
+    "checkpoint": "d20f4de01f160486c368a6e7414d3d793f067870aac1e2bb044e89d8a3853b50.joblib",
     "cached": false,
-    "elapsed_seconds": 3.4944886250887066,
+    "elapsed_seconds": 4.662791582988575,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -2476,9 +2476,9 @@
       0.22868066952766075,
       0.22561076278717565
     ],
-    "checkpoint": "e1c36bb04309c39c2ca40025dcf33a36265f703b846fe588820deb807b1b88a4.joblib",
+    "checkpoint": "6e348d77f6f6a368ae138234a97f4b9003e9a4264be26b715d46662a55621cef.joblib",
     "cached": false,
-    "elapsed_seconds": 3.928161000018008,
+    "elapsed_seconds": 4.9219976250315085,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -2511,9 +2511,9 @@
       0.23123109983593762,
       0.22747238535809639
     ],
-    "checkpoint": "5f47aedcf43e052cb6e02bf0dae4106394b681448c2fc16ea318a3b2b4b9b354.joblib",
+    "checkpoint": "8e1f7357be6c867afdf3b12d383cdafb1bb52c01eb5517f980ebc431ce654c41.joblib",
     "cached": false,
-    "elapsed_seconds": 5.973014790914021,
+    "elapsed_seconds": 6.592513542040251,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -2546,9 +2546,9 @@
       0.230776228863194,
       0.22738629536348084
     ],
-    "checkpoint": "a15d7ff5a18ab496c274bf1079d58adb034021ad532e1f91683d72e47a4e807c.joblib",
+    "checkpoint": "df133d9460bba15ceac850fd996df853ccfdf460fd922a5a1861c0185d7b9cd5.joblib",
     "cached": false,
-    "elapsed_seconds": 5.4336563750403,
+    "elapsed_seconds": 7.4442055829567835,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -2581,9 +2581,9 @@
       0.2321171504943975,
       0.2287809797033747
     ],
-    "checkpoint": "4daa138ea23c4a58046d89eec7ef908cdeaaa04db2edc479a60aba3c070f3b39.joblib",
+    "checkpoint": "2df24c0a9061f92257f7c742c082ba03687bd4de7f02ef12e800df289577701a.joblib",
     "cached": false,
-    "elapsed_seconds": 4.230499791097827,
+    "elapsed_seconds": 4.506107749999501,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -2616,9 +2616,9 @@
       0.2298275221938053,
       0.2257109503040035
     ],
-    "checkpoint": "18c5524599c440330387dde551adcc118438a3caea67e52d39d15139811be6c3.joblib",
+    "checkpoint": "f03a32fa1631049173d3694b8b58ffa36c3e533a696daa33dbfa67fa02542844.joblib",
     "cached": false,
-    "elapsed_seconds": 4.358304707915522,
+    "elapsed_seconds": 4.460667334031314,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -2651,9 +2651,9 @@
       0.23138480941613754,
       0.22740664941570038
     ],
-    "checkpoint": "a34c4f9c2905355f59a5420a3f9d5142738865e4db8b19b67fa8c0f2cc2e09c3.joblib",
+    "checkpoint": "a4a42b2f595b252ec5d45fee7066df966833806fd461a4a0111bd2409b66e2dc.joblib",
     "cached": false,
-    "elapsed_seconds": 4.39837816695217,
+    "elapsed_seconds": 4.933873167028651,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -2686,9 +2686,9 @@
       0.23043563333897646,
       0.2268989855872539
     ],
-    "checkpoint": "06474f74dddce3d677dda5cc495a8e6f60f9242f66083cc3f853ec71ee141a11.joblib",
+    "checkpoint": "36c6e60dcf4508171704341b5d1e3db0600edf68d0021c2b5e6582677136a6da.joblib",
     "cached": false,
-    "elapsed_seconds": 4.363909250008874,
+    "elapsed_seconds": 5.6981438340153545,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -2721,9 +2721,9 @@
       0.23225503853346396,
       0.22982644644074263
     ],
-    "checkpoint": "967e53dec3129521329a20314f3f65e384dfac368b1911f0544e38660fea92bf.joblib",
+    "checkpoint": "4ff6b1245606418c7f9009125bcf2e772ddc3679443426793f558c270eb18d1a.joblib",
     "cached": false,
-    "elapsed_seconds": 3.4195782920578495,
+    "elapsed_seconds": 4.986339999944903,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -2756,9 +2756,9 @@
       0.22961470818602608,
       0.22571862412229024
     ],
-    "checkpoint": "6e551c536b265b52b426b09da66619e00c7f23db15f9fa1c4665c70c0219bc9b.joblib",
+    "checkpoint": "b13af1cf80798438dff29b862a0c516e0fcb43c6e61923dde1159a065ea9e945.joblib",
     "cached": false,
-    "elapsed_seconds": 3.8548834999091923,
+    "elapsed_seconds": 5.203842167044058,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -2791,9 +2791,9 @@
       0.23122868322961584,
       0.22810835314749187
     ],
-    "checkpoint": "8f34a3c2354510d9efc44828523c769e7b2ecb491983a90cb2067db742eb1acd.joblib",
+    "checkpoint": "14891b3444e4bea0651b798c68505abdbe301de3cb7af345baab2e45446e6cdd.joblib",
     "cached": false,
-    "elapsed_seconds": 4.108063625055365,
+    "elapsed_seconds": 5.139007334015332,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -2826,9 +2826,9 @@
       0.23072726966879853,
       0.22766260529429536
     ],
-    "checkpoint": "762370197a5b3f781398fe158686ae2f97ef7c1626d2b1f67920e35d658ff99d.joblib",
+    "checkpoint": "92b6f91e4cde953682b6161952484790b531421c4e3e42a206c08c3336a6735e.joblib",
     "cached": false,
-    "elapsed_seconds": 4.403606583015062,
+    "elapsed_seconds": 5.754184124991298,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -2861,9 +2861,9 @@
       0.22723161697551406,
       0.2226161197411111
     ],
-    "checkpoint": "014fcfb61f300de3351d9a8f82f8e6cc4693376ce8973baadb205bd8f2d58e0c.joblib",
+    "checkpoint": "9b2f9e040a4f6dc9a4bf3a700088bf369156d1f7a9cbd058de6266224f332bef.joblib",
     "cached": false,
-    "elapsed_seconds": 6.553109457949176,
+    "elapsed_seconds": 8.686444541090168,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -2896,9 +2896,9 @@
       0.22605653209373255,
       0.22128245851365805
     ],
-    "checkpoint": "b34eb573beb366d034527d4f9022c18353ecbfda7b1ad854ebbbfef116f8eebd.joblib",
+    "checkpoint": "68aab829420a03fc48620b679d81e6ec9bb7047139ed2ddef40ae02a45341858.joblib",
     "cached": false,
-    "elapsed_seconds": 8.532241165987216,
+    "elapsed_seconds": 8.75409095804207,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -2931,9 +2931,9 @@
       0.22462262648742826,
       0.2206538319298061
     ],
-    "checkpoint": "2ecbe76eb3f1a1a10bf1f16f8c38b96cdab09f0bebbdd72339a950e8275ad83b.joblib",
+    "checkpoint": "b43da716bb57bb4d92709e7c5f41179e961a0e4d12a1c841f391821c81804292.joblib",
     "cached": false,
-    "elapsed_seconds": 7.338000625022687,
+    "elapsed_seconds": 11.57877045799978,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -2966,9 +2966,9 @@
       0.22549631729390024,
       0.22087942031066027
     ],
-    "checkpoint": "8cce485e88f9bea3423bce15b66103a0922395b0bee60167f057efb93ae5db5a.joblib",
+    "checkpoint": "129070c8b16e070bb848f88a7b94d95ca75a8dc219fb6c6954999399e648b42e.joblib",
     "cached": false,
-    "elapsed_seconds": 7.9835135421017185,
+    "elapsed_seconds": 10.089777584071271,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -3001,9 +3001,9 @@
       0.22636918953186036,
       0.22155005656944785
     ],
-    "checkpoint": "a5264a7bd259f6476c2ace818c11581bc910a441168a3428d61666a150358806.joblib",
+    "checkpoint": "d5975fa9cf864772ce1a3171b0ba3031e317b1a553cd77184bf16f58ca519005.joblib",
     "cached": false,
-    "elapsed_seconds": 6.826300082961097,
+    "elapsed_seconds": 7.2455647910246626,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -3036,9 +3036,9 @@
       0.22747939135164605,
       0.22283848478608323
     ],
-    "checkpoint": "bad111118f2ebe042951b7ce4903c8214f0ec03cf45fc04f373c5033e488aa25.joblib",
+    "checkpoint": "11cad29f85856b7698d81307b50e29f02bfc70a4ea5f825722ef0e2ed96f5aa2.joblib",
     "cached": false,
-    "elapsed_seconds": 6.141101417015307,
+    "elapsed_seconds": 8.141314208041877,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -3071,9 +3071,9 @@
       0.22645509461852933,
       0.22165419683007007
     ],
-    "checkpoint": "230ca54c5042a3b903ff2fa9e0523a8d5f20d9b7cd36b8c8cd0410fefb0e7c51.joblib",
+    "checkpoint": "e5de0b78a2baacf666304f90f6e9c3f9c81efaf369cf1713bfe3de4d335c9439.joblib",
     "cached": false,
-    "elapsed_seconds": 6.359416874940507,
+    "elapsed_seconds": 8.516500875004567,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -3106,9 +3106,9 @@
       0.2274575085077419,
       0.22292043994609745
     ],
-    "checkpoint": "757f97d25ebcfefb325de53bf1279cc335a700973cb21da3a77685d7c7abc3b0.joblib",
+    "checkpoint": "b17905f87eeecc346e2dd4c555dcf5b9725fb2f1b5498c25bfbc2e2a9b24e1eb.joblib",
     "cached": false,
-    "elapsed_seconds": 6.761653334018774,
+    "elapsed_seconds": 9.11759416689165,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -3141,9 +3141,9 @@
       0.2280550297521077,
       0.22344594052452385
     ],
-    "checkpoint": "474ec49aa0d85e8325058a6883628a75d9698bd7ca4cf8c835f5435a2a8ad359.joblib",
+    "checkpoint": "58fb436e67ca383e616bc6adcadc37072cf652634788f189cd335555f87add08.joblib",
     "cached": false,
-    "elapsed_seconds": 6.1742300420301035,
+    "elapsed_seconds": 6.637880292022601,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -3176,9 +3176,9 @@
       0.22712716893244594,
       0.22233945401890273
     ],
-    "checkpoint": "0ea9730c63c207696cb4d7cdc9db7c4bac8cb98133805ecdb59d6ec662e43b66.joblib",
+    "checkpoint": "48cfefc9eb69895b2d8b4b3dc5cc5b24ea6c360995bc2d660c1a9b10d2f51a76.joblib",
     "cached": false,
-    "elapsed_seconds": 9.392624333966523,
+    "elapsed_seconds": 7.090104375034571,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -3211,9 +3211,9 @@
       0.22553896915577565,
       0.2210880367731467
     ],
-    "checkpoint": "2828276608cbd927fcfc42e11e0eee9ace8d06995aaa9d4e846652605ef91885.joblib",
+    "checkpoint": "9a52b2cd3b775d4f92b684e81c3b7bb144fb8fe3d687f993808ad6c46aa31bd1.joblib",
     "cached": false,
-    "elapsed_seconds": 7.3444600000511855,
+    "elapsed_seconds": 7.5271613750373945,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -3246,9 +3246,9 @@
       0.22588780468322858,
       0.22129091215537014
     ],
-    "checkpoint": "a459848151973ba7abbc22863995eefe2f38106af0563b4976069242c2270691.joblib",
+    "checkpoint": "a9db280e681a2f228915bfab0faccc4d63446301d2fa7b291fa6a842b1377cdb.joblib",
     "cached": false,
-    "elapsed_seconds": 7.848643125034869,
+    "elapsed_seconds": 8.27309283404611,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -3281,9 +3281,9 @@
       0.22722598947780312,
       0.22318451425321734
     ],
-    "checkpoint": "412122123c56c86f9a4411b4f9af45b3e683c6038d237d111be6e210d54b589c.joblib",
+    "checkpoint": "3baa232a0c720c5582a3cc0df3c5e92b8db6c3242234d912abd65e373727af43.joblib",
     "cached": false,
-    "elapsed_seconds": 5.394979584030807,
+    "elapsed_seconds": 5.737719416967593,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -3316,9 +3316,9 @@
       0.22749790281103888,
       0.22292263794798056
     ],
-    "checkpoint": "3e5a971a28bef0a41fff06a537947302102aef1996ca7b487eaf6bd09dfb5d98.joblib",
+    "checkpoint": "1068c7f7935a355a4bae3aecd7362fc60f0da0b066b9c8b7281a461dd7640eb1.joblib",
     "cached": false,
-    "elapsed_seconds": 5.805570875061676,
+    "elapsed_seconds": 6.584496665978804,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -3351,9 +3351,9 @@
       0.2269969005716882,
       0.22184484150238692
     ],
-    "checkpoint": "762c5ae00827aaef1c97e6110733ce1f81e89d80c03d64841e77bf94aa516dfd.joblib",
+    "checkpoint": "155983e9331c0c0bbe2b21034207a768113418e0d3bf9f9d9ab2e4f57fa103b3.joblib",
     "cached": false,
-    "elapsed_seconds": 6.287291957996786,
+    "elapsed_seconds": 6.797312917071395,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -3386,9 +3386,9 @@
       0.22883297435195948,
       0.2247073429142999
     ],
-    "checkpoint": "80b8549a3bee050546a2c9efc75614d1c3bab546116564d08403ed4bfc060a76.joblib",
+    "checkpoint": "595c7de26e6653e0118d46f8365482fb24515baa1260f0d6d43bf899e635a10b.joblib",
     "cached": false,
-    "elapsed_seconds": 8.195290124975145,
+    "elapsed_seconds": 7.2872145840665326,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -3421,9 +3421,9 @@
       0.22722535559762178,
       0.22236884832791481
     ],
-    "checkpoint": "e67861b713c3fc28631fd394e1b6dfb6db5d6aecf1d90ad45d6d26764ff6499e.joblib",
+    "checkpoint": "6d100decebb0cfa19fd582e259f5ceaf23a299385c842b7a2f02bf1e28b6a176.joblib",
     "cached": false,
-    "elapsed_seconds": 6.4944224579958245,
+    "elapsed_seconds": 6.441049040993676,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -3456,9 +3456,9 @@
       0.22781272882433434,
       0.22252734837895902
     ],
-    "checkpoint": "8fd483af27dffb75e4cd136202404c4108f4b75ef3bb331a4ebda803286ec816.joblib",
+    "checkpoint": "215889f51cbd9f900b74af4c0d4d4121a56b7c9ea62aae52d9483aff789d1a96.joblib",
     "cached": false,
-    "elapsed_seconds": 7.090917083085515,
+    "elapsed_seconds": 6.980558000039309,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -3491,9 +3491,9 @@
       0.22551738849389896,
       0.2212994126625817
     ],
-    "checkpoint": "7b06ef46c392693e7a378eecda64e8f069ea5d412a0256d90fc0a938ee3b2655.joblib",
+    "checkpoint": "4d8c58bced1ce04ba7deb732499f39b15fca856b58610939cec6f80e1834ef42.joblib",
     "cached": false,
-    "elapsed_seconds": 7.430202499963343,
+    "elapsed_seconds": 7.580353915924206,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -3526,9 +3526,9 @@
       0.22646852239530008,
       0.2220838904268877
     ],
-    "checkpoint": "86e8652b13925dd8d95d3ab48cebcf72534b5d78df46d0bdd0fceca3d1b3047d.joblib",
+    "checkpoint": "0d8d6bad006698c7a1138a86d46eaa1ac57e55a6ac867dd395ae1ccea9408e82.joblib",
     "cached": false,
-    "elapsed_seconds": 7.63223641703371,
+    "elapsed_seconds": 7.932060959050432,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -3561,9 +3561,9 @@
       0.22628271320364923,
       0.22228176365835264
     ],
-    "checkpoint": "f1e52fdedc2f96c36f8c7aa29c0c3cee9db1169ed775061c9ab8de9ac33a84af.joblib",
+    "checkpoint": "204e91b6c734e196a584c8ea64604fdc5ba88434e70b21c5b53bece388a8364b.joblib",
     "cached": false,
-    "elapsed_seconds": 5.909719333052635,
+    "elapsed_seconds": 5.263234792044386,
     "fit_time": "2012-12-31 23:00:00"
   },
   {
@@ -3596,9 +3596,9 @@
       0.22834444273447038,
       0.22337414795985683
     ],
-    "checkpoint": "e86fb36ee8a3611f7d616783653f9deedf5e3ecf638f572de93b8c26fe2a760e.joblib",
+    "checkpoint": "47ba5229152ef50464e6145b1bb8c5459a5f82426e7773850718f865abcfd9a5.joblib",
     "cached": false,
-    "elapsed_seconds": 6.942236333037727,
+    "elapsed_seconds": 5.885170917026699,
     "fit_time": "2013-03-31 23:00:00"
   },
   {
@@ -3631,9 +3631,9 @@
       0.22700908861430344,
       0.2228539877599474
     ],
-    "checkpoint": "e36a7c6686e1fa2fbf9ffec9303594d91cfc36f1a40a79e43b19700295562ad6.joblib",
+    "checkpoint": "12a1465d5e9c4d97fa464c50721aa543efd079fb65a79ad9ec66ffef1f247638.joblib",
     "cached": false,
-    "elapsed_seconds": 7.365746375056915,
+    "elapsed_seconds": 6.682756207999773,
     "fit_time": "2013-06-30 23:00:00"
   },
   {
@@ -3666,9 +3666,9 @@
       0.22927788443328267,
       0.2251862266939648
     ],
-    "checkpoint": "cdd18a030c9c597bbc718a1dd24103c525a53a994913403f69c6cdd9bb4a3d93.joblib",
+    "checkpoint": "08a22b12a992bb7189a7ce0bef559aff99ae4b542405b31f964baaffa2d24b77.joblib",
     "cached": false,
-    "elapsed_seconds": 9.22601687500719,
+    "elapsed_seconds": 7.477302083047107,
     "fit_time": "2013-09-30 23:00:00"
   },
   {
@@ -3701,9 +3701,9 @@
       0.22746246640720064,
       0.22318302737724466
     ],
-    "checkpoint": "7e4499be1cb0e80885611487ac68aef887a4c27620a8daa0a2205b248e557896.joblib",
+    "checkpoint": "efeefe3c1c1ae8f9f3c47c65aefeb4dfe9d96fe82162cd9145f67c409476cf42.joblib",
     "cached": false,
-    "elapsed_seconds": 10.092476375051774,
+    "elapsed_seconds": 10.636602458078414,
     "fit_time": "2013-12-31 23:00:00"
   },
   {
@@ -3736,9 +3736,9 @@
       0.22756626468098742,
       0.22261367996703527
     ],
-    "checkpoint": "32ff8d42ba3cd316fdb014c906ba7d9467ca0dcfc0bfe42bd2f66d586ba9a632.joblib",
+    "checkpoint": "fab68c22df016dd5715e5d0f2ce4f691a4b0156582d11fcd322c961626872d29.joblib",
     "cached": false,
-    "elapsed_seconds": 10.239961124956608,
+    "elapsed_seconds": 11.05637462507002,
     "fit_time": "2014-03-31 23:00:00"
   },
   {
@@ -3771,9 +3771,9 @@
       0.22620756340494902,
       0.22102287691141517
     ],
-    "checkpoint": "afcc4dc327c84a93508576d8a1aef0a1d151fb57a074554e3545116750473341.joblib",
+    "checkpoint": "8e12a10596669b449aba6e0e774270dceea721ab71333203ee7d2b798557c4e3.joblib",
     "cached": false,
-    "elapsed_seconds": 10.500712291919626,
+    "elapsed_seconds": 10.581713791936636,
     "fit_time": "2014-06-30 23:00:00"
   },
   {
@@ -3806,9 +3806,9 @@
       0.226968878286554,
       0.22260526561521288
     ],
-    "checkpoint": "b76b84dd3726af7d31b9f2cfea47b940e415090542b104160c01f88284d2925e.joblib",
+    "checkpoint": "ce2164b19e4f830181c21f85d2c44492d973813a89ba5942b0f2378fbb6fcacb.joblib",
     "cached": false,
-    "elapsed_seconds": 11.50447849999182,
+    "elapsed_seconds": 11.144928249996156,
     "fit_time": "2014-09-30 23:00:00"
   },
   {
@@ -3841,9 +3841,9 @@
       0.23207814131393473,
       0.22867043805803963
     ],
-    "checkpoint": "41d9adf11be15772a7e8ae8ac86749c778a11dad257cd8740d0f6ebee037449a.joblib",
+    "checkpoint": "2f8165ea4110b5e7b744337ab69bbd42b2b0ac7e369f9763776fe55e10171d55.joblib",
     "cached": false,
-    "elapsed_seconds": 4.888525874936022,
+    "elapsed_seconds": 4.961928166914731,
     "fit_time": "2013-12-31 23:00:00"
   },
   {
@@ -3876,9 +3876,9 @@
       0.23198222452758724,
       0.22859417766926976
     ],
-    "checkpoint": "b8da6978c60b96bdedad7344fc63624af5dc2b800378fa219469a5eee8a825de.joblib",
+    "checkpoint": "c3c39c2b365abba5e578b5240a052f32dc21cc3ae1d2ca6e04cf8630064f5706.joblib",
     "cached": false,
-    "elapsed_seconds": 5.175569333019666,
+    "elapsed_seconds": 5.717660416965373,
     "fit_time": "2014-03-31 23:00:00"
   },
   {
@@ -3911,9 +3911,9 @@
       0.23053462312883574,
       0.22705523546789716
     ],
-    "checkpoint": "058871f2e93ddb917a46d86411cadd7e0af04c7939869b94c46e79fb4d16243e.joblib",
+    "checkpoint": "01189ba9191ff488c3bb81f3ca026d6516e55f4e12293f11117c3235d95b35e9.joblib",
     "cached": false,
-    "elapsed_seconds": 5.460717290989123,
+    "elapsed_seconds": 6.022825916996226,
     "fit_time": "2014-06-30 23:00:00"
   },
   {
@@ -3946,9 +3946,9 @@
       0.23161735057371466,
       0.22779440644407078
     ],
-    "checkpoint": "bc9c3946f1139d947931b28040a0f49719a62fe67c8742cf0e5b2839457664df.joblib",
+    "checkpoint": "5aadfc1de6f585ed289fc236628a2caeb6acd0b296eb142f498f8ff27740821f.joblib",
     "cached": false,
-    "elapsed_seconds": 5.69361212500371,
+    "elapsed_seconds": 6.051519625005312,
     "fit_time": "2014-09-30 23:00:00"
   },
   {
@@ -3981,9 +3981,9 @@
       0.22429856734861914,
       0.21965504594836865
     ],
-    "checkpoint": "d9596a6a5e02b76438aa784a56ab4a677309ed878b5955a56c40e523d0bc4a5e.joblib",
+    "checkpoint": "5d29b5774c304023445b9d76db6d848b094c4696d709e71967d78e98ea33b848.joblib",
     "cached": false,
-    "elapsed_seconds": 7.236747500021011,
+    "elapsed_seconds": 7.2881490419385955,
     "fit_time": "2013-12-31 23:00:00"
   },
   {
@@ -4016,9 +4016,9 @@
       0.22585079856747575,
       0.22176538055863476
     ],
-    "checkpoint": "8454df3e857c118b5e047924e9218cfb7ee1793b245b60071bf79de5eff21bb0.joblib",
+    "checkpoint": "5e23c4a8a606617c8725d39296a38591d31ee6209eab4416f3dcb7f529777f4d.joblib",
     "cached": false,
-    "elapsed_seconds": 7.641520750010386,
+    "elapsed_seconds": 7.884448874974623,
     "fit_time": "2014-03-31 23:00:00"
   },
   {
@@ -4051,9 +4051,9 @@
       0.22654956544216215,
       0.22157110944812702
     ],
-    "checkpoint": "eb03ab680ce87c96a5403852f2c7a92c1d80dc47034ccbf16d9b2d592786b290.joblib",
+    "checkpoint": "3ff0e8148e5c684812aa4004fd53c38ad49fc45908c3c905d5778e92812b207c.joblib",
     "cached": false,
-    "elapsed_seconds": 9.580916041973978,
+    "elapsed_seconds": 8.926605958957225,
     "fit_time": "2014-06-30 23:00:00"
   },
   {
@@ -4086,9 +4086,9 @@
       0.2273136893843964,
       0.22256718400225847
     ],
-    "checkpoint": "5c52bc499b06d02afbcb603d2f20ac67086521e4e331104e46d6236bbfeea503.joblib",
+    "checkpoint": "7fb9f6ed12560be4a1407f9044fd1f2095ae6f779d1e4a189ad92a2bb49cc938.joblib",
     "cached": false,
-    "elapsed_seconds": 9.935395000036806,
+    "elapsed_seconds": 9.876557209063321,
     "fit_time": "2014-09-30 23:00:00"
   },
   {
@@ -4121,9 +4121,9 @@
       0.2268296544149405,
       0.22271968881825832
     ],
-    "checkpoint": "21fb678533e393a8aab6913fc1202eb1bba520972cb1c98c551907bb5f5edf65.joblib",
+    "checkpoint": "9699484a2b7de9efb6edca0acc2163ed2e2f086da96fbab78acc7eb84dd8d048.joblib",
     "cached": false,
-    "elapsed_seconds": 12.6804648329271
+    "elapsed_seconds": 11.70794787502382
   },
   {
     "role": "deployment_lstm",
@@ -4155,9 +4155,9 @@
       0.23125839468310525,
       0.22789010640595792
     ],
-    "checkpoint": "c0aa15f0caee3cad5baccfa0249248163c150afcb72a2f772017236b2fc7057f.joblib",
+    "checkpoint": "c7077ac9e821a36128ee1435210a36a664893f21a4d7d4f0c672b74b86485e6e.joblib",
     "cached": false,
-    "elapsed_seconds": 6.692498999997042
+    "elapsed_seconds": 6.4766685829963535
   },
   {
     "role": "calibration_0.2",
@@ -4189,8 +4189,8 @@
       0.2276886669278392,
       0.2225113918699794
     ],
-    "checkpoint": "5b18f4c5db893d2870d1ebfce31f894d63f32bed227d435368ad10b30cec0fab.joblib",
+    "checkpoint": "a4c32c5bc3a34398d0fd29954b2b0a3c35ca65fa99ddd4370c1af635238473b2.joblib",
     "cached": false,
-    "elapsed_seconds": 10.974960874998942
+    "elapsed_seconds": 10.415398999932222
   }
 ]

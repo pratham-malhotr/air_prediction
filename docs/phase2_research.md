@@ -76,6 +76,12 @@ bash scripts/start_frontend.sh
 
 The dashboard prefers a completed real-data `artifacts/phase2_research/` run and verifies model hashes before loading. Until it is complete, it can use the preserved `artifacts/phase2/` baseline. Saved 24-step models require 192 raw hourly slots. Alternate experiment directories are not automatically activated.
 
+## External continuation and production runtime
+
+A separately frozen [external transfer evaluation](phase2_external_validation.md) now covers all 12 UCI 501 stations in 2015–2017, using 217,156 common station-hours per method. Bi-LSTM has the lowest observed RMSE (19.293), while persistence has the lowest MAE (10.203). The original validation preference remains LSTM. Different sites, missing legacy weather inputs and new wind categories limit interpretation.
+
+The [production runtime](../deployment/phase2/README.md) adds Gunicorn, startup provenance checks, a non-root CPU container and an actual HTTP prediction checker. Manual GitHub CI builds the runnable release and verifies Linux forecasts. Public hosting still needs a suitable runtime and allocation.
+
 ## Limits and optional follow-up
 
 The finite search reuses one validation year, the final comparison uses one predeclared seed, and the data covers one historical city. This work does not provide causal weather effects, calibrated prediction intervals, official AQI mapping or present-day accuracy. A fresh untouched period or another appropriate dataset is needed for new blind performance claims.

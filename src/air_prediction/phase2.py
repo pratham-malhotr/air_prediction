@@ -44,7 +44,7 @@ def _baseline_predictions(directory, dataset, config):
     if manifest['config'] != json.loads(json.dumps(config.to_dict())):
         raise ValueError('Phase 1 and Phase 2 must use the same feature and split configuration')
     path = directory / 'predictions.csv'
-    predictions = pd.read_csv(path, parse_dates=['origin_time', 'target_time'])
+    predictions = pd.read_csv(path, parse_dates=['origin_time', 'target_time'], float_precision='round_trip')
     if predictions.duplicated(['phase', 'model', 'origin_time']).any():
         raise ValueError('Duplicate Phase 1 comparison rows')
     provenance = {

@@ -73,3 +73,56 @@ jobs:
         with:
           name: phase2-python-3.13
           path: test-results-phase2.xml
+
+  phase2-container:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Download and verify the published model bundle
+        run: |
+          mkdir -p /tmp/phase2-release
+          gh release download phase2-research-2026-11-05 --pattern 'air_prediction_phase2.zip*' --dir /tmp/phase2-release
+          cd /tmp/phase2-release
+          sha256sum --check air_prediction_phase2.zip.sha256
+      - name: Restore only evaluated runtime artifacts
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          from hashlib import sha256
+          import json
+          with ZipFile('/tmp/phase2-release/air_prediction_phase2.zip') as archive:
+              manifest = json.loads(archive.read('PACKAGE_MANIFEST.json'))
+              for name, digest in manifest['files'].items():
+                  if not name.startswith(('artifacts/phase1/', 'artifacts/phase2_research/', 'data/raw/')):
+                      continue
+                  path = Path(name)
+                  assert not path.is_absolute() and '..' not in path.parts
+                  payload = archive.read(name)
+                  assert sha256(payload).hexdigest() == digest, name
+                  path.parent.mkdir(parents=True, exist_ok=True)
+                  path.write_bytes(payload)
+          PY
+      - name: Build and start the production container
+        run: |
+          docker build -f deployment/phase2/Dockerfile -t aircast-phase2 .
+          docker run --detach --name aircast-phase2 --publish 10000:10000 aircast-phase2
+      - name: Compare actual Linux HTTP predictions with saved references
+        run: python scripts/check_phase2_production.py --url http://127.0.0.1:10000 --output artifacts/phase2_production/container-verification.json
+      - name: Collect container logs
+        if: always()
+        run: docker logs aircast-phase2 > container.log 2>&1 || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: phase2-container
+          path: |
+            artifacts/phase2_production/container-verification.json
+            container.log

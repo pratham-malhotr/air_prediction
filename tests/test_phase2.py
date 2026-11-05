@@ -102,3 +102,23 @@ def test_phase2_cli_runs_without_launcher_thread_environment(phase2_run):
                             env=environment, text=True, capture_output=True, timeout=30)
     assert result.returncode == 0, result.stderr
     assert np.isfinite(json.loads(result.stdout)['pm25_ug_m3'])
+
+
+def test_baseline_csv_round_trip_preserves_exact_decimal_targets(tmp_path):
+    from air_prediction.data import Dataset
+    from air_prediction.phase2 import _baseline_predictions
+
+    directory = tmp_path / 'baseline'
+    directory.mkdir()
+    config = Config()
+    values = np.array([0.30000000000000004, 1.2345678901234567])
+    origins = pd.date_range('2013-01-01', periods=2, freq='h')
+    pd.DataFrame({'phase': 'validation', 'model': 'persistence', 'fold': 'validation_01',
+                  'origin_time': origins, 'target_time': origins + pd.Timedelta(hours=1),
+                  'actual': values, 'prediction': values}).to_csv(directory / 'predictions.csv', index=False)
+    (directory / 'run_manifest.json').write_text(json.dumps({
+        'status': 'complete', 'dataset_audit': {'sha256': 'fixture'},
+        'config': config.to_dict(), 'versions': {}, 'source_code_sha256': 'fixture'}))
+    dataset = Dataset(pd.DataFrame(), {'sha256': 'fixture'}, 'synthetic')
+    predictions, _ = _baseline_predictions(directory, dataset, config)
+    np.testing.assert_array_equal(predictions.actual.to_numpy(), values)

@@ -1,4 +1,4 @@
-# Phase 2 completion audit before GitHub publication
+# Phase 2 completion audit and continuation
 
 This audit uses the repository's stated Phase 2 scope and the work requested in this session. No separate college grading rubric was found in the checkout or the repository's GitHub issues, so it does not certify requirements that have not been supplied.
 
@@ -19,18 +19,28 @@ This audit uses the repository's stated Phase 2 scope and the work requested in 
 | Working local demonstration | Verified | Five available saved models, validation-selected LSTM default, sequence history requirements, report selection and browser checks. |
 | Academic submission | Verified | Five-page IEEE report, editable source, twelve-slide PowerPoint with notes, slide PDF, speaker guide and figures. |
 | Reproducible notebook and package | Verified | Seven executed notebook cells without error outputs; package checksum verification and excluded credentials/environments/checkpoints. |
-| CI actually exercises deep learning | Added for publication | Dedicated Python 3.13 job installs pinned CPU PyTorch, runs all tests with deprecation warnings as errors, and rejects skipped neural tests. Remote results must be checked after pushing. |
-| GitHub availability of the runnable weights | Prepared for publication | Publish the verified package as a release asset; model binaries remain outside source commits under the repository workflow. |
+| CI actually exercises deep learning | Implemented and locally verified | Python 3.13 CPU PyTorch job rejects skipped neural tests. The first remote run exposed a decimal round-trip issue; strict CSV loading and a regression now preserve exact target alignment. Final remote status is recorded in GitHub Actions. |
+| GitHub availability of the runnable weights | Release handoff | Runnable ZIP and its SHA-256 checksum are published with the Phase 2 release; model binaries remain outside source commits under the repository workflow. |
+| External validation | Completed | Pre-download protocol; five immutable models and two baselines evaluated on all 12 UCI 501 stations, 217,156 common station-hours; independently recomputed scores and transfer limitations. |
+| Production runtime | Implemented | Gunicorn factory, source/data/weight preflight, non-root CPU container recipe and an actual HTTP forecast checker. Manual CI builds the published bundle on Linux; public hosting is separate. |
 
 ## Verification used for publication
 
-- `python -m pytest -q -W error::DeprecationWarning`: 101 passing tests.
+- `python -m pytest -q -W error::DeprecationWarning`: 115 passing tests.
 - `python scripts/verify_phase2_submission.py`: source/input/model hashes, frozen selection, common rows, chronological boundaries, independent training counts, CLI/dashboard parity, document consistency and notebook execution.
 - `node scripts/check_frontend_browser.cjs`: model selection, numerical forecasts, measured score tables, manual inputs, CSV upload/export, report link, chart behavior, mobile layout and no JavaScript errors.
 - `git diff --check`, workflow parsing, CPU wheel/version compatibility, targeted publication credential scan, and archive-to-workspace checksums.
 
 The preferred model remains the validation-selected LSTM. Its exploratory 2014 RMSE is 20.726; Bi-LSTM is 20.799, hybrid 20.919, Ridge 21.063 and XGBoost 21.088. These are historical rankings, not significance tests or a fresh blind evaluation.
 
-## Scope left for the next work
+## Work completed after the initial push
 
-The core Phase 2 local implementation and submission are complete against the documented scope. The next work is production neural-hosting readiness and a separately declared external validation. Actual hosting needs a suitable runtime; no paid service or live deployment is implied by pushing source. New data must be checked for station and feature compatibility before it can support a blind temporal claim. Cross-station or changed-feature results must be labeled as external transfer evidence rather than presented as equivalent to the original Beijing station evaluation.
+The first three commits published the causal pipeline, independent research, submission materials and dashboard. The first Linux CI run passed the Python 3.11/3.12 classical jobs but exposed one-bit decimal CSV parsing differences in the neural fixtures. Reading the comparison CSV with `float_precision='round_trip'` fixes that portability issue without relaxing exact target checks. A full research rerun under the corrected source preserves honest artifact provenance; the earlier run is retained locally.
+
+The fourth commit adds the portability regression, external transfer supplement, production runtime and additional verification. The external protocol freezes the original published model bytes and records both training and runtime source hashes. It never changes its model selection based on the new results. Bi-LSTM has the lowest observed external RMSE (19.293), while persistence has the lowest MAE (10.203); the original validation-selected LSTM remains the demo default.
+
+## Remaining scope
+
+The local Phase 2 implementation, documented research and submission are complete. A public neural deployment needs an appropriate host and resource allocation. This work supplies a production runtime and container verification; it does not provision or charge a hosting account. A separate college rubric has not been supplied. Any requirements unique to that rubric still need comparison with this audit.
+
+The external test uses different stations and lacks three legacy inputs, so it cannot replace untouched same-station temporal validation. The work makes no significance, causal-weather, prediction-interval or present-day accuracy claim. [External supplement](phase2_external_validation.md) and [production instructions](../deployment/phase2/README.md) describe the evidence and limits.

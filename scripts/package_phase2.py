@@ -12,6 +12,9 @@ def package():
     manifest = json.loads((run / 'run_manifest.json').read_text())
     if manifest.get('status') != 'complete' or manifest.get('is_synthetic', True):
         raise ValueError('A completed real-data Phase 2 research run is required')
+    verification = json.loads((run / 'verification.json').read_text())
+    if verification['source_code_sha256'] != manifest['source_code_sha256']:
+        raise ValueError('Verify the active research run before packaging')
     for name, digest in manifest['model_sha256'].items():
         if sha256((run / f'{name}.joblib').read_bytes()).hexdigest() != digest:
             raise ValueError(f'Stale {name} model artifact')
@@ -20,6 +23,15 @@ def package():
                 ROOT / 'reports/phase2/slides.pdf', ROOT / 'notebooks/Air_Prediction_Phase2.ipynb']
     if any(not path.is_file() for path in required):
         raise ValueError('Build all Phase 2 submission documents before packaging')
+    for path in required[:3]:
+        if sha256(path.read_bytes()).hexdigest() != verification['document_sha256'][path.name]:
+            raise ValueError(f'Reverify the updated submission document: {path.name}')
+    for folder in ('phase2_external', 'phase2_production'):
+        evidence = json.loads((ROOT / 'artifacts' / folder / 'verification.json').read_text())
+        if evidence['status'] != 'passed':
+            raise ValueError(f'Incomplete {folder} verification')
+        if folder == 'phase2_production' and evidence['source_code_sha256'] != manifest['source_code_sha256']:
+            raise ValueError('Production verification uses a different research source')
     files = {}
     def add(path):
         path = Path(path)
@@ -34,7 +46,8 @@ def package():
                   '.css', '.js', '.cjs', '.svg', '.csv', '.json', '.pdf', '.pptx', '.png', '.ipynb', '.txt'}
     for directory in ('src', 'frontend', 'deployment', 'configs', 'docs', 'reports', 'notebooks', 'tests', 'scripts', '.github'):
         for path in sorted((ROOT / directory).rglob('*')):
-            if path.is_file() and '__pycache__' not in path.parts and path.suffix in extensions:
+            if (path.is_file() and '__pycache__' not in path.parts
+                    and (path.suffix in extensions or path.name in {'Dockerfile', 'Dockerfile.dockerignore'})):
                 add(path)
     phase1 = ROOT / 'artifacts/phase1'
     for name in ('run_manifest.json', 'selection.json', 'predictions.csv', 'metrics.csv', 'fold_metrics.csv',
@@ -43,6 +56,14 @@ def package():
     for path in run.iterdir():
         if path.is_file() and path.suffix in {'.json', '.csv', '.gz', '.joblib', '.md', '.xml'}:
             add(path)
+    external = ROOT / 'artifacts/phase2_external'
+    if (external / 'run_manifest.json').is_file():
+        for path in external.rglob('*'):
+            if path.is_file() and path.suffix in {'.json', '.csv', '.gz', '.joblib', '.md'}:
+                add(path)
+    production = ROOT / 'artifacts/phase2_production/verification.json'
+    if production.is_file():
+        add(production)
     data = ROOT / 'data/raw/PRSA_data_2010.1.1-2014.12.31.csv'
     if sha256(data.read_bytes()).hexdigest() != manifest['dataset_audit']['sha256']:
         raise ValueError('Raw data differs from the evaluated run')
@@ -62,6 +83,8 @@ def package():
 
 The editable IEEE report, presentation, slide PDF and speaker guide are in `reports/phase2/`.
 The saved models and complete candidate evidence are in `artifacts/phase2_research/`.
+Production Gunicorn/container instructions are in `deployment/phase2/README.md`.
+The frozen cross-station evaluation and its limitations are in `docs/phase2_external_validation.md`.
 The local dashboard automatically loads this completed research run. The hosted classical app is separate.
 Model selection uses 2013; 2014 comparisons are exploratory because Phase 1 results were already viewed.
 Dataset: Chen (2015), UCI Beijing PM2.5, DOI 10.24432/C5JS49, CC BY 4.0; see data/README.md.

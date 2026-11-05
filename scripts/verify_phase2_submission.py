@@ -75,6 +75,11 @@ def verify():
         assert abs(cli['pm25_ug_m3'] - live['forecast']) < 1e-5
         assert live['backtest']['n'] == 8531
         forecasts[name] = cli['pm25_ug_m3']
+    for name in ('ridge', 'xgboost'):
+        cli = predict_latest(phase1 / f'{name}.joblib', dataset_path)
+        live = service.forecast(mode='history', selected=name)
+        assert abs(cli['pm25_ug_m3'] - live['forecast']) < 1e-5
+        forecasts[name] = cli['pm25_ug_m3']
     import pymupdf
     from pptx import Presentation
     paper = pymupdf.open(report / 'Aircast_Phase2_Report.pdf')

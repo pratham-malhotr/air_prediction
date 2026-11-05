@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "verified_utc": "2026-11-05T04:30:54.661166+00:00",
+  "station_hours_per_model": 217156,
+  "stations": 12,
+  "models": 7,
+  "protocol_sha256": "7c887f8c1a21d8b1c90234461c0295e2bc589bdfdc2ef906fe2e9043f0c532c7",
+  "predictions_sha256": "6157a3d740200922364fb615ab4981350061b209d1070f49c4ee58365697cd1f",
+  "checks": [
+    "completed frozen protocol",
+    "reference model and evaluator hashes",
+    "all common station-hours and targets",
+    "declared one-hour target interval",
+    "recomputed pooled and station scores",
+    "archive provenance and pre-download declaration"
+  ]
+}

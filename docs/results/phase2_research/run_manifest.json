@@ -1,6 +1,6 @@
 {
   "status": "complete",
-  "completed_utc": "2026-11-04T19:53:03.992857+00:00",
+  "completed_utc": "2026-11-05T04:35:14.222330+00:00",
   "source": "uci381_user_supplied",
   "is_synthetic": false,
   "dataset_audit": {
@@ -335,7 +335,7 @@
         }
       ]
     },
-    "source_code_sha256": "5749d38089d06b443f67e314aedfb08813bdcbc50867e9cf54cf970894e9250c",
+    "source_code_sha256": "ba686e2f1da9f2bf60982912d08d0d9d1aa71df1efa48caf288ba52c7dc7eec5",
     "dataset_sha256": "4127f868775e31b3956522adc0ec75af8937dde6a3896e8beed3a376c6d27f1c",
     "parameter_policy": "Search on 2013 only; paired architecture/attention variants averaged across validation seeds.",
     "comparison_policy": "One predeclared comparison/deployment seed; never select a seed using 2014.",
@@ -348,7 +348,7 @@
     "lstm",
     "hybrid"
   ],
-  "source_code_sha256": "5749d38089d06b443f67e314aedfb08813bdcbc50867e9cf54cf970894e9250c",
+  "source_code_sha256": "ba686e2f1da9f2bf60982912d08d0d9d1aa71df1efa48caf288ba52c7dc7eec5",
   "baseline_provenance": {
     "directory": "/Users/prathammalhotra/Desktop/air_pred/artifacts/phase1",
     "predictions_sha256": "b03b3a1a3b3df627d26f32f4bf77f341a8f9f686ca34369c04286de283e70081",
@@ -367,7 +367,7 @@
     "note": "Classical metrics reuse saved Phase 1 predictions; classical models were not retrained."
   },
   "training_p90_pm25": 218.0,
-  "selection_sha256": "ce8bfb39bb776c3f1c23dfc882c82f37df231a6d0aad8df2c5bcea08fc386555",
+  "selection_sha256": "52fbaa905f4a3abf020c468607b7dd7ed32ea2257e99c2274cbc1b9bb59bcd31",
   "selection": {
     "criterion": "Mean pooled 2013 RMSE across predefined validation seeds",
     "preferred_model": "lstm",
@@ -436,7 +436,7 @@
       },
       {
         "model": "xgboost",
-        "validation_rmse_mean": 26.77232238108137
+        "validation_rmse_mean": 26.772322381081366
       },
       {
         "model": "bilstm",
@@ -457,9 +457,9 @@
     "hybrid_search_metrics_sha256": "4c588be11ed5bb83a350df99c861a3dca3dcdbe0443af18178627247973da344"
   },
   "model_sha256": {
-    "bilstm": "2f4c3f75ae25ac9817eadc9643e0ef5dc6a29fc430170b43b914071200572074",
-    "lstm": "8dc3ccf69092172750a51603e20cfd17d5175040998488950900f632a053d9ae",
-    "hybrid": "aa1e165fab273c8ddcfb9e9bbfe615b77d0a207c1362b3d1fe1c015cfce762bd"
+    "bilstm": "effd6f670740cd506bf7a81aa788514266c22e7f3394a430cd86b8c7751f14ec",
+    "lstm": "206f7768a6ff8e2848081c79d86855782e3f6e8995793ff406af66e9d124d1c4",
+    "hybrid": "027e15cf496e055b175eaa6b623cc4c950649e343749c43ab2ce4ccf3c34f092"
   },
   "versions": {
     "numpy": "2.1.3",

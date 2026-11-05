@@ -1,0 +1,33 @@
+{
+  "status": "complete",
+  "completed_utc": "2026-11-05T04:28:35.554675+00:00",
+  "evaluation_kind": "external_station_and_feature_transfer",
+  "protocol_sha256": "7c887f8c1a21d8b1c90234461c0295e2bc589bdfdc2ef906fe2e9043f0c532c7",
+  "archive_sha256": "b04da438b2f331ac0ffd45aebdfec0d20d2367feb5f6948c4b1f7ce1191e33c4",
+  "stations": [
+    "Aotizhongxin",
+    "Changping",
+    "Dingling",
+    "Dongsi",
+    "Guanyuan",
+    "Gucheng",
+    "Huairou",
+    "Nongzhanguan",
+    "Shunyi",
+    "Tiantan",
+    "Wanliu",
+    "Wanshouxigong"
+  ],
+  "model_sha256": {
+    "ridge": "8879ef6ecf9ab4c361579f9e974a445b6d96952533ea660592216947314fc514",
+    "xgboost": "e760354b2a93400a2bf7bc0344bf012559b9728368013cf35e8a19fc8f0ab1a7",
+    "bilstm": "2f4c3f75ae25ac9817eadc9643e0ef5dc6a29fc430170b43b914071200572074",
+    "lstm": "8dc3ccf69092172750a51603e20cfd17d5175040998488950900f632a053d9ae",
+    "hybrid": "aa1e165fab273c8ddcfb9e9bbfe615b77d0a207c1362b3d1fe1c015cfce762bd"
+  },
+  "runtime_source_sha256": "ba686e2f1da9f2bf60982912d08d0d9d1aa71df1efa48caf288ba52c7dc7eec5",
+  "evaluator_sha256": "b263bbce58c1cbf7e0689ac0cdd33f3911319ffb2a79c4b6c805a31c4fe0e39a",
+  "common_target_hours_per_model": 217156,
+  "no_external_fitting": true,
+  "interpretation": "Different monitoring sites and nearest weather stations plus missing legacy features; not a same-station temporal validation."
+}

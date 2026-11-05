@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "verified_utc": "2026-11-05T04:35:54.235339+00:00",
+  "reference_source_sha256": "5749d38089d06b443f67e314aedfb08813bdcbc50867e9cf54cf970894e9250c",
+  "active_source_sha256": "ba686e2f1da9f2bf60982912d08d0d9d1aa71df1efa48caf288ba52c7dc7eec5",
+  "models": {
+    "lstm": {
+      "exact_neural_parameter_sha256": "718722d1a6c2ee6c41051c95318d9d0ab02dac7982d36b3ff3d775414c50acad",
+      "preprocessing_and_target_scaling_identical": true,
+      "reference_model_sha256": "8dc3ccf69092172750a51603e20cfd17d5175040998488950900f632a053d9ae",
+      "active_model_sha256": "206f7768a6ff8e2848081c79d86855782e3f6e8995793ff406af66e9d124d1c4",
+      "latest_forecast": 12.197717666625977
+    },
+    "bilstm": {
+      "exact_neural_parameter_sha256": "070843a84b53258b21f75cc9fefcf44d722f6c6586682ba5f55141ceb775769c",
+      "preprocessing_and_target_scaling_identical": true,
+      "reference_model_sha256": "2f4c3f75ae25ac9817eadc9643e0ef5dc6a29fc430170b43b914071200572074",
+      "active_model_sha256": "effd6f670740cd506bf7a81aa788514266c22e7f3394a430cd86b8c7751f14ec",
+      "latest_forecast": 11.78113842010498
+    },
+    "hybrid": {
+      "exact_neural_parameter_sha256": "74feb01c94da69a7626e7e969e7dbcb3aa5cf78a7a7374cb5dbc3bba1e678661",
+      "preprocessing_and_target_scaling_identical": true,
+      "reference_model_sha256": "aa1e165fab273c8ddcfb9e9bbfe615b77d0a207c1362b3d1fe1c015cfce762bd",
+      "active_model_sha256": "027e15cf496e055b175eaa6b623cc4c950649e343749c43ab2ce4ccf3c34f092",
+      "latest_forecast": 12.48949247598648
+    }
+  },
+  "checks": [
+    "independent fresh training",
+    "exact neural state tensors",
+    "training origins and preprocessing",
+    "target statistics and loss histories",
+    "exact hybrid tree bytes and preprocessing",
+    "identical saved-model forecasts"
+  ]
+}
