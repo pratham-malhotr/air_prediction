@@ -1,0 +1,73 @@
+# Preregistered search. 2014 is never used to select parameters or a seed.
+seeds = [42, 137, 2026]
+comparison_seed = 42
+calibration_fractions = [0.1, 0.2]
+correction_weights = [0.0, 0.25, 0.5, 1.0]
+
+[base]
+architecture = "bilstm"
+seq_len = 24
+hidden_dim = 32
+num_layers = 1
+dropout = 0.1
+epochs = 6
+batch_size = 128
+learning_rate = 0.001
+random_seed = 42
+use_attention = true
+target_mode = "level"
+device = "cpu"
+
+[[candidates]]
+name = "level_24h_attention"
+
+[[candidates]]
+name = "level_24h_longer_training"
+epochs = 10
+
+[[candidates]]
+name = "level_48h_attention"
+seq_len = 48
+
+[[candidates]]
+name = "level_24h_wider"
+hidden_dim = 64
+
+[[candidates]]
+name = "level_24h_no_attention"
+use_attention = false
+
+[[candidates]]
+name = "delta_24h_no_attention"
+use_attention = false
+target_mode = "delta"
+
+[[candidates]]
+name = "delta_24h_longer_training"
+use_attention = false
+target_mode = "delta"
+epochs = 10
+
+[[candidates]]
+name = "delta_48h_no_attention"
+use_attention = false
+target_mode = "delta"
+seq_len = 48
+
+[[residual_candidates]]
+n_estimators = 100
+max_depth = 3
+learning_rate = 0.05
+min_child_weight = 5
+subsample = 0.8
+colsample_bytree = 0.8
+reg_lambda = 5.0
+
+[[residual_candidates]]
+n_estimators = 80
+max_depth = 2
+learning_rate = 0.03
+min_child_weight = 20
+subsample = 0.8
+colsample_bytree = 0.8
+reg_lambda = 30.0
