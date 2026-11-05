@@ -88,7 +88,7 @@ jobs:
       - name: Download and verify the published model bundle
         run: |
           mkdir -p /tmp/phase2-release
-          gh release download phase2-research-2026-11-05 --pattern 'air_prediction_phase2.zip*' --dir /tmp/phase2-release
+          gh release download phase2-research-2026-11-05-r1 --pattern 'air_prediction_phase2.zip*' --dir /tmp/phase2-release
           cd /tmp/phase2-release
           sha256sum --check air_prediction_phase2.zip.sha256
       - name: Restore only evaluated runtime artifacts

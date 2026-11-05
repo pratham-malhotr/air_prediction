@@ -26,7 +26,7 @@ This audit uses the repository's stated Phase 2 scope and the work requested in 
 
 ## Verification used for publication
 
-- `python -m pytest -q -W error::DeprecationWarning`: 115 passing tests.
+- `python -m pytest -q -W error::DeprecationWarning`: 116 passing tests.
 - `python scripts/verify_phase2_submission.py`: source/input/model hashes, frozen selection, common rows, chronological boundaries, independent training counts, CLI/dashboard parity, document consistency and notebook execution.
 - `node scripts/check_frontend_browser.cjs`: model selection, numerical forecasts, measured score tables, manual inputs, CSV upload/export, report link, chart behavior, mobile layout and no JavaScript errors.
 - `git diff --check`, workflow parsing, CPU wheel/version compatibility, targeted publication credential scan, and archive-to-workspace checksums.
@@ -38,6 +38,8 @@ The preferred model remains the validation-selected LSTM. Its exploratory 2014 R
 The first three commits published the causal pipeline, independent research, submission materials and dashboard. The first Linux CI run passed the Python 3.11/3.12 classical jobs but exposed one-bit decimal CSV parsing differences in the neural fixtures. Reading the comparison CSV with `float_precision='round_trip'` fixes that portability issue without relaxing exact target checks. A full research rerun under the corrected source preserves honest artifact provenance; the earlier run is retained locally.
 
 The fourth commit adds the portability regression, external transfer supplement, production runtime and additional verification. The external protocol freezes the original published model bytes and records both training and runtime source hashes. It never changes its model selection based on the new results. Bi-LSTM has the lowest observed external RMSE (19.293), while persistence has the lowest MAE (10.203); the original validation-selected LSTM remains the demo default.
+
+The first release-backed Docker build succeeded, then its readiness checker encountered a transient connection reset before worker initialization completed. A small follow-up commit adds that socket failure to bounded startup retries and a regression, without changing forecast or training code. The revised runnable release preserves the original publication.
 
 ## Remaining scope
 

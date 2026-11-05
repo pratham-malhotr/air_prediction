@@ -2,7 +2,7 @@
 
 ## 1. Test Suite Overview
 
-The repository features 115 automated unit, integration, and regression tests ensuring data integrity, chronological timing validity, machine learning accuracy, frontend correctness, and deployment safety.
+The repository features 116 automated unit, integration, and regression tests ensuring data integrity, chronological timing validity, machine learning accuracy, frontend correctness, and deployment safety.
 
 ### Test Catalog Summary
 
@@ -18,8 +18,8 @@ The repository features 115 automated unit, integration, and regression tests en
 | `tests/test_phase2.py` | 4 | Complete synthetic Phase 2 runs, baseline preservation, identical-hour comparisons, provenance, saved-model inference, overwrite refusal and direct CLI inference without launcher thread settings. |
 | `tests/test_phase2_research.py` | 2 | Selection freezes before comparison, independent full-window training, calibration boundaries, seed summaries and saved LSTM/Bi-LSTM/hybrid inference. |
 | `tests/test_phase2_external.py` | 6 | Archive selection, field compatibility, declared target boundaries, common rows, immutable pre-download protocol and cached provenance. |
-| `tests/test_phase2_production.py` | 7 | Post-fork Gunicorn factory, port validation, HTTPS proxy/origin enforcement and rejection of source/data/model drift or synthetic bundles. |
-| **Total** | **115** | **100% Pass Rate** |
+| `tests/test_phase2_production.py` | 8 | Container startup-reset retry, post-fork Gunicorn factory, port validation, HTTPS proxy/origin enforcement and rejection of source/data/model drift or synthetic bundles. |
+| **Total** | **116** | **100% Pass Rate** |
 
 ---
 

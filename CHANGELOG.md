@@ -7,7 +7,8 @@ All notable changes to the Air Quality Prediction project are documented here.
 - Fixed exact decimal CSV round trips exposed by Linux CPU CI, added a regression and repeated the full research run under the corrected source.
 - Completed a frozen external transfer test on all 12 UCI 501 stations: 217,156 common station-hours, no fitting or model reselection, preserved reference bytes, and independently recomputed pooled/station metrics.
 - Added Gunicorn serving, startup provenance checks, a non-root CPU Docker recipe, HTTP forecast parity checks and a manual Linux container CI job.
-- Expanded the strict local suite to 115 passing tests and included external evidence and production instructions in the runnable release.
+- Hardened container readiness against transient TCP resets during worker startup, with a regression.
+- Expanded the strict local suite to 116 passing tests and included external evidence and production instructions in the runnable release.
 
 ## 2026-11-05 — Independent Phase 2 research and submission
 

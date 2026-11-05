@@ -39,7 +39,7 @@ def check(url, expected_path, output):
         try:
             health = json.loads(request('/api/health'))
             break
-        except (URLError, TimeoutError):
+        except (URLError, TimeoutError, ConnectionError):
             if time.monotonic() >= deadline:
                 raise
             time.sleep(1)

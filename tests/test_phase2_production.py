@@ -87,3 +87,44 @@ def test_production_proxy_setting_preserves_https_same_origin_validation(monkeyp
         assert response.status_code==expected
         headers['Origin']='https://different.example'
         assert client.post('/api/forecast',json={},headers=headers).status_code==403
+
+
+def test_production_http_checker_retries_container_startup_resets(tmp_path, monkeypatch):
+    from io import BytesIO
+    from urllib.error import HTTPError
+    from urllib.parse import urlparse
+    from scripts import check_phase2_production as checker
+
+    values={'lstm':1.0,'bilstm':2.0,'hybrid':3.0,'ridge':4.0,'xgboost':5.0}
+    expected=tmp_path/'expected.json'
+    expected.write_text(json.dumps({'cli_dashboard_forecasts':values,'default_model':'lstm',
+                                    'source_code_sha256':'fixture'}))
+    attempts=[]
+    sleeps=[]
+
+    class Response(BytesIO):
+        headers={'X-Content-Type-Options':'nosniff','Cache-Control':'no-store'}
+
+    def request(value, timeout):
+        path=urlparse(value.full_url).path
+        if path=='/api/health':
+            attempts.append(path)
+            if len(attempts)==1:
+                raise ConnectionResetError('Docker port is bound before the worker is ready')
+            result={'ready':True,'models':list(values)}
+        elif path=='/api/bootstrap':
+            result={'forecast':{'selected_model':'lstm'},'metrics':[{}]*7}
+        elif path=='/report':
+            return Response(b'%PDF-1.7')
+        else:
+            body=json.loads(value.data)
+            if body['mode']=='manual':
+                raise HTTPError(value.full_url,400,'invalid measurements',None,None)
+            result={'selected_model':body['model'],'forecast':values[body['model']]}
+        return Response(json.dumps(result).encode())
+
+    monkeypatch.setattr(checker,'urlopen',request)
+    monkeypatch.setattr(checker.time,'sleep',lambda seconds:sleeps.append(seconds))
+    result=checker.check('http://127.0.0.1:10000',expected,tmp_path/'verified.json')
+    assert len(attempts)==2 and sleeps==[1]
+    assert result['status']=='passed' and result['forecasts']==values
