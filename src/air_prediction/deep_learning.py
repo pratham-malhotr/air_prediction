@@ -1,7 +1,7 @@
 """Deep Learning architectures, sequence generators, and hybrid models for Phase 2."""
 
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -9,6 +9,10 @@ try:
     import torch
     import torch.nn as nn
     from torch.utils.data import DataLoader, Dataset
+    # Use the same CPU thread policy for direct CLI inference as for training
+    # and the dashboard launcher. Multiple workers can crash mixed numerical
+    # runtimes on macOS, including while loading serialized tensor storages.
+    torch.set_num_threads(1)
 except ImportError as exc:
     raise ImportError(
         "PyTorch is required for deep learning and hybrid models. "
@@ -27,6 +31,29 @@ class DLConfig:
     epochs: int = 15
     device: str = "cpu"
     architecture: str = "lstm"  # "lstm", "gru", "bilstm"
+    random_seed: int = 42
+    use_attention: bool = True
+    target_mode: str = "level"  # "delta" learns a correction to current PM2.5
+
+    def __post_init__(self):
+        for name in ("seq_len", "hidden_dim", "num_layers", "batch_size", "epochs"):
+            value = getattr(self, name)
+            if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+                raise ValueError(f"{name} must be a positive integer")
+        if self.hidden_dim < 2:
+            raise ValueError("hidden_dim must be at least 2")
+        if self.architecture not in {"lstm", "gru", "bilstm"}:
+            raise ValueError("architecture must be lstm, gru, or bilstm")
+        if not np.isfinite(self.learning_rate) or self.learning_rate <= 0:
+            raise ValueError("learning_rate must be positive and finite")
+        if not 0 <= self.dropout < 1:
+            raise ValueError("dropout must be in [0, 1)")
+        if not isinstance(self.use_attention, bool):
+            raise ValueError("use_attention must be boolean")
+        if self.target_mode not in {"level", "delta"}:
+            raise ValueError("target_mode must be level or delta")
+        if not isinstance(self.random_seed, int) or isinstance(self.random_seed, bool) or self.random_seed < 0:
+            raise ValueError("random_seed must be a nonnegative integer")
 
 
 class SequenceAirDataset(Dataset):
@@ -35,10 +62,13 @@ class SequenceAirDataset(Dataset):
     Produces tensors of shape:
         - X_seq: (seq_len, num_features)
         - y: (1,) target PM2.5 concentration at origin t + horizon
-        - mask: validity indicator (warmup, valid target, valid sequence)
     """
 
     def __init__(self, X: np.ndarray, y: Optional[np.ndarray] = None, seq_len: int = 24):
+        if not isinstance(seq_len, int) or isinstance(seq_len, bool) or seq_len < 1:
+            raise ValueError("seq_len must be a positive integer")
+        if np.ndim(X) != 2 or (y is not None and (np.ndim(y) != 1 or len(y) != len(X))):
+            raise ValueError("Expected a 2D feature matrix and an aligned 1D target")
         self.X = torch.tensor(X, dtype=torch.float32)
         self.y = torch.tensor(y, dtype=torch.float32).unsqueeze(-1) if y is not None else None
         self.seq_len = seq_len
@@ -91,6 +121,8 @@ class TemporalForecaster(nn.Module):
     ):
         super().__init__()
         self.architecture = architecture.lower()
+        if self.architecture not in {"lstm", "gru", "bilstm"}:
+            raise ValueError("architecture must be lstm, gru, or bilstm")
         self.use_attention = use_attention
         bidirectional = self.architecture == "bilstm"
 
@@ -116,194 +148,256 @@ class TemporalForecaster(nn.Module):
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
         # x: (batch_size, seq_len, input_dim)
-        rnn_out, _ = self.rnn(x)  # (batch_size, seq_len, out_hidden)
+        rnn_out, hidden = self.rnn(x)  # (batch_size, seq_len, out_hidden)
 
         attn_weights = None
         if self.attention is not None:
             context, attn_weights = self.attention(rnn_out)
         else:
-            context = rnn_out[:, -1, :]  # last step
+            state = hidden[0] if isinstance(hidden, tuple) else hidden
+            context = (torch.cat((state[-2], state[-1]), dim=1)
+                       if self.architecture == "bilstm" else state[-1])
 
         out = self.head(context)
         return out, attn_weights
 
 
+def validate_hourly_frame(frame):
+    if not isinstance(frame.index, pd.DatetimeIndex) or frame.empty:
+        raise ValueError("Sequences require a nonempty DatetimeIndex")
+    expected = pd.date_range(frame.index.min(), frame.index.max(), freq="h")
+    if not frame.columns.is_unique or not frame.index.equals(expected):
+        raise ValueError("Sequences require unique columns and a sorted, unique, regular hourly index")
+
+
+def aligned_mask(X, y, valid_mask):
+    validate_hourly_frame(X)
+    if not isinstance(y, pd.Series) or not y.index.equals(X.index):
+        raise ValueError("Targets must have exactly the same index as features")
+    if valid_mask is None:
+        mask = np.ones(len(X), dtype=bool)
+    else:
+        if isinstance(valid_mask, pd.Series) and not valid_mask.index.equals(X.index):
+            raise ValueError("Training mask index must match features")
+        mask = np.asarray(valid_mask)
+        if mask.shape != (len(X),) or mask.dtype != np.bool_:
+            raise ValueError("Training mask must be an aligned boolean vector")
+    return mask & np.isfinite(y.to_numpy(dtype=float))
+
+
 class DeepLearningPipeline:
-    """End-to-end scikit-learn compatible wrapper for training and inference of DL models."""
+    """Hourly sequence regressor with preprocessing fitted on training windows only.
+
+    Inference never learns fill values or category levels from the prediction batch.
+    Numeric columns and categorical wind direction are retained in a frozen schema.
+    """
 
     def __init__(self, config: Optional[DLConfig] = None):
         self.config = config or DLConfig()
-        self.model: Optional[TemporalForecaster] = None
-        self.feature_means: Optional[np.ndarray] = None
-        self.feature_stds: Optional[np.ndarray] = None
-        self.input_dim: Optional[int] = None
+        self.model = None
 
-    def _prepare_matrix(self, frame: pd.DataFrame) -> np.ndarray:
-        # Numeric values only, fill NA with column medians/means
-        numeric_df = frame.select_dtypes(include=[np.number]).copy()
-        for col in numeric_df.columns:
-            if numeric_df[col].isna().any():
-                median_val = numeric_df[col].median()
-                numeric_df[col] = numeric_df[col].fillna(0.0 if pd.isna(median_val) else median_val)
-        return numeric_df.to_numpy(dtype=np.float32)
+    def _prepare_matrix(self, frame):
+        missing = set(self.columns_) - set(frame.columns)
+        if missing:
+            raise ValueError(f"Missing fitted feature columns: {sorted(missing)}")
+        numeric = frame[self.numeric_columns_].to_numpy(dtype=np.float32)
+        if np.isinf(numeric).any():
+            raise ValueError("Feature values must be finite or missing")
+        numeric = np.where(np.isnan(numeric), self.feature_medians_, numeric)
+        parts = [numeric]
+        for column, levels in self.category_levels_.items():
+            values = frame[column].fillna("MISSING").astype(str).to_numpy()
+            parts.append((values[:, None] == np.asarray(levels)[None, :]).astype(np.float32))
+        return np.concatenate(parts, axis=1)
 
-    def fit(self, X_df: pd.DataFrame, y_series: pd.Series, valid_mask: Optional[pd.Series] = None):
-        raw_mat = self._prepare_matrix(X_df)
-        self.feature_means = np.mean(raw_mat, axis=0)
-        self.feature_stds = np.std(raw_mat, axis=0) + 1e-7
-        scaled_mat = (raw_mat - self.feature_means) / self.feature_stds
-        self.input_dim = scaled_mat.shape[1]
+    def _target_baseline(self, frame):
+        if self.config.target_mode == "level":
+            return np.zeros(len(frame), dtype=np.float32)
+        if "pm25_lag_0" not in self.numeric_columns_:
+            raise ValueError("Delta targets require the current PM2.5 feature pm25_lag_0")
+        fill = self.feature_medians_[self.numeric_columns_.index("pm25_lag_0")]
+        return frame["pm25_lag_0"].fillna(fill).to_numpy(dtype=np.float32)
 
-        y_arr = y_series.to_numpy(dtype=np.float32)
-
-        # Build sequence dataset
+    def fit(self, X_df, y_series, valid_mask=None):
+        mask = aligned_mask(X_df, y_series, valid_mask)
         seq_len = self.config.seq_len
-        dataset = SequenceAirDataset(scaled_mat, y_arr, seq_len=seq_len)
-
-        # Apply valid mask alignment using numpy boolean masking
-        num_windows = len(dataset)
-        target_indices = np.arange(seq_len - 1, seq_len - 1 + num_windows)
-        
-        valid_targets = ~np.isnan(y_arr[target_indices])
-        if valid_mask is not None:
-            mask_arr = valid_mask.to_numpy() if hasattr(valid_mask, "to_numpy") else np.asarray(valid_mask)
-            if len(mask_arr) == len(y_arr):
-                valid_targets = valid_targets & mask_arr[target_indices]
-            elif len(mask_arr) == len(X_df):
-                valid_targets = valid_targets & mask_arr[target_indices]
-
-        indices = np.where(valid_targets)[0].tolist()
-        if not indices:
-            # Fallback to all non-nan target indices if mask doesn't align
-            indices = np.where(~np.isnan(y_arr[target_indices]))[0].tolist()
-
-        if not indices:
-            raise ValueError("No valid training samples found for Deep Learning pipeline")
-
-        subset = torch.utils.data.Subset(dataset, indices)
-        loader = DataLoader(subset, batch_size=self.config.batch_size, shuffle=True)
-
+        mask[:seq_len - 1] = False
+        endpoints = np.flatnonzero(mask)
+        if not len(endpoints):
+            raise ValueError("No valid training sequences; the supplied mask is never relaxed")
+        # Union of the actual training windows, including their historical context.
+        changes = np.zeros(len(X_df) + 1, dtype=int)
+        np.add.at(changes, endpoints - seq_len + 1, 1)
+        np.add.at(changes, endpoints + 1, -1)
+        input_mask = np.cumsum(changes[:-1]) > 0
+        self.columns_ = list(X_df.columns)
+        self.numeric_columns_ = list(X_df.select_dtypes(include="number").columns)
+        train_frame = X_df.loc[input_mask]
+        self.feature_medians_ = (train_frame[self.numeric_columns_].median()
+                                .fillna(0.0).to_numpy(dtype=np.float32))
+        self.category_levels_ = {
+            column: sorted(train_frame[column].fillna("MISSING").astype(str).unique())
+            for column in self.columns_ if column not in self.numeric_columns_
+        }
+        raw = self._prepare_matrix(X_df)
+        self.feature_means = raw[input_mask].mean(axis=0)
+        std = raw[input_mask].std(axis=0)
+        self.feature_stds = np.where(std > 1e-7, std, 1.0)
+        scaled = (raw - self.feature_means) / self.feature_stds
+        self.input_dim = scaled.shape[1]
+        self.preprocessing_fit_start_ = str(X_df.index[input_mask].min())
+        self.preprocessing_fit_end_ = str(X_df.index[input_mask].max())
+        self.training_origins_ = X_df.index[endpoints]
+        self.training_rows_ = len(endpoints)
+        # Standardize targets so Huber's delta and gradients have a meaningful scale.
+        targets = y_series.to_numpy(dtype=np.float32) - self._target_baseline(X_df)
+        self.target_mean_ = float(targets[endpoints].mean())
+        self.target_std_ = max(float(targets[endpoints].std()), 1e-7)
+        normalized_y = (targets - self.target_mean_) / self.target_std_
+        dataset = SequenceAirDataset(scaled, normalized_y, seq_len)
+        subset = torch.utils.data.Subset(dataset, (endpoints - seq_len + 1).tolist())
+        generator = torch.Generator().manual_seed(self.config.random_seed)
+        loader = DataLoader(subset, batch_size=self.config.batch_size, shuffle=True, generator=generator)
         device = torch.device(self.config.device)
+        torch.manual_seed(self.config.random_seed)
         self.model = TemporalForecaster(
-            input_dim=self.input_dim,
-            hidden_dim=self.config.hidden_dim,
-            num_layers=self.config.num_layers,
-            dropout=self.config.dropout,
+            input_dim=self.input_dim, hidden_dim=self.config.hidden_dim,
+            num_layers=self.config.num_layers, dropout=self.config.dropout,
             architecture=self.config.architecture,
+            use_attention=self.config.use_attention,
         ).to(device)
-
+        optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.config.learning_rate, weight_decay=1e-4)
         criterion = nn.HuberLoss(delta=1.0)
-        optimizer = torch.optim.AdamW(
-            self.model.parameters(), lr=self.config.learning_rate, weight_decay=1e-4
-        )
-
-        self.model.train()
+        self.loss_history_ = []
         for _ in range(self.config.epochs):
+            self.model.train()
+            total = 0.0
             for batch_x, batch_y in loader:
                 batch_x, batch_y = batch_x.to(device), batch_y.to(device)
                 optimizer.zero_grad()
-                pred, _ = self.model(batch_x)
-                loss = criterion(pred, batch_y)
+                prediction, _ = self.model(batch_x)
+                loss = criterion(prediction, batch_y)
+                if not torch.isfinite(loss):
+                    raise RuntimeError("Nonfinite neural training loss")
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
                 optimizer.step()
-
+                total += loss.item() * len(batch_x)
+            self.loss_history_.append(total / len(subset))
         self.model.eval()
         return self
 
-    def predict(self, X_df: pd.DataFrame) -> np.ndarray:
+    def predict(self, X_df):
         if self.model is None:
-            raise RuntimeError("Model has not been fitted.")
-
-        raw_mat = self._prepare_matrix(X_df)
-        scaled_mat = (raw_mat - self.feature_means) / self.feature_stds
-        seq_len = self.config.seq_len
-
-        dataset = SequenceAirDataset(scaled_mat, seq_len=seq_len)
+            raise RuntimeError("Model has not been fitted")
+        validate_hourly_frame(X_df)
+        raw = self._prepare_matrix(X_df)
+        scaled = (raw - self.feature_means) / self.feature_stds
+        dataset = SequenceAirDataset(scaled, seq_len=self.config.seq_len)
         loader = DataLoader(dataset, batch_size=self.config.batch_size, shuffle=False)
-
-        device = torch.device(self.config.device)
-        self.model.to(device)
-        self.model.eval()
-
+        self.model.to(self.config.device).eval()
+        output = np.full(len(X_df), np.nan)
         predictions = []
         with torch.no_grad():
             for batch_x, _ in loader:
-                batch_x = batch_x.to(device)
-                pred, _ = self.model(batch_x)
-                predictions.append(pred.cpu().numpy())
-
+                prediction, _ = self.model(batch_x.to(self.config.device))
+                predictions.append(prediction.cpu().numpy().ravel())
         if predictions:
-            pred_arr = np.concatenate(predictions, axis=0).flatten()
-            # Nonnegative concentration constraint
-            pred_arr = np.clip(pred_arr, a_min=0.0, a_max=None)
-            # Prepend NaNs for the initial warmup sequence window
-            warmup_padding = np.full(seq_len - 1, np.nan)
-            return np.concatenate([warmup_padding, pred_arr])
-        return np.full(len(X_df), np.nan)
+            values = (np.concatenate(predictions) * self.target_std_ + self.target_mean_
+                      + self._target_baseline(X_df)[self.config.seq_len - 1:])
+            if not np.isfinite(values).all():
+                raise RuntimeError("Nonfinite neural prediction")
+            output[self.config.seq_len - 1:] = np.maximum(values, 0.0)
+        return output
 
-    def get_attention_weights(self, X_window: np.ndarray) -> np.ndarray:
-        """Extract attention distribution over the given sequence window (seq_len, num_features)."""
-        if self.model is None or self.model.attention is None:
-            return np.ones(self.config.seq_len) / self.config.seq_len
-
-        scaled = (X_window - self.feature_means) / self.feature_stds
-        tensor_in = torch.tensor(scaled, dtype=torch.float32).unsqueeze(0).to(self.config.device)
-        self.model.eval()
+    def get_attention_weights(self, X_window):
+        """Explain one complete window using the same preprocessing as prediction."""
+        if self.model is None:
+            raise RuntimeError("Model has not been fitted")
+        if self.model.attention is None:
+            raise ValueError("Attention is disabled for this model")
+        if not isinstance(X_window, pd.DataFrame) or len(X_window) != self.config.seq_len:
+            raise ValueError("Attention requires one DataFrame window with seq_len rows")
+        validate_hourly_frame(X_window)
+        matrix = (self._prepare_matrix(X_window) - self.feature_means) / self.feature_stds
+        tensor = torch.tensor(matrix, dtype=torch.float32).unsqueeze(0).to(self.config.device)
+        self.model.to(self.config.device).eval()
         with torch.no_grad():
-            _, weights = self.model(tensor_in)
+            _, weights = self.model(tensor)
         return weights.squeeze(0).cpu().numpy()
 
 
 class HybridResidualModel:
-    """Technically sound Hybrid architecture combining Deep Learning and Gradient Boosted Trees.
-    
-    Methodology:
-    1. Base Estimator: Bi-LSTM / Temporal Attention captures long-range multi-hour dependencies
-       from continuous sequence tensors: y_dl = DL(sequence).
-    2. Residual Estimator: An XGBoost / Ridge tabular model learns the residual error:
-       r = y_actual - y_dl based on discrete tabular lags and domain features.
-    3. Composite Forecast:
-       y_hybrid = clip(y_dl + residual_hat, min=0.0).
+    """Bi-LSTM plus corrections learned on a later, disjoint calibration block.
+
+    The base is frozen before calibration begins. Its labels must be observable
+    at the first calibration origin. It is NOT refitted on calibration labels,
+    including in the saved deployment model, so the residual target stays honest.
     """
 
-    def __init__(self, dl_pipeline: Optional[DeepLearningPipeline] = None, tabular_model=None):
-        self.dl = dl_pipeline or DeepLearningPipeline(DLConfig(architecture="bilstm", epochs=15))
+    def __init__(self, dl_pipeline=None, tabular_model=None, calibration_fraction=0.2,
+                 correction_weight=1.0):
+        if not 0 < calibration_fraction < 1:
+            raise ValueError("calibration_fraction must be between zero and one")
+        self.dl = dl_pipeline or DeepLearningPipeline(DLConfig(architecture="bilstm"))
         self.tabular_model = tabular_model
+        self.calibration_fraction = calibration_fraction
+        if not np.isfinite(correction_weight) or not 0 <= correction_weight <= 1:
+            raise ValueError("correction_weight must be finite and in [0, 1]")
+        self.correction_weight = correction_weight
         self.is_fitted = False
 
-    def fit(self, X_df: pd.DataFrame, y_series: pd.Series, valid_mask: pd.Series):
-        # 1. Fit DL Base
-        self.dl.fit(X_df, y_series, valid_mask=valid_mask)
-        dl_preds = self.dl.predict(X_df)
-
-        # 2. Compute residual on valid mask
-        valid_indices = valid_mask & (~np.isnan(dl_preds)) & y_series.notna()
-        residuals = y_series[valid_indices] - dl_preds[valid_indices]
-
-        # 3. Fit Tabular Model on residuals
-        if self.tabular_model is not None:
-            X_valid = X_df.loc[valid_indices]
-            self.tabular_model.fit(X_valid, residuals)
-
+    def fit(self, X_df, y_series, valid_mask, target_time=None):
+        self.is_fitted = False
+        if self.tabular_model is None:
+            raise ValueError("A residual estimator is required")
+        valid = aligned_mask(X_df, y_series, valid_mask)
+        valid[:self.dl.config.seq_len - 1] = False
+        positions = np.flatnonzero(valid)
+        calibration_rows = max(1, int(np.ceil(len(positions) * self.calibration_fraction)))
+        if len(positions) - calibration_rows < 2:
+            raise ValueError("Insufficient training rows for separate base and calibration blocks")
+        calibration_start = X_df.index[positions[-calibration_rows]]
+        if target_time is None:
+            target_time = pd.Series(X_df.index + pd.Timedelta(hours=1), index=X_df.index)
+        if not isinstance(target_time, pd.Series) or not target_time.index.equals(X_df.index):
+            raise ValueError("Target times must have exactly the same index as features")
+        if target_time.isna().any() or (target_time <= X_df.index).any():
+            raise ValueError("Target times must follow their forecast origins")
+        base_mask = valid & (X_df.index < calibration_start) & (target_time <= calibration_start).to_numpy()
+        calibration_mask = valid & (X_df.index >= calibration_start)
+        if base_mask.sum() < 2:
+            raise ValueError("Insufficient base training labels before calibration")
+        self.dl.fit(X_df, y_series, valid_mask=base_mask)
+        # Predict only through calibration end; keep the hourly input grid intact.
+        stop = positions[-1] + 1
+        base = self.dl.predict(X_df.iloc[:stop])
+        calibration_positions = np.flatnonzero(calibration_mask)
+        residuals = y_series.iloc[calibration_positions] - base[calibration_positions]
+        self.tabular_model.fit(X_df.iloc[calibration_positions], residuals)
+        self.fit_audit_ = {
+            "base_training_rows": int(base_mask.sum()),
+            "base_last_origin": str(X_df.index[base_mask].max()),
+            "base_latest_target": str(target_time.loc[base_mask].max()),
+            "calibration_start": str(calibration_start),
+            "calibration_end": str(X_df.index[calibration_mask].max()),
+            "calibration_rows": int(calibration_mask.sum()),
+            "calibration_latest_target": str(target_time.loc[calibration_mask].max()),
+            "preprocessing_fit_end": self.dl.preprocessing_fit_end_,
+            "calibration_fraction": self.calibration_fraction,
+            "residual_training": "chronological out-of-sample calibration; base frozen",
+        }
         self.is_fitted = True
         return self
 
-    def predict(self, X_df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Returns (hybrid_pred, dl_base_pred, ml_residual_pred)."""
+    def predict(self, X_df):
+        """Return (hybrid concentration, base concentration, signed correction)."""
         if not self.is_fitted:
-            raise RuntimeError("Hybrid model is not fitted.")
-
-        dl_base = self.dl.predict(X_df)
-        if self.tabular_model is not None:
-            # Predict residual
-            try:
-                residual_pred = self.tabular_model.predict(X_df)
-            except Exception:
-                # If tabular pipeline requires specific index or preprocessing
-                residual_pred = np.zeros(len(X_df))
-        else:
-            residual_pred = np.zeros(len(X_df))
-
-        hybrid_pred = np.where(np.isnan(dl_base), np.nan, np.clip(dl_base + residual_pred, a_min=0.0, a_max=None))
-        return hybrid_pred, dl_base, residual_pred
+            raise RuntimeError("Hybrid model is not fitted")
+        base = self.dl.predict(X_df)
+        # A failed correction model must surface as an error, not an apparent success.
+        residual = np.asarray(self.tabular_model.predict(X_df), dtype=float)
+        if residual.shape != base.shape or not np.isfinite(residual).all():
+            raise RuntimeError("Residual model returned invalid predictions")
+        residual = residual * getattr(self, "correction_weight", 1.0)
+        return np.maximum(base + residual, 0.0), base, residual

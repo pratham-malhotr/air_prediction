@@ -1,0 +1,24 @@
+# Fixed before evaluation. The final 20% of eligible training origins calibrate
+# the residual model; the neural base remains frozen before that block.
+calibration_fraction = 0.2
+
+[deep_learning]
+architecture = "bilstm"
+seq_len = 24
+hidden_dim = 32
+num_layers = 1
+dropout = 0.1
+epochs = 6
+batch_size = 128
+learning_rate = 0.001
+random_seed = 42
+device = "cpu"
+
+[residual_model]
+n_estimators = 100
+max_depth = 3
+learning_rate = 0.05
+min_child_weight = 5
+subsample = 0.8
+colsample_bytree = 0.8
+reg_lambda = 5.0
