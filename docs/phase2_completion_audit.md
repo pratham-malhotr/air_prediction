@@ -41,6 +41,14 @@ The fourth commit adds the portability regression, external transfer supplement,
 
 The first release-backed Docker build succeeded, then its readiness checker encountered a transient connection reset before worker initialization completed. A small follow-up commit adds that socket failure to bounded startup retries and a regression, without changing forecast or training code. The revised runnable release preserves the original publication.
 
+## Clean checkout deployment continuation
+
+The original Docker recipe depended on ignored model files already being present. CI previously restored those files into its runner before building, so it did not establish that a hosting service could deploy directly from Git. The new `scripts/restore_phase2_runtime.py` fixes that gap: it uses only the standard library to verify the pinned public release, current forecasting source and all selected runtime payloads before creating files. It refuses to replace a different existing experiment. The Docker build now invokes this restorer itself; its context excludes local artifacts and training data.
+
+A real source checkout with no saved models was restored and served through Gunicorn. All five HTTP forecasts matched the release references, the selected default remained LSTM, and measured comparisons, report delivery, response headers and invalid-input rejection passed. The current strict suite has **129 passing tests**, including thirteen restoration regressions. [Local clean-checkout evidence](results/phase2_production/clean_checkout_audit.json) is distinct from the original publication evidence above. The manual CI workflow also builds from source without preloading artifacts; its remote status is recorded in Actions.
+
+Public hosting still awaits a hosting account choice and connection. No paid service has been created. The frozen research models, selection and numerical findings remain unchanged.
+
 ## Remaining scope
 
 The local Phase 2 implementation, documented research and submission are complete. A public neural deployment needs an appropriate host and resource allocation. This work supplies a production runtime and container verification; it does not provision or charge a hosting account. A separate college rubric has not been supplied. Any requirements unique to that rubric still need comparison with this audit.

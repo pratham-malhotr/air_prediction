@@ -2,7 +2,7 @@
 
 ## 1. Test Suite Overview
 
-The repository features 116 automated unit, integration, and regression tests ensuring data integrity, chronological timing validity, machine learning accuracy, frontend correctness, and deployment safety.
+The repository features 129 automated unit, integration, and regression tests ensuring data integrity, chronological timing validity, machine learning accuracy, frontend correctness, and deployment safety.
 
 ### Test Catalog Summary
 
@@ -19,7 +19,8 @@ The repository features 116 automated unit, integration, and regression tests en
 | `tests/test_phase2_research.py` | 2 | Selection freezes before comparison, independent full-window training, calibration boundaries, seed summaries and saved LSTM/Bi-LSTM/hybrid inference. |
 | `tests/test_phase2_external.py` | 6 | Archive selection, field compatibility, declared target boundaries, common rows, immutable pre-download protocol and cached provenance. |
 | `tests/test_phase2_production.py` | 8 | Container startup-reset retry, post-fork Gunicorn factory, port validation, HTTPS proxy/origin enforcement and rejection of source/data/model drift or synthetic bundles. |
-| **Total** | **116** | **100% Pass Rate** |
+| `tests/test_phase2_runtime_restore.py` | 13 | Pinned archive and payload verification, source/data/model/report provenance, selective and idempotent restoration, conflict preservation and path safety. |
+| **Total** | **129** | **100% Pass Rate** |
 
 ---
 
@@ -83,3 +84,5 @@ The classical matrix checks Python 3.11/3.12 without optional PyTorch. A dedicat
 `python scripts/check_phase2_production.py --launch` exercises a real local Gunicorn worker, all five saved forecasts, model readiness, the selected default, measured comparisons, PDF delivery, invalid-input handling and HTTP headers. It writes its result only after all checks pass. The manual CI workflow additionally builds the release-backed Docker image and repeats HTTP parity on Linux.
 
 `python scripts/build_phase2_external_report.py` independently recomputes pooled and station scores from the frozen UCI 501 transfer predictions and checks common target hours, protocol/model/evaluator hashes, timestamps and the pre-download declaration. The external observations are evaluation data and are never used for fitting or selection.
+
+`python -S scripts/restore_phase2_runtime.py` restores only the pinned release runtime from a source-only checkout. Its thirteen focused tests cover archive/payload corruption, source drift, unfinished or synthetic runs, conflicting model outputs, duplicate/missing selected members and symlink escapes. A real fresh checkout was restored without ML imports and served matching forecasts through Gunicorn; [local evidence](results/phase2_production/clean_checkout_audit.json) records the checks. Manual container CI now builds directly from checkout without restoring artifacts into the runner first.

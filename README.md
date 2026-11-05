@@ -103,6 +103,8 @@ On the same 8,531 historical 2014 hours, RMSE is **20.726 for LSTM**, **20.799 f
 
 The Phase 2 submission includes an IEEE-format report, editable presentation, slide PDF, presenter guide, executed notebook, scientific figures and a runnable package with saved weights. The runnable package is published as a [GitHub release download](https://github.com/pratham-malhotr/air_prediction/releases/download/phase2-research-2026-11-05-r1/air_prediction_phase2.zip); extract it to obtain the saved models without retraining. The local dashboard defaults to the validation-selected LSTM and retains every alternative. The hosted classical app is separate.
 
+The production container now builds directly from a source-only checkout, restoring the evaluated models from a checksum-pinned release. See the [production runtime instructions](deployment/phase2/README.md).
+
 [Phase 2 selected research and reproduction](docs/phase2_research.md) · [Submission documents](reports/phase2/README.md) · [First corrected baseline audit](docs/phase2.md) · [Production runtime](deployment/phase2/README.md) · [External transfer test](docs/phase2_external_validation.md).
 
 ## Interactive forecast workspace
@@ -134,7 +136,7 @@ source .venv/bin/activate
 pip install -e '.[dev,web]'       # Classical ML + Web Dashboard
 pip install -r requirements-phase2.txt  # Recorded versions for Phase 2 and saved-model compatibility
 
-# 3. Run the complete test suite (116 tests)
+# 3. Run the complete test suite (129 tests)
 pytest -v
 
 # Train Phase 2 into a fresh directory (requires completed Phase 1 artifacts)
@@ -173,7 +175,7 @@ Visitors can use this dashboard to:
 
 ## Current status and limits
 
-The real-data cleaning, EDA, feature construction, four-model backtests, validation-only feature comparison, diagnostics and saved-model forecasts have been completed for Phase 1. Phase 2 now has independent recurrent benchmarks, validation selection, attention ablations, seed stability and a calibrated hybrid. LSTM is the validation-preferred model and has the lowest pooled RMSE in the exploratory 2014 comparison. The seven-page IEEE report and ten-slide editable PowerPoint document the classical ML Phase 1 findings and Aircast demonstration. The presentation includes thirteen graph panels covering data quality, training EDA, validation, pooled/quarterly errors, pollution regimes, forecast traces, residuals and final-refit importance. Both documents include the supplied team names and enrollment numbers; the presentation ends with a thank-you slide. A matching presentation PDF and detailed embedded speaker notes are included. Aircast adds an interactive interface around the saved models. The current test run reports 116 passing checks across data handling, classical ML forecasting, PyTorch sequence & hybrid models, dashboard service, and deployment packaging. Synthetic data remains limited to implementation tests. The Phase 2 models are available in the local dashboard; the existing Vercel bundle uses the classical models.
+The real-data cleaning, EDA, feature construction, four-model backtests, validation-only feature comparison, diagnostics and saved-model forecasts have been completed for Phase 1. Phase 2 now has independent recurrent benchmarks, validation selection, attention ablations, seed stability and a calibrated hybrid. LSTM is the validation-preferred model and has the lowest pooled RMSE in the exploratory 2014 comparison. The seven-page IEEE report and ten-slide editable PowerPoint document the classical ML Phase 1 findings and Aircast demonstration. The presentation includes thirteen graph panels covering data quality, training EDA, validation, pooled/quarterly errors, pollution regimes, forecast traces, residuals and final-refit importance. Both documents include the supplied team names and enrollment numbers; the presentation ends with a thank-you slide. A matching presentation PDF and detailed embedded speaker notes are included. Aircast adds an interactive interface around the saved models. The current test run reports 129 passing checks across data handling, classical ML forecasting, PyTorch sequence & hybrid models, dashboard service, and deployment packaging. Synthetic data remains limited to implementation tests. The Phase 2 models are available in the local dashboard; the existing Vercel bundle uses the classical models.
 
 Our conclusions are limited to this historical Beijing series. They do not establish accuracy in another city or today, and weather correlations or feature importance do not establish causation. Missing baseline inputs also affect which hours we can compare. Changes made after reviewing these holdout results require a fresh evaluation or an explicit exploratory label.
 

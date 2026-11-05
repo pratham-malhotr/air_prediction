@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "verified_utc": "2026-11-05T08:56:01.228056+00:00",
+  "url": "http://127.0.0.1:8017",
+  "source_code_sha256": "ba686e2f1da9f2bf60982912d08d0d9d1aa71df1efa48caf288ba52c7dc7eec5",
+  "forecasts": {
+    "bilstm": 11.78113842010498,
+    "lstm": 12.197717666625977,
+    "hybrid": 12.48949247598648,
+    "ridge": 13.639784709098251,
+    "xgboost": 11.92273235321045
+  },
+  "tolerance": 0.0001,
+  "checks": [
+    "HTTP readiness with five loaded models",
+    "validation-selected default",
+    "seven measured comparisons",
+    "Phase 2 PDF",
+    "all five saved forecasts",
+    "same-origin POST",
+    "invalid-input rejection",
+    "response headers"
+  ]
+}

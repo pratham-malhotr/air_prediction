@@ -1,0 +1,49 @@
+{
+  "status": "verified",
+  "verified_utc": "2026-11-05T08:55:11.975003+00:00",
+  "release_tag": "phase2-research-2026-11-05-r1",
+  "bundle_sha256": "d20646ee62de7aa8fcd7a4895e978e6150cb6faa717123cdb17d7b48b136faf8",
+  "source_code_sha256": "ba686e2f1da9f2bf60982912d08d0d9d1aa71df1efa48caf288ba52c7dc7eec5",
+  "restored_files": [
+    "artifacts/phase1/ridge.joblib",
+    "artifacts/phase1/xgboost.joblib",
+    "artifacts/phase1/metrics.csv",
+    "artifacts/phase1/fold_metrics.csv",
+    "artifacts/phase1/errors_by_pollution_regime.csv",
+    "artifacts/phase1/run_manifest.json",
+    "artifacts/phase2_research/bilstm.joblib",
+    "artifacts/phase2_research/lstm.joblib",
+    "artifacts/phase2_research/hybrid.joblib",
+    "artifacts/phase2_research/metrics.csv",
+    "artifacts/phase2_research/fold_metrics.csv",
+    "artifacts/phase2_research/errors_by_pollution_regime.csv",
+    "artifacts/phase2_research/run_manifest.json",
+    "artifacts/phase2_research/verification.json"
+  ],
+  "matching_existing_files": [
+    "data/raw/PRSA_data_2010.1.1-2014.12.31.csv",
+    "data/raw/PRSA_data_2010.1.1-2014.12.31.provenance.json",
+    "data/README.md",
+    "reports/phase2/Aircast_Phase2_Report.pdf"
+  ],
+  "files": {
+    "artifacts/phase1/ridge.joblib": "8879ef6ecf9ab4c361579f9e974a445b6d96952533ea660592216947314fc514",
+    "artifacts/phase1/xgboost.joblib": "e760354b2a93400a2bf7bc0344bf012559b9728368013cf35e8a19fc8f0ab1a7",
+    "artifacts/phase1/metrics.csv": "9799653e4cdf1388ee6e13d9797e3bb7ad8ac5f2b384d52e5abb54de66ffb99c",
+    "artifacts/phase1/fold_metrics.csv": "7018808e387001e8f7a64ddaa627278e96a18a36b288c6ff549271df919037ea",
+    "artifacts/phase1/errors_by_pollution_regime.csv": "b0d4304ccda021ef49d0cbb3268625c1d2d0744bb6ebe0d3332a69d7edfcf94f",
+    "artifacts/phase1/run_manifest.json": "b2a88405b2261bba0faa4251172de9cc491da6f5f3d770da4ac5ab4d9280e425",
+    "artifacts/phase2_research/bilstm.joblib": "effd6f670740cd506bf7a81aa788514266c22e7f3394a430cd86b8c7751f14ec",
+    "artifacts/phase2_research/lstm.joblib": "206f7768a6ff8e2848081c79d86855782e3f6e8995793ff406af66e9d124d1c4",
+    "artifacts/phase2_research/hybrid.joblib": "027e15cf496e055b175eaa6b623cc4c950649e343749c43ab2ce4ccf3c34f092",
+    "artifacts/phase2_research/metrics.csv": "32c9b54394e4cce00085faa9955ee73a11e4d5c30d77fac692b33859624eb110",
+    "artifacts/phase2_research/fold_metrics.csv": "37b33a6b16592cacdfcb6aedf8c109c2cc3f63036ff8a84f2cdac6ea4dabdd4a",
+    "artifacts/phase2_research/errors_by_pollution_regime.csv": "7c7bc5883f946dc2624ce2c8c342688d29c8c3227b7e6e133e0fd7c11d8cce2c",
+    "artifacts/phase2_research/run_manifest.json": "73cd80390ed0c354f9c4ca49429f58fabc921aa21f8ff39bcb9d455ab33e8b99",
+    "artifacts/phase2_research/verification.json": "9193abed1705fc5d8d0a11b92765d627464e0ed1a93bd401b5394db3ad5ffafd",
+    "data/raw/PRSA_data_2010.1.1-2014.12.31.csv": "4127f868775e31b3956522adc0ec75af8937dde6a3896e8beed3a376c6d27f1c",
+    "data/raw/PRSA_data_2010.1.1-2014.12.31.provenance.json": "8a25110e268c93f256c4d54b30470632984ffa96f3b348acf9a66a148c482062",
+    "data/README.md": "3343f117cce21bc207151f563ac51f47d02876076a33c5307d9290dbee89d132",
+    "reports/phase2/Aircast_Phase2_Report.pdf": "97ab3379a7e9beda53fd92264da7e428c60c051ba3cd7062a49a25fac3a86c94"
+  }
+}

@@ -2,13 +2,16 @@
 
 This runtime serves all five saved models with Gunicorn. Startup checks the forecasting source, original dataset and three neural model hashes against the completed research run. PyTorch initializes inside a single worker after Gunicorn forks. There is no request-time fitting.
 
-The runnable release ZIP supplies the ignored `artifacts/phase1/*.joblib` and `artifacts/phase2_research/*.joblib` files. Extract that bundle into a clean directory before running these commands. A source-only Git clone does not include trained weights.
+A clean Git checkout can build the container directly. The build restores the evaluated runtime files from the public `phase2-research-2026-11-05-r1` release, pinned to SHA-256 `d20646ee62de7aa8fcd7a4895e978e6150cb6faa717123cdb17d7b48b136faf8`. Local models, training outputs and credentials are excluded from the Docker build context.
+
+The standard-library restorer verifies the whole archive, selected payload hashes, current forecasting source, dataset, neural model hashes and verified report before writing files. It restores 18 runtime files and never unpickles models. An existing file must match; a different experiment is preserved and causes an error. Use a fresh checkout when deploying another version. No retraining is required.
 
 ## Gunicorn
 
 Use Python 3.13 and a virtual environment:
 
 ```bash
+python -S scripts/restore_phase2_runtime.py
 python -m pip install -r deployment/phase2/requirements.txt
 python scripts/serve_phase2_production.py
 ```
@@ -29,7 +32,7 @@ python scripts/check_phase2_production.py --launch
 
 ## Container
 
-Run from the extracted release root:
+Run from the repository root, including a source-only clone:
 
 ```bash
 docker build -f deployment/phase2/Dockerfile -t aircast-phase2 .
@@ -37,7 +40,15 @@ docker run --publish 10000:10000 aircast-phase2
 python scripts/check_phase2_production.py --url http://127.0.0.1:10000
 ```
 
-The image uses Python 3.13, CPU PyTorch, a non-root user, a writable temporary Matplotlib cache and an HTTP health check. Its context excludes local environments, Git metadata, checkpoints and external raw data. The manual GitHub CI workflow downloads and verifies the release model bundle, builds this image, and compares Linux HTTP results for all five models against the saved references. The uploaded CI evidence is named `phase2-container`.
+The image uses Python 3.13, CPU PyTorch, a non-root user, a writable temporary Matplotlib cache and an HTTP health check. Its build downloads the pinned public release over HTTPS and verifies it before installing inference dependencies. The manual GitHub CI workflow starts without local artifacts, builds this image directly from checkout, and compares Linux HTTP results for all five models against the recorded references. The uploaded CI evidence is named `phase2-container`.
+
+For an offline local restore, supply the exact published ZIP:
+
+```bash
+python -S scripts/restore_phase2_runtime.py --bundle /path/to/air_prediction_phase2.zip
+```
+
+The restorer has no package dependencies. It rejects an unexpected archive digest, missing or duplicate selected members, mismatched training provenance, incompatible source, conflicting files and destinations outside the checkout. Unselected archive members are never extracted. Updating the pinned release requires a reviewed source change; there is no mutable “latest” model download.
 
 A container build and smoke test verify hosting readiness. A public neural deployment still needs a host and resource allocation. The existing classical Vercel deployment is separate.
 

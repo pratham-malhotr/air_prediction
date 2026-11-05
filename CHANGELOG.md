@@ -2,6 +2,13 @@
 
 All notable changes to the Air Quality Prediction project are documented here.
 
+## 2026-11-05 — Deployment from a clean checkout
+
+- Added a standard-library runtime restorer pinned to the published release digest, with selective extraction and checks for source, dataset, model and report provenance.
+- Preserved existing differing experiments and excluded local artifacts and credentials from the Docker context.
+- Made the production image restore its own runtime during build; manual CI now builds directly from a checkout without preloading model files.
+- Verified all five forecasts through Gunicorn from a fresh restored checkout; the strict suite has 129 passing tests, including 13 restoration regressions.
+
 ## 2026-11-05 — Post-publication Phase 2 continuation
 
 - Fixed exact decimal CSV round trips exposed by Linux CPU CI, added a regression and repeated the full research run under the corrected source.
