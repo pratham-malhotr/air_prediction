@@ -11,8 +11,10 @@ from air_prediction.deep_learning import (
     DLConfig,
     DeepLearningPipeline,
     HybridResidualModel,
+    PinballLoss,
     SequenceAirDataset,
     TemporalForecaster,
+    empirical_coverage,
 )
 from air_prediction.models import make_model
 
@@ -253,3 +255,54 @@ def test_delta_target_reconstructs_concentrations_and_preserves_missingness(synt
     np.testing.assert_allclose(model.predict(values.tail(4))[-1], predictions[-1], atol=1e-5)
     with pytest.raises(ValueError, match='Attention is disabled'):
         model.get_attention_weights(values.tail(4))
+
+
+def test_pinball_loss_and_quantile_validation():
+    loss_fn = PinballLoss(quantiles=(0.1, 0.5, 0.9))
+    preds = torch.tensor([[10.0, 15.0, 20.0]], dtype=torch.float32)
+    targets = torch.tensor([[15.0]], dtype=torch.float32)
+    loss = loss_fn(preds, targets)
+    assert torch.isfinite(loss) and loss.item() >= 0.0
+
+    # Median quantile q=0.5 error should be 0.5 * |y - y_hat|
+    median_loss_fn = PinballLoss(quantiles=(0.5,))
+    med_loss = median_loss_fn(torch.tensor([[10.0]]), torch.tensor([[15.0]]))
+    assert np.isclose(med_loss.item(), 0.5 * 5.0)
+
+    with pytest.raises(ValueError, match="strictly between 0 and 1"):
+        PinballLoss(quantiles=(0.0, 0.5))
+    with pytest.raises(ValueError, match="strictly between 0 and 1"):
+        PinballLoss(quantiles=(1.2,))
+
+
+def test_empirical_coverage():
+    actuals = np.array([10.0, 20.0, 30.0, 40.0, 50.0])
+    lower = np.array([8.0, 15.0, 25.0, 35.0, 45.0])
+    upper = np.array([12.0, 22.0, 32.0, 42.0, 52.0])
+    assert empirical_coverage(actuals, lower, upper) == 1.0
+
+    upper_tight = np.array([12.0, 18.0, 32.0, 42.0, 52.0])  # index 1 misses
+    assert empirical_coverage(actuals, lower, upper_tight) == 0.8
+
+    # NaN handling
+    actuals_with_nan = np.array([10.0, np.nan, 30.0, 40.0, 50.0])
+    assert empirical_coverage(actuals_with_nan, lower, upper) == 1.0
+
+
+def test_quantile_deep_learning_pipeline(synthetic_series):
+    X, y, mask = synthetic_series
+    config = DLConfig(seq_len=4, hidden_dim=8, num_layers=1, epochs=2, batch_size=16,
+                      quantiles=(0.1, 0.5, 0.9), random_seed=42)
+    pipeline = DeepLearningPipeline(config)
+    pipeline.fit(X, y, mask)
+
+    assert pipeline.model.output_dim == 3
+    preds = pipeline.predict(X)
+    assert preds.shape == (len(X), 3)
+
+    df_preds = pipeline.predict_quantiles(X)
+    assert isinstance(df_preds, pd.DataFrame)
+    assert list(df_preds.columns) == ["q10", "q50", "q90"]
+    assert len(df_preds) == len(X)
+    assert np.all(df_preds.dropna().values >= 0)
+

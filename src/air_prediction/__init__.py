@@ -47,6 +47,8 @@ __all__ = [
     "DLConfig",
     "DeepLearningPipeline",
     "HybridResidualModel",
+    "PinballLoss",
     "SequenceAirDataset",
     "TemporalForecaster",
+    "empirical_coverage",
 ]

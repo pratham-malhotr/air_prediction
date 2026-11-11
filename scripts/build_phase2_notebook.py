@@ -59,6 +59,7 @@ def build():
     * **Recurrent Sequence Models**: Evaluates **LSTM** and **Bi-LSTM** architectures for temporal time-series representation.
     * **Temporal Attention**: Additive attention mechanism across past sliding sequence windows ($L=24$ hours) to identify critical weather transitions.
     * **Delta vs. Level Formulation**: Models target level $y_{t+1}$ directly or learns a residual delta correction $\Delta y = y_{t+1} - y_t$ against the latest reading.
+    * **Probabilistic Quantile Regression**: Computes 80% uncertainty prediction intervals $[q_{10}, q_{90}]$ using Pinball Loss to quantify confidence during volatile pollution regimes.
     * **Calibrated Hybrid Forecaster**: Pairs a frozen classical base model (XGBoost) with a deep neural residual correction block.
     * **Rigorous Validation Protocol**: Hyperparameter selection on 2013 validation folds, paired attention/directionality ablations across 3 predefined random seeds (42, 137, 2026), and backtests on 2014 holdout.
     ''')
@@ -317,8 +318,77 @@ print('Runtime:', sys.version.split()[0], '| Colab:', IN_COLAB)
         print(f"Peak Attention Horizon: {hours_back[int(np.argmax(weights))]} (Weight: {weights.max():.4f})")
     ''')
 
+    md(r'''
+    ## 7. Probabilistic Forecasting: Quantile Regression & Prediction Intervals
+
+    Standard point forecasts ($\hat{y}$) do not convey epistemic or aleatoric uncertainty. In operational air quality management, decision-makers need **prediction intervals** (e.g., an 80% confidence bound).
+    
+    We train a multi-quantile model using **Pinball Loss**:
+    $$\mathcal{L}_q(y, \hat{y}_q) = \max\Big(q(y - \hat{y}_q), (1 - q)(\hat{y}_q - y)\Big)$$
+    
+    By jointly outputting the **10th ($q_{10}$)**, **50th ($q_{50}$, median)**, and **90th ($q_{90}$)** percentiles, the network provides an **80% prediction interval** $[q_{10}, q_{90}]$.
+    ''')
+
+    code('''
+    from air_prediction.deep_learning import PinballLoss, empirical_coverage
+
+    q_forecaster = TemporalForecaster(input_dim=X_train_mat.shape[1], hidden_dim=32, architecture='bilstm', use_attention=True, output_dim=3)
+    q_optimizer = torch.optim.Adam(q_forecaster.parameters(), lr=0.001)
+    q_criterion = PinballLoss(quantiles=(0.1, 0.5, 0.9))
+
+    print("Training Multi-Quantile Forecaster (q=0.10, 0.50, 0.90)...")
+    q_epochs = 5
+    for epoch in range(1, q_epochs + 1):
+        q_forecaster.train()
+        total_q_loss, count = 0.0, 0
+        for X_b, y_b in train_loader:
+            mask = torch.isfinite(y_b).squeeze(-1)
+            if not mask.any():
+                continue
+            q_optimizer.zero_grad()
+            preds, _ = q_forecaster(X_b)
+            loss = q_criterion(preds[mask], y_b[mask])
+            loss.backward()
+            q_optimizer.step()
+            total_q_loss += loss.item() * mask.sum().item()
+            count += mask.sum().item()
+        print(f"Epoch {epoch}/{q_epochs} - Pinball Loss: {total_q_loss / max(1, count):.4f}")
+
+    # Evaluate on an example validation segment (168 hours = 1 week)
+    q_forecaster.eval()
+    test_slice = 168
+    all_q_preds = []
+    with torch.no_grad():
+        for i in range(24, test_slice):
+            sub_x = torch.tensor(X_val_mat[i-24:i], dtype=torch.float32).unsqueeze(0)
+            p, _ = q_forecaster(sub_x)
+            all_q_preds.append(p.squeeze(0).numpy())
+    
+    q_matrix = np.array(all_q_preds)
+    # Ensure monotonicity q10 <= q50 <= q90
+    q_matrix = np.sort(q_matrix, axis=-1)
+    actual_test_y = y_val[24:test_slice]
+
+    coverage_80 = empirical_coverage(actual_test_y, q_matrix[:, 0], q_matrix[:, 2])
+    print(f"\\nEmpirical 80% Interval Coverage: {coverage_80 * 100:.2f}% (Target: 80.0%)")
+
+    # Plot Prediction Intervals
+    time_steps = np.arange(len(actual_test_y))
+    plt.figure(figsize=(12, 5))
+    plt.fill_between(time_steps, q_matrix[:, 0], q_matrix[:, 2], color='#93c5fd', alpha=0.5, label='80% Prediction Interval [q10, q90]')
+    plt.plot(time_steps, q_matrix[:, 1], color='#1d4ed8', linewidth=1.8, label='Median Forecast (q50)')
+    plt.plot(time_steps, actual_test_y, 'o-', color='#111827', markersize=3, linewidth=1.2, label='Actual PM2.5 Observation')
+    plt.title('Probabilistic Forecasting: 80% Uncertainty Intervals on 1-Week Horizon', fontsize=12, fontweight='bold')
+    plt.xlabel('Hour Step')
+    plt.ylabel('PM2.5 Concentration (µg/m³)')
+    plt.grid(True, linestyle=':', alpha=0.5)
+    plt.legend(loc='upper right')
+    plt.tight_layout()
+    plt.show()
+    ''')
+
     md('''
-    ## 7. Comparative Holdout Evaluation: Deep Learning vs. Baselines
+    ## 8. Comparative Holdout Evaluation: Deep Learning vs. Baselines
 
     We evaluate all 7 models across the complete, identical **8,531 hours in the 2014 holdout period**:
     - **Persistence baseline**
@@ -359,7 +429,7 @@ print('Runtime:', sys.version.split()[0], '| Colab:', IN_COLAB)
     ''')
 
     md(r'''
-    ## 8. Pollution Regime Breakdown & Extreme Smog Events
+    ## 9. Pollution Regime Breakdown & Extreme Smog Events
 
     Error behavior differs markedly across pollution regimes. Models that excel during low/moderate pollution often struggle during extreme inversion spikes ($\ge$ 90th percentile, 218 µg/m³).
     ''')
@@ -382,7 +452,7 @@ print('Runtime:', sys.version.split()[0], '| Colab:', IN_COLAB)
     ''')
 
     md('''
-    ## 9. Ablation Studies & Seed Stability Analysis
+    ## 10. Ablation Studies & Seed Stability Analysis
 
     We review the ablation results testing:
     1. **Attention vs. No-Attention**
@@ -398,7 +468,7 @@ print('Runtime:', sys.version.split()[0], '| Colab:', IN_COLAB)
     ''')
 
     md('''
-    ## 10. Saved Research Artifacts & Report Figures
+    ## 11. Saved Research Artifacts & Report Figures
 
     Inspect the final published high-resolution scientific evaluation figures generated by the project pipeline.
     ''')

@@ -34,6 +34,7 @@ class DLConfig:
     random_seed: int = 42
     use_attention: bool = True
     target_mode: str = "level"  # "delta" learns a correction to current PM2.5
+    quantiles: Optional[Tuple[float, ...]] = None  # None for standard point forecast, or (0.1, 0.5, 0.9)
 
     def __post_init__(self):
         for name in ("seq_len", "hidden_dim", "num_layers", "batch_size", "epochs"):
@@ -54,6 +55,13 @@ class DLConfig:
             raise ValueError("target_mode must be level or delta")
         if not isinstance(self.random_seed, int) or isinstance(self.random_seed, bool) or self.random_seed < 0:
             raise ValueError("random_seed must be a nonnegative integer")
+        if self.quantiles is not None:
+            if not isinstance(self.quantiles, (tuple, list)) or not self.quantiles:
+                raise ValueError("quantiles must be a non-empty sequence of floats strictly between 0 and 1")
+            for q in self.quantiles:
+                if not isinstance(q, (int, float)) or not 0 < q < 1:
+                    raise ValueError("All quantiles must be strictly between 0 and 1")
+            self.quantiles = tuple(float(q) for q in self.quantiles)
 
 
 class SequenceAirDataset(Dataset):
@@ -107,6 +115,44 @@ class TemporalAttention(nn.Module):
         return context, weights.squeeze(-1)
 
 
+class PinballLoss(nn.Module):
+    """Pinball (quantile) loss for probabilistic multi-quantile regression.
+
+    L_q(y, y_hat) = max(q * (y - y_hat), (q - 1) * (y - y_hat))
+    """
+
+    def __init__(self, quantiles: Tuple[float, ...] = (0.1, 0.5, 0.9)):
+        super().__init__()
+        if not quantiles or any(not 0 < q < 1 for q in quantiles):
+            raise ValueError("All quantiles must be strictly between 0 and 1")
+        self.quantiles = tuple(float(q) for q in quantiles)
+
+    def forward(self, preds: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        if targets.ndim == 1:
+            targets = targets.unsqueeze(-1)
+        if targets.shape[-1] == 1 and preds.shape[-1] == len(self.quantiles):
+            targets = targets.expand_as(preds)
+        errors = targets - preds
+        losses = []
+        for i, q in enumerate(self.quantiles):
+            err = errors[..., i]
+            loss_q = torch.maximum((q - 1.0) * err, q * err)
+            losses.append(loss_q)
+        return torch.stack(losses, dim=-1).mean()
+
+
+def empirical_coverage(actuals: np.ndarray, lower: np.ndarray, upper: np.ndarray) -> float:
+    """Calculate the fraction of observed values that fall inside [lower, upper]."""
+    actuals = np.asarray(actuals, dtype=float)
+    lower = np.asarray(lower, dtype=float)
+    upper = np.asarray(upper, dtype=float)
+    valid = np.isfinite(actuals) & np.isfinite(lower) & np.isfinite(upper)
+    if not valid.any():
+        return float("nan")
+    covered = (actuals[valid] >= lower[valid]) & (actuals[valid] <= upper[valid])
+    return float(np.mean(covered))
+
+
 class TemporalForecaster(nn.Module):
     """Deep Learning Forecaster supporting LSTM, GRU, and Bi-LSTM with Temporal Attention."""
 
@@ -118,12 +164,16 @@ class TemporalForecaster(nn.Module):
         dropout: float = 0.2,
         architecture: str = "lstm",
         use_attention: bool = True,
+        output_dim: int = 1,
     ):
         super().__init__()
         self.architecture = architecture.lower()
         if self.architecture not in {"lstm", "gru", "bilstm"}:
             raise ValueError("architecture must be lstm, gru, or bilstm")
+        if not isinstance(output_dim, int) or isinstance(output_dim, bool) or output_dim < 1:
+            raise ValueError("output_dim must be a positive integer")
         self.use_attention = use_attention
+        self.output_dim = output_dim
         bidirectional = self.architecture == "bilstm"
 
         rnn_cls = nn.GRU if self.architecture == "gru" else nn.LSTM
@@ -143,7 +193,7 @@ class TemporalForecaster(nn.Module):
             nn.Linear(out_hidden, out_hidden // 2),
             nn.ReLU(),
             nn.Dropout(dropout),
-            nn.Linear(out_hidden // 2, 1),
+            nn.Linear(out_hidden // 2, output_dim),
         )
 
     def forward(self, x: torch.Tensor) -> Tuple[torch.Tensor, Optional[torch.Tensor]]:
@@ -260,14 +310,16 @@ class DeepLearningPipeline:
         loader = DataLoader(subset, batch_size=self.config.batch_size, shuffle=True, generator=generator)
         device = torch.device(self.config.device)
         torch.manual_seed(self.config.random_seed)
+        output_dim = len(self.config.quantiles) if self.config.quantiles else 1
         self.model = TemporalForecaster(
             input_dim=self.input_dim, hidden_dim=self.config.hidden_dim,
             num_layers=self.config.num_layers, dropout=self.config.dropout,
             architecture=self.config.architecture,
             use_attention=self.config.use_attention,
+            output_dim=output_dim,
         ).to(device)
         optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.config.learning_rate, weight_decay=1e-4)
-        criterion = nn.HuberLoss(delta=1.0)
+        criterion = PinballLoss(self.config.quantiles) if self.config.quantiles else nn.HuberLoss(delta=1.0)
         self.loss_history_ = []
         for _ in range(self.config.epochs):
             self.model.train()
@@ -296,19 +348,38 @@ class DeepLearningPipeline:
         dataset = SequenceAirDataset(scaled, seq_len=self.config.seq_len)
         loader = DataLoader(dataset, batch_size=self.config.batch_size, shuffle=False)
         self.model.to(self.config.device).eval()
-        output = np.full(len(X_df), np.nan)
         predictions = []
         with torch.no_grad():
             for batch_x, _ in loader:
                 prediction, _ = self.model(batch_x.to(self.config.device))
-                predictions.append(prediction.cpu().numpy().ravel())
-        if predictions:
-            values = (np.concatenate(predictions) * self.target_std_ + self.target_mean_
-                      + self._target_baseline(X_df)[self.config.seq_len - 1:])
-            if not np.isfinite(values).all():
-                raise RuntimeError("Nonfinite neural prediction")
-            output[self.config.seq_len - 1:] = np.maximum(values, 0.0)
-        return output
+                predictions.append(prediction.cpu().numpy())
+        if self.config.quantiles:
+            output = np.full((len(X_df), len(self.config.quantiles)), np.nan)
+            if predictions:
+                stacked = np.vstack(predictions)
+                baseline = self._target_baseline(X_df)[self.config.seq_len - 1:, None]
+                values = stacked * self.target_std_ + self.target_mean_ + baseline
+                if not np.isfinite(values).all():
+                    raise RuntimeError("Nonfinite neural prediction")
+                output[self.config.seq_len - 1:, :] = np.maximum(values, 0.0)
+            return output
+        else:
+            output = np.full(len(X_df), np.nan)
+            if predictions:
+                values = (np.concatenate([p.ravel() for p in predictions]) * self.target_std_ + self.target_mean_
+                          + self._target_baseline(X_df)[self.config.seq_len - 1:])
+                if not np.isfinite(values).all():
+                    raise RuntimeError("Nonfinite neural prediction")
+                output[self.config.seq_len - 1:] = np.maximum(values, 0.0)
+            return output
+
+    def predict_quantiles(self, X_df):
+        """Predict multi-quantile intervals as a DataFrame with one column per quantile."""
+        if not self.config.quantiles:
+            raise ValueError("Quantiles are not configured for this pipeline")
+        preds = self.predict(X_df)
+        columns = [f"q{int(round(q * 100)):02d}" for q in self.config.quantiles]
+        return pd.DataFrame(preds, index=X_df.index, columns=columns)
 
     def get_attention_weights(self, X_window):
         """Explain one complete window using the same preprocessing as prediction."""
