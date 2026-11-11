@@ -4,7 +4,7 @@ The deployment keeps the actual Python inference pipelines. The frontend assets 
 
 ## Deployment status
 
-The Vercel CLI reported a successful production deployment on 23 October 2026 and assigned [aircast-pm25.vercel.app](https://aircast-pm25.vercel.app). This confirms the build and publication reported by Vercel; hosted inference and visual rendering still need independent checks. The local prepared folder is linked to the `aircast-pm25` project.
+The updated classical application was deployed on 7 November 2026 to [aircast-pm25.vercel.app](https://aircast-pm25.vercel.app). The production deployment is `dpl_2PnugrggVYSDdQh5qWt3v1DTY3Gw`. Hosted API checks passed for forecasts, current assets, manual inputs, CSV upload, validation errors, the original dataset download and byte-for-byte delivery of the final seven-page report. Anonymous desktop/mobile browser checks also passed. The local prepared folder remains linked to the `aircast-pm25` project.
 
 The CLI also reports Vercel Authentication protection. That message alone does not establish whether the production alias requires login: Standard Protection leaves production domains public, while All Deployments protects them too. The [project's Deployment Protection settings](https://vercel.com/pratham-malhotras-projects/aircast-pm25/settings/deployment-protection) show the actual scope. Keep the existing settings while testing through the authenticated CLI.
 
@@ -24,13 +24,13 @@ To prepare the files without publishing:
 python scripts/prepare_vercel.py
 ```
 
-An existing `.vercel` project link inside the generated folder is preserved when rebuilding. The generator verifies the dataset and forecasting-source hashes before it packages the evaluated models.
+An existing `.vercel` project link inside the generated folder is preserved when rebuilding. The generator verifies the dataset and forecasting-source hashes before it packages the evaluated models. A completed Phase 2 continuation can attest the newer package source only when its hashes also preserve the original Phase 1 manifest and comparison predictions. Unfinished, synthetic or changed continuations are rejected.
 
 ## Runtime files and dependencies
 
 The prepared folder contains the Flask entrypoint, frontend templates, public assets, Python forecasting source, both saved models, measured comparison tables, the original dataset and its attribution, and the compiled report. It excludes the training outputs, local environment, caches, notebook snapshots and test suite.
 
-The Python runtime is 3.13. The inference requirements pin the ML package versions used to save the models. The Linux deployment uses `xgboost-cpu==3.4.1`, the official CPU-only build, rather than installing unused GPU support. Matplotlib is not needed to serve forecasts.
+The Python runtime is 3.13. Both `deployment/pyproject.toml` and `deployment/uv.lock` pin that runtime consistently with `.python-version`; all three are copied into the prepared bundle. This prevents stale generated Python 3.14 project/lock metadata from overriding the tested interpreter. The inference requirements pin the ML package versions used to save the models. The Linux deployment uses `xgboost-cpu==3.4.1`, the official CPU-only build, rather than installing unused GPU support. Matplotlib is not needed to serve forecasts.
 
 The original ML requirements and local frontend installation remain separate from this inference-only dependency list. The prepared Linux requirements should not be installed directly into the Mac environment.
 
@@ -60,7 +60,13 @@ Only a successful hosted check writes `artifacts/deployment_verification.json`. 
 
 Those sample values verify inference parity, not accuracy for an unobserved target. Forecast quality is established by the chronological 2014 backtests. Small platform-dependent floating-point differences are possible.
 
-The restricted development workspace cannot resolve Vercel's API host or start a browser. A successful local preflight and the CLI's Ready status do not independently verify hosted inference or browser rendering. Open the production alias in a browser to check layout, chart interactions, model switching and export after the hosted checks pass. Test the alias in a private window to confirm the access available to someone without your Vercel session.
+Anonymous browser checks can be repeated against the public alias:
+
+```bash
+node scripts/check_frontend_browser.cjs --url https://aircast-pm25.vercel.app
+```
+
+The browser checker covers desktop/mobile rendering, model selection, manual input, CSV upload/export, measured comparisons and exact report delivery. Hosted screenshots and its record are saved under `artifacts/frontend_review_hosted/`, separately from local five-model screenshots. `scripts/check_vercel.py` uses the subprocess working directory directly so the Vercel CLI does not accidentally forward a global `--cwd` flag to system curl.
 
 ## Hosting references
 

@@ -5,7 +5,7 @@ CSAI Project 19 · Phase 1: Machine Learning · Phase 2: Deep Learning and Hybri
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-aircast--pm25.vercel.app-000000?style=for-the-badge&logo=vercel)](https://aircast-pm25.vercel.app/#forecast)
 
 > 🌐 **Live Interactive App & Analysis:** [**aircast-pm25.vercel.app/#forecast**](https://aircast-pm25.vercel.app/#forecast)  
-> Visit the live web application to test real-time 1-hour-ahead PM2.5 forecasting, compare XGBoost with baseline models, and explore interactive error analysis and historical visualizations.
+> Visit the web application to run historical or uploaded-data 1-hour-ahead PM2.5 scenarios, compare XGBoost with baseline models, and explore measured historical results.
 
 For our Phase 1 project, we are working on a simple question: **can past pollution readings and weather conditions help us predict PM2.5 one hour ahead?** We use XGBoost for the main model and compare it with two simple forecasts and a linear model. The comparison matters as much as the model itself: we want to see what the extra features and model complexity add over using the latest reading.
 
@@ -127,24 +127,32 @@ The implementation uses Python, pandas, NumPy, scikit-learn, XGBoost, matplotlib
 
 ### Installation and Quick Start
 
+For a **fresh source checkout**, use Python 3.13 and restore the evaluated weights before starting the five-model dashboard:
+
 ```bash
-# 1. Create and activate a virtual environment
-python3 -m venv .venv
+python3.13 -m venv .venv
 source .venv/bin/activate
-
-# 2. Install package with development, web dashboard, and optional deep learning extras
-pip install -e '.[dev,web]'       # Classical ML + Web Dashboard
-pip install -r requirements-phase2.txt  # Recorded versions for Phase 2 and saved-model compatibility
-
-# 3. Run the complete test suite (129 tests)
-pytest -v
-
-# Train Phase 2 into a fresh directory (requires completed Phase 1 artifacts)
-python scripts/run_phase2_research.py --output artifacts/phase2-new-run
-
-# 4. Start the interactive Aircast dashboard locally
+python -S scripts/restore_phase2_runtime.py
+python -m pip install -r requirements-phase2.txt
 bash scripts/start_frontend.sh
 ```
+
+The standard-library restorer downloads and verifies the checksum-pinned release. It preserves conflicting existing experiments and needs no ML packages. On macOS, XGBoost may also require `brew install libomp`. To restore offline, pass `--bundle /path/to/the/published/air_prediction_phase2.zip`. This restores inference files; it does not restore the complete research predictions.
+
+For **research reproduction with saved evidence**, download the [full runnable release ZIP](https://github.com/pratham-malhotr/air_prediction/releases/download/phase2-research-2026-11-05-r1/air_prediction_phase2.zip), verify its accompanying SHA-256 file, and extract it into a separate directory. Install `requirements-phase2.txt` there. The ZIP includes the Phase 1 predictions needed to rerun Phase 2.
+
+For **training from source**, first create the classical comparison run, then pass it explicitly to Phase 2. These commands use fresh output directories and preserve the published experiments:
+
+```bash
+python -m pip install -r requirements-phase2.txt
+python -m air_prediction train --config configs/phase1.toml --output artifacts/phase1-new-run --ablations
+python scripts/run_phase2_research.py --baseline-dir artifacts/phase1-new-run --output artifacts/phase2-new-run
+python -m pytest -q -W error::DeprecationWarning
+```
+
+Alternate experiment directories are not automatically activated in the dashboard. The [Phase 1 Colab notebook](Air_Prediction_Phase1_Colab.ipynb) embeds a verified source snapshot and trains in a fresh runtime or checks completed local results. Rebuild and execute it with `python scripts/build_phase1_notebook.py --execute`; add `--train` for a separate full training run. A classical-only environment can use `requirements-phase1.txt` without PyTorch.
+
+The [submission checklist](docs/submission_checklist.md) lists both phases' final deliverables and the remaining faculty/account-dependent steps.
 
 Further reading within the project:
 
@@ -169,13 +177,13 @@ The project is deployed and accessible online:
 🔗 **[aircast-pm25.vercel.app/#forecast](https://aircast-pm25.vercel.app/#forecast)**
 
 Visitors can use this dashboard to:
-- **Inspect Live Predictions:** Generate and examine 1-hour-ahead PM2.5 forecasts using the trained model weights.
+- **Inspect Forecast Scenarios:** Generate 1-hour-ahead PM2.5 forecasts from historical examples or uploaded observations using the trained weights.
 - **Compare Models:** Evaluate performance side-by-side across XGBoost, Ridge, Persistence, and Daily Seasonal Naive.
 - **Interactive Analysis:** Explore pollution regime breakdowns, residual diagnostics, and error distributions directly in the browser.
 
 ## Current status and limits
 
-The real-data cleaning, EDA, feature construction, four-model backtests, validation-only feature comparison, diagnostics and saved-model forecasts have been completed for Phase 1. Phase 2 now has independent recurrent benchmarks, validation selection, attention ablations, seed stability and a calibrated hybrid. LSTM is the validation-preferred model and has the lowest pooled RMSE in the exploratory 2014 comparison. The seven-page IEEE report and ten-slide editable PowerPoint document the classical ML Phase 1 findings and Aircast demonstration. The presentation includes thirteen graph panels covering data quality, training EDA, validation, pooled/quarterly errors, pollution regimes, forecast traces, residuals and final-refit importance. Both documents include the supplied team names and enrollment numbers; the presentation ends with a thank-you slide. A matching presentation PDF and detailed embedded speaker notes are included. Aircast adds an interactive interface around the saved models. The current test run reports 129 passing checks across data handling, classical ML forecasting, PyTorch sequence & hybrid models, dashboard service, and deployment packaging. Synthetic data remains limited to implementation tests. The Phase 2 models are available in the local dashboard; the existing Vercel bundle uses the classical models.
+The real-data cleaning, EDA, feature construction, four-model backtests, validation-only feature comparison, diagnostics and saved-model forecasts have been completed for Phase 1. Phase 2 now has independent recurrent benchmarks, validation selection, attention ablations, seed stability and a calibrated hybrid. LSTM is the validation-preferred model and has the lowest pooled RMSE in the exploratory 2014 comparison. The seven-page IEEE report and ten-slide editable PowerPoint document the classical ML Phase 1 findings and Aircast demonstration. The presentation includes thirteen graph panels covering data quality, training EDA, validation, pooled/quarterly errors, pollution regimes, forecast traces, residuals and final-refit importance. Both documents include the supplied team names and enrollment numbers; the presentation ends with a thank-you slide. A matching presentation PDF and detailed embedded speaker notes are included. Aircast adds an interactive interface around the saved models. The current test run reports 139 passing checks across data handling, classical ML forecasting, PyTorch sequence & hybrid models, dashboard service, and deployment packaging. Synthetic data remains limited to implementation tests. The Phase 2 models are available in the local dashboard; the existing Vercel bundle uses the classical models.
 
 Our conclusions are limited to this historical Beijing series. They do not establish accuracy in another city or today, and weather correlations or feature importance do not establish causation. Missing baseline inputs also affect which hours we can compare. Changes made after reviewing these holdout results require a fresh evaluation or an explicit exploratory label.
 

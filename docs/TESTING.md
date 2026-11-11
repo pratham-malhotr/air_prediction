@@ -2,7 +2,7 @@
 
 ## 1. Test Suite Overview
 
-The repository features 129 automated unit, integration, and regression tests ensuring data integrity, chronological timing validity, machine learning accuracy, frontend correctness, and deployment safety.
+The repository features 139 automated unit, integration, and regression tests covering data integrity, chronological timing validity, forecasting behavior, frontend correctness, and deployment packaging.
 
 ### Test Catalog Summary
 
@@ -10,7 +10,7 @@ The repository features 129 automated unit, integration, and regression tests en
 |---|---|---|
 | `tests/test_data_and_integration.py` | 14 | Dataset loading, calendar validation, provenance checksums, full synthetic backtests, corruption detection, PyTorch graceful degradation, and timedelta warnings. |
 | `tests/test_deep_learning.py` | 23 | Sequence dataset 3D shape generation, LSTM/GRU/Bi-LSTM forecaster architectures, temporal attention, future-data invariance, frozen preprocessing, strict masks, chronological calibration, serialization and error propagation. |
-| `tests/test_deployment.py` | 5 | Vercel package bundling, asset isolation, secret omission, and project link preservation. |
+| `tests/test_deployment.py` | 13 | Vercel package bundling, Python/lock consistency, asset isolation, project link preservation, and rejection of source/data/baseline drift in evaluated continuations. |
 | `tests/test_eda_notes.py` | 2 | EDA metric calculation within training bounds without future leakage. |
 | `tests/test_forecasting.py` | 23 | Target alignment, rolling window boundaries, missing value non-leakage, chronological fold boundaries, and configuration validation. |
 | `tests/test_frontend.py` | 28 | Web dashboard endpoints, manual form validation, CSV upload limits, stateless context revalidation, available model discovery, and error reporting. |
@@ -20,7 +20,8 @@ The repository features 129 automated unit, integration, and regression tests en
 | `tests/test_phase2_external.py` | 6 | Archive selection, field compatibility, declared target boundaries, common rows, immutable pre-download protocol and cached provenance. |
 | `tests/test_phase2_production.py` | 8 | Container startup-reset retry, post-fork Gunicorn factory, port validation, HTTPS proxy/origin enforcement and rejection of source/data/model drift or synthetic bundles. |
 | `tests/test_phase2_runtime_restore.py` | 13 | Pinned archive and payload verification, source/data/model/report provenance, selective and idempotent restoration, conflict preservation and path safety. |
-| **Total** | **129** | **100% Pass Rate** |
+| `tests/test_handoff_packages.py` | 2 | Extracted notebook/verifier inputs, preservation of the pinned runtime ZIP, and separate retraining after an inference-only restore. |
+| **Total** | **139** | **100% Pass Rate** |
 
 ---
 

@@ -64,7 +64,7 @@ The hybrid correction is also compared with its own frozen base, separating corr
 - [Editable PowerPoint](../reports/phase2/Aircast_Phase2_Presentation.pptx), [slide PDF](../reports/phase2/slides.pdf), and [presenter guide](../reports/phase2/presenter_guide.md).
 - [Executed notebook](../notebooks/Air_Prediction_Phase2.ipynb); full retraining is an explicit switch.
 - [Compact results and scientific figures](results/phase2_research/), including every candidate and seed score.
-- Local package: `dist/air_prediction_phase2.zip`, with a payload checksum manifest.
+- Local handoff package: `dist/air_prediction_phase2_completed.zip`, with a payload checksum manifest and the inputs needed by both notebooks and verification scripts. The published pinned runtime ZIP remains separate.
 
 ```bash
 python -m pip install -r requirements-phase2.txt

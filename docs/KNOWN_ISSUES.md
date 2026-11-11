@@ -48,6 +48,6 @@ This document records technical limitations, scientific assumptions, and known s
    - Package startup now initializes single-thread CPU defaults before numerical imports, and optional neural exports load lazily. Training and dashboard launchers use the same policy; a clean-subprocess CLI test covers this failure.
 
 2. **Serverless Deployment Size Limits**:
-   - Vercel serverless Python functions enforce a 250 MB unzipped bundle limit.
-   - PyTorch packages (>120 MB) are omitted from the Vercel production deployment (`deployment/requirements.txt`), which runs lean inference using XGBoost and Ridge.
-   - Full deep learning and hybrid models require local execution or containerized hosting with the `[dl]` optional dependency.
+   - The existing Vercel bundle intentionally contains only the classical inference dependencies (`deployment/requirements.txt`). Its Python 3.13 runtime and resolved dependencies are pinned in `deployment/pyproject.toml` and `deployment/uv.lock`.
+   - Vercel currently documents a 500 MB standard uncompressed Python function limit; larger-function availability has separate account/feature requirements. Check the [current runtime documentation](https://vercel.com/docs/functions/runtimes/python) before changing the deployment architecture.
+   - The tested Phase 2 deployment path is the Gunicorn/container runtime with CPU PyTorch. It serves all five models locally and in Linux container CI; public neural hosting still requires an account connection and resource allocation.

@@ -1,0 +1,66 @@
+{
+  "status": "passed",
+  "verified_utc": "2026-11-07T17:00:44.215515+00:00",
+  "strict_local_suite": {
+    "tests": 139,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "isolated_package_tests": 139,
+  "isolated_workflows": [
+    {
+      "workflow": "phase1_notebook",
+      "exit": 0
+    },
+    {
+      "workflow": "phase2_notebook",
+      "exit": 0
+    },
+    {
+      "workflow": "submission_verifier",
+      "exit": 0
+    },
+    {
+      "workflow": "external_report",
+      "exit": 0
+    },
+    {
+      "workflow": "phase1_package",
+      "exit": 0
+    },
+    {
+      "workflow": "phase2_package",
+      "exit": 0
+    },
+    {
+      "workflow": "isolated_suite",
+      "exit": 0
+    }
+  ],
+  "fixed_findings": [
+    "Combined ZIP omitted Phase 1 EDA/selection/diagnostic inputs",
+    "Combined ZIP omitted browser verification and external dataset provenance",
+    "Inference-only restore was mistaken for a complete notebook experiment",
+    "Default packaging could overwrite the pinned runtime ZIP"
+  ],
+  "public_health": {
+    "horizon_hours": 1,
+    "models": [
+      "xgboost",
+      "ridge"
+    ],
+    "ready": true
+  },
+  "public_report_sha256": "b63ab90aafa564174236e23b3950bc4f85fe9339f2633aa0c968bfc03a0d5b4b",
+  "github": {
+    "published_main_sha": "ed6696beb4eb6098c57830499c1d453009d5d67d",
+    "final_changes_committed_and_pushed": false,
+    "release_is_original_pinned_runtime": true
+  },
+  "limits": [
+    "Latest workspace changes and completed handoff are not yet published to GitHub",
+    "Official faculty rubric and truthful individual contributions require confirmation",
+    "Public neural hosting needs an appropriate account if required"
+  ]
+}

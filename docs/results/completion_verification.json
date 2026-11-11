@@ -1,0 +1,113 @@
+{
+  "status": "passed",
+  "verified_utc": "2026-11-07T16:45:23.133688+00:00",
+  "source_code_sha256": "ba686e2f1da9f2bf60982912d08d0d9d1aa71df1efa48caf288ba52c7dc7eec5",
+  "strict_local_suite": {
+    "tests": 139,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "phase1_notebook": {
+    "status": "passed",
+    "executed_cells": 14,
+    "bundled_tests": 40,
+    "full_retraining_metrics_match": true,
+    "source_files_match": true,
+    "execution": {
+      "executed_cells": 14,
+      "source_bundle_sha256": "e8ac2f679897cad89993ab3608f6db89193011cb80fe2fb7f3a2cf624235e672",
+      "verified_utc": "2026-11-07T16:37:18.315757+00:00"
+    }
+  },
+  "fresh_runtime": {
+    "restored_files": 18,
+    "source_code_sha256": "ba686e2f1da9f2bf60982912d08d0d9d1aa71df1efa48caf288ba52c7dc7eec5",
+    "all_five_forecasts_match": true,
+    "default_model": "lstm"
+  },
+  "browser": {
+    "local": {
+      "status": "passed",
+      "checks": [
+        "real model forecast",
+        "chart ranges and tooltips",
+        "manual changes",
+        "model selection",
+        "invalid input",
+        "measured metrics",
+        "CSV upload",
+        "CSV export",
+        "mobile layout",
+        "mobile navigation",
+        "report link",
+        "no JavaScript errors"
+      ],
+      "screenshots": [
+        "desktop-forecast.png",
+        "desktop-performance.png",
+        "desktop-upload.png",
+        "mobile-forecast.png",
+        "mobile-performance.png"
+      ]
+    },
+    "public": {
+      "status": "passed",
+      "checks": [
+        "real model forecast",
+        "chart ranges and tooltips",
+        "manual changes",
+        "model selection",
+        "invalid input",
+        "measured metrics",
+        "CSV upload",
+        "CSV export",
+        "mobile layout",
+        "mobile navigation",
+        "report link",
+        "no JavaScript errors"
+      ],
+      "screenshots": [
+        "desktop-forecast.png",
+        "desktop-performance.png",
+        "desktop-upload.png",
+        "mobile-forecast.png",
+        "mobile-performance.png"
+      ]
+    }
+  },
+  "public_deployment": {
+    "id": "dpl_2PnugrggVYSDdQh5qWt3v1DTY3Gw",
+    "status": "passed",
+    "checks": [
+      "Both models loaded; forecast horizon is one hour",
+      "Dashboard HTML and all three public assets are current",
+      "Sample predictions and all four measured comparisons match",
+      "Edited manual inputs and both model selections run correctly",
+      "Original CSV upload and stateless forecasts match predict_latest",
+      "Invalid measurements return a readable validation error",
+      "Final project report and original CSV download match local checksums"
+    ],
+    "uploaded_history_predictions": {
+      "ridge": 13.639784709098194,
+      "xgboost": 11.92273235321045
+    },
+    "target_time": "2015-01-01T00:00:00+08:00",
+    "report_sha256": "b63ab90aafa564174236e23b3950bc4f85fe9339f2633aa0c968bfc03a0d5b4b",
+    "browser_rendering_verified": false,
+    "url": "https://aircast-pm25.vercel.app",
+    "checked_at": "2026-11-07T16:43:15.788082+00:00"
+  },
+  "pinned_release_preserved": true,
+  "remote_ci_scope": "Previously published base commit; 139-test follow-up verified locally and in an isolated extracted package",
+  "remaining_external_steps": [
+    "Commit and publish the final local source and handoff updates to GitHub before submitting the repository link",
+    "Official faculty rubric, submission requirements and truthful team contribution confirmation",
+    "Hosting account/resource allocation if public neural demonstration is required"
+  ],
+  "second_review": {
+    "record": "second_review.json",
+    "isolated_workflows_passed": 7,
+    "isolated_package_tests": 139
+  }
+}
