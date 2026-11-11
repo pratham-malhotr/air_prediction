@@ -7,7 +7,9 @@ export NO_UPDATE_NOTIFIER=1
 export VERCEL_TELEMETRY_DISABLED=1
 export PYTHONDONTWRITEBYTECODE=1
 
-if [[ -x /opt/anaconda3/bin/python ]]; then
+if [[ -x "$project_root/.venv/bin/python" ]]; then
+  project_python="$project_root/.venv/bin/python"
+elif [[ -x /opt/anaconda3/bin/python ]]; then
   project_python=/opt/anaconda3/bin/python
 else
   project_python=python3

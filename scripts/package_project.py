@@ -9,15 +9,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def source_files():
-    for name in ("README.md", "requirements.txt", "pyproject.toml", ".gitignore", "LICENSE", "CONTRIBUTING.md", "Start_Aircast.command", "data/README.md", "data/raw/.gitkeep", "artifacts/.gitkeep"):
+    for name in ("README.md", "requirements.txt", "requirements-phase1.txt", "requirements-phase2.txt", "pyproject.toml", ".gitignore", "LICENSE", "CONTRIBUTING.md", "Start_Aircast.command", "Air_Prediction_Phase1_Colab.ipynb", "data/README.md", "data/raw/.gitkeep", "artifacts/.gitkeep"):
         path = ROOT / name
         if path.exists():
             yield path
-    for name in ("src", "frontend", "deployment", "configs", "docs", "reports", "tests", "scripts", ".github"):
+    for name in ("src", "frontend", "deployment", "configs", "docs", "reports", "notebooks", "tests", "scripts", ".github"):
         for path in sorted((ROOT / name).rglob("*")):
-            text_source = path.suffix in {".py", ".sh", ".toml", ".md", ".tex", ".bib", ".yml", ".yaml", ".html", ".css", ".js", ".cjs", ".svg"}
+            text_source = path.suffix in {".py", ".sh", ".toml", ".md", ".tex", ".bib", ".yml", ".yaml", ".html", ".css", ".js", ".cjs", ".svg", ".ipynb"}
             measured_summary = name == "docs" and path.parent.name == "results" and path.suffix in {".csv", ".json", ".png"}
-            deployment_config = name == "deployment" and (path.suffix == ".json" or path.name in {"requirements.txt", ".python-version", ".vercelignore"})
+            deployment_config = name == "deployment" and (path.suffix == ".json" or path.name in {"requirements.txt", "uv.lock", ".python-version", ".vercelignore"})
             report_resource = name == "reports" and (path.suffix in {".pdf", ".pptx", ".png", ".json"} or path.name == "requirements.txt")
             if path.is_file() and "__pycache__" not in path.parts and (text_source or measured_summary or deployment_config or report_resource):
                 yield path

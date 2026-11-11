@@ -48,8 +48,11 @@ class HostedApp:
                 options += ["--header", "Content-Type: application/json", "--request", "POST", "--data-binary", "@" + str(body)]
             if upload is not None:
                 options += ["--form", "file=@" + str(upload)]
-            command = [*self.command, "--cwd", str(self.directory), "curl", path, "--deployment", self.url, "--", *options]
-            result = subprocess.run(command, env=self.environment, capture_output=True, text=True, timeout=120)
+            # Set the child process cwd directly. Recent CLI versions can
+            # forward a global --cwd option to system curl, which rejects it.
+            command = [*self.command, "curl", path, "--deployment", self.url, "--", *options]
+            result = subprocess.run(command, cwd=self.directory, env=self.environment,
+                                    capture_output=True, text=True, timeout=120)
             status = result.stdout.strip()[-3:]
             if result.returncode or status != str(expected):
                 raise RuntimeError(f"{path}: expected HTTP {expected}, received {status if status.isdigit() else 'no response'} (CLI exit {result.returncode}). Check Vercel authentication and deployment logs.")
@@ -119,11 +122,16 @@ def verify(client, root=ROOT):
     invalid = read_json("/api/forecast", payload={"mode": "manual", "inputs": {**inputs, "pm2.5": -1}}, expected=400)
     require("pm2.5" in invalid.get("error", {}).get("fields", {}), "Invalid PM2.5 input was not explained.")
     passed("Invalid measurements return a readable validation error")
-    require(client.request("/report").startswith(b"%PDF-"), "The project report is not a PDF.")
+    report = client.request("/report")
+    require(report.startswith(b"%PDF-"), "The project report is not a PDF.")
+    report_path = root / ("reports/phase2/Aircast_Phase2_Report.pdf" if "lstm" in health["models"] else "reports/ieee/main.pdf")
+    report_hash = sha256(report).hexdigest()
+    require(report_hash == sha256(report_path.read_bytes()).hexdigest(), "The hosted report differs from the final local report.")
     require(sha256(client.request("/api/example.csv")).digest() == sha256(csv.read_bytes()).digest(), "The example download differs from the original CSV.")
-    passed("Project report and original CSV download are available")
+    passed("Final project report and original CSV download match local checksums")
     return {"status": "passed", "checks": checks, "uploaded_history_predictions": result["predictions"],
-            "target_time": result["target_time"], "browser_rendering_verified": False}
+            "target_time": result["target_time"], "report_sha256": report_hash,
+            "browser_rendering_verified": False}
 
 
 def main():

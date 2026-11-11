@@ -1,5 +1,6 @@
 """Package source, reports, an executed notebook and verified Phase 2 artifacts."""
 from hashlib import sha256
+import argparse
 import json
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -7,7 +8,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def package():
+def package(destination=None):
     run = ROOT / 'artifacts/phase2_research'
     manifest = json.loads((run / 'run_manifest.json').read_text())
     if manifest.get('status') != 'complete' or manifest.get('is_synthetic', True):
@@ -40,19 +41,31 @@ def package():
         name = path.relative_to(ROOT).as_posix()
         files[name] = path
     for name in ('README.md', 'CHANGELOG.md', 'CONTRIBUTING.md', 'LICENSE', 'pyproject.toml',
-                 'requirements.txt', 'requirements-phase2.txt', 'Start_Aircast.command'):
+                 'requirements.txt', 'requirements-phase1.txt', 'requirements-phase2.txt',
+                 'Air_Prediction_Phase1_Colab.ipynb', 'Start_Aircast.command'):
         add(ROOT / name)
     extensions = {'.py', '.sh', '.toml', '.md', '.tex', '.bib', '.yml', '.yaml', '.html',
                   '.css', '.js', '.cjs', '.svg', '.csv', '.json', '.pdf', '.pptx', '.png', '.ipynb', '.txt'}
     for directory in ('src', 'frontend', 'deployment', 'configs', 'docs', 'reports', 'notebooks', 'tests', 'scripts', '.github'):
         for path in sorted((ROOT / directory).rglob('*')):
             if (path.is_file() and '__pycache__' not in path.parts
-                    and (path.suffix in extensions or path.name in {'Dockerfile', 'Dockerfile.dockerignore'})):
+                    and (path.suffix in extensions or path.name in {'Dockerfile', 'Dockerfile.dockerignore', 'uv.lock', '.python-version', '.vercelignore'})):
                 add(path)
     phase1 = ROOT / 'artifacts/phase1'
     for name in ('run_manifest.json', 'selection.json', 'predictions.csv', 'metrics.csv', 'fold_metrics.csv',
                  'errors_by_pollution_regime.csv', 'ridge.joblib', 'xgboost.joblib'):
         add(phase1 / name)
+    # The bundled Phase 1 notebook also consumes EDA, selection/coverage
+    # tables and diagnostic figures. A minimal inference subset cannot run it.
+    for path in sorted(phase1.rglob('*')):
+        if (path.is_file() and path.name != 'validation_predictions.csv'
+                and path.suffix in {'.json', '.csv', '.gz', '.joblib', '.md', '.png', '.pdf', '.tex'}):
+            add(path)
+    # These records are read by the submission and external-report verifiers.
+    # Include them alongside the predictions so an extracted ZIP can verify
+    # its evidence without access to the author's working directory.
+    add(ROOT / 'artifacts/frontend_review/browser_checks.json')
+    add(ROOT / 'data/raw/external/uci501.provenance.json')
     for path in run.iterdir():
         if path.is_file() and path.suffix in {'.json', '.csv', '.gz', '.joblib', '.md', '.xml'}:
             add(path)
@@ -69,7 +82,7 @@ def package():
         raise ValueError('Raw data differs from the evaluated run')
     for path in (data, data.with_suffix('.provenance.json'), ROOT / 'data/README.md'):
         add(path)
-    destination = ROOT / 'dist/air_prediction_phase2.zip'
+    destination = Path(destination) if destination is not None else ROOT / 'dist/air_prediction_phase2_completed.zip'
     destination.parent.mkdir(parents=True, exist_ok=True)
     start = '''# Aircast Phase 2 submission
 
@@ -107,8 +120,11 @@ Python environments, credentials, Git metadata and training checkpoints are excl
         if archive.testzip() is not None:
             raise RuntimeError('Corrupt ZIP entry')
     print(f'Packaged and verified {len(files)} files: {destination} ({destination.stat().st_size / 1e6:.1f} MB)')
+    destination.with_suffix(destination.suffix + '.sha256').write_text(sha256(destination.read_bytes()).hexdigest() + '  ' + destination.name + '\n')
     return destination
 
 
 if __name__ == '__main__':
-    package()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', type=Path, help='Choose a new handoff ZIP without replacing the pinned release')
+    package(parser.parse_args().output)

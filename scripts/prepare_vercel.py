@@ -20,8 +20,25 @@ def prepare(root=ROOT, destination=None):
     for path in sorted((root / "src/air_prediction").glob("*.py")):
         source.update(path.name.encode())
         source.update(path.read_bytes())
-    if source.hexdigest() != manifest["source_code_sha256"]:
-        raise ValueError("The forecasting source differs from the evaluated run")
+    current_source = source.hexdigest()
+    source_evidence = "phase1"
+    if current_source != manifest["source_code_sha256"]:
+        # Phase 2 adds package modules, so the whole-package hash changes even
+        # when the original classical fits/predictions are preserved. Require
+        # the completed research continuation to attest this exact source and
+        # the immutable Phase 1 inputs instead of accepting an arbitrary hash.
+        research_path = root / "artifacts/phase2_research/run_manifest.json"
+        research = json.loads(research_path.read_text()) if research_path.exists() else {}
+        baseline = research.get("baseline_provenance", {})
+        predictions = run / "predictions.csv"
+        if (research.get("status") != "complete" or research.get("is_synthetic", True)
+                or research.get("source_code_sha256") != current_source
+                or research.get("dataset_audit", {}).get("sha256") != manifest["dataset_audit"]["sha256"]
+                or baseline.get("manifest_sha256") != sha256((run / "run_manifest.json").read_bytes()).hexdigest()
+                or not predictions.is_file()
+                or baseline.get("predictions_sha256") != sha256(predictions.read_bytes()).hexdigest()):
+            raise ValueError("The forecasting source differs from the evaluated run")
+        source_evidence = "phase2_research_preserved_phase1"
     data_path = root / manifest["dataset_audit"]["path"]
     if sha256(data_path.read_bytes()).hexdigest() != manifest["dataset_audit"]["sha256"]:
         raise ValueError("The input CSV differs from the evaluated run")
@@ -38,7 +55,7 @@ def prepare(root=ROOT, destination=None):
         shutil.copyfile(path, target)
         generated[name] = sha256(target.read_bytes()).hexdigest()
 
-    for name in ("app.py", "requirements.txt", "vercel.json", ".python-version", ".vercelignore"):
+    for name in ("app.py", "requirements.txt", "pyproject.toml", "uv.lock", "vercel.json", ".python-version", ".vercelignore"):
         copy(root / "deployment" / name, name)
     for path in sorted((root / "frontend").rglob("*")):
         if not path.is_file() or "__pycache__" in path.parts:
@@ -64,7 +81,8 @@ def prepare(root=ROOT, destination=None):
         if path.is_file():
             path.unlink()
     marker.write_text(json.dumps({"format": 1, "dataset_sha256": manifest["dataset_audit"]["sha256"],
-                                   "forecast_source_sha256": manifest["source_code_sha256"], "files": generated}, indent=2) + "\n")
+                                   "forecast_source_sha256": current_source,
+                                   "source_evidence": source_evidence, "files": generated}, indent=2) + "\n")
     print(f"Prepared {len(generated)} deployment files at {destination}")
     print("Includes the real saved models and dataset; excludes training dependencies and local caches.")
     return destination
