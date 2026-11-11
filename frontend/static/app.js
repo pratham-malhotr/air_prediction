@@ -271,16 +271,21 @@ function appendCell(row, text, className) {
 function renderPerformance(data) {
   const metrics = Object.fromEntries(data.metrics.map((row) => [row.model, row]));
   const models = ["xgboost", "ridge", "bilstm", "lstm", "hybrid", "persistence", "seasonal_naive"].filter((name) => metrics[name]);
+  const preferred = data.forecast.selected_model;
+  const preferredLabel = modelLabels[preferred];
   const lowestRmse = Math.min(...models.map((name) => metrics[name].rmse));
-  setText("#performance-xgb", fmt(metrics.xgboost.rmse, 2)); setText("#performance-ridge", fmt(metrics.ridge.rmse, 2));
-  setText("#performance-gain", fmt((metrics.persistence.rmse - metrics.xgboost.rmse) / metrics.persistence.rmse * 100, 2) + "%");
+  setText("#performance-description", `The same ${Number(metrics[preferred].n).toLocaleString()} hours. ${models.length} methods. Chronological 2014 comparisons.`);
+  setText("#performance-model-label", `DEFAULT FORECAST · ${preferredLabel}`);
+  setText("#performance-model", fmt(metrics[preferred].rmse, 2)); setText("#performance-ridge", fmt(metrics.ridge.rmse, 2));
+  setText("#performance-gain", fmt((metrics.persistence.rmse - metrics[preferred].rmse) / metrics.persistence.rmse * 100, 2) + "%");
+  setText("#performance-gain-label", `${preferredLabel} RMSE improvement`);
   const body = $("#metrics-body"); body.replaceChildren();
   for (const model of models) {
-    const values = metrics[model], row = document.createElement("tr"); if (model === "xgboost") row.className = "main-model";
+    const values = metrics[model], row = document.createElement("tr"); if (model === preferred) row.className = "main-model";
     const label = appendCell(row, "");
     const dot = document.createElement("span"); dot.className = "metric-model-dot"; label.append(dot, document.createTextNode(modelLabels[model]));
-    const tag = values.rmse === lowestRmse ? "LOWEST RMSE" : (["bilstm", "lstm", "hybrid"].includes(model) ? "PHASE 2" : (model === "xgboost" ? "MAIN MODEL" : null));
-    if (tag) { const badge = document.createElement("span"); badge.className = "metric-tag"; badge.textContent = tag; label.append(badge); }
+    const tags = [model === preferred ? "DEFAULT FORECAST" : null, values.rmse === lowestRmse ? "LOWEST RMSE" : null].filter(Boolean);
+    for (const tag of tags) { const badge = document.createElement("span"); badge.className = "metric-tag"; badge.textContent = tag; label.append(badge); }
     appendCell(row, fmt(values.mae, 3)); appendCell(row, fmt(values.rmse, 3)); appendCell(row, fmt(values.r2, 4)); body.append(row);
   }
   const quarters = $("#quarter-body"); quarters.replaceChildren();
@@ -297,7 +302,7 @@ function renderPerformance(data) {
     quarters.append(row);
   }
   const peak = (name) => data.regimes.find((row) => row.model === name && row.pollution_regime === "above_training_p90").rmse;
-  setText("#peak-explanation", `For observed concentrations at or above ${fmt(data.training_p90, 0)} µg/m³, XGBoost RMSE is ${fmt(peak("xgboost"), 3)}, compared with ${fmt(peak("persistence"), 3)} for persistence.`);
+  setText("#peak-explanation", `For observed concentrations at or above ${fmt(data.training_p90, 0)} µg/m³, ${preferredLabel} RMSE is ${fmt(peak(preferred), 3)}, compared with ${fmt(peak("persistence"), 3)} for persistence.`);
 }
 
 async function uploadHistory(file) {

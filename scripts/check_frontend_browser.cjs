@@ -5,7 +5,13 @@ const os = require('node:os');
 const {spawn} = require('node:child_process');
 const assert = require('node:assert/strict');
 const root = path.resolve(__dirname, '..');
-const output = path.join(root, 'artifacts', 'frontend_review');
+const remoteFlag = process.argv.indexOf('--url');
+const remote = remoteFlag >= 0 ? process.argv[remoteFlag + 1] : null;
+if (remoteFlag >= 0 && (!remote || new URL(remote).protocol !== 'https:' || new URL(remote).origin !== remote.replace(/\/$/, ''))) {
+  throw new Error('--url requires an HTTPS origin without a path or credentials.');
+}
+const baseURL = remote ? remote.replace(/\/$/, '') : 'http://127.0.0.1:8016';
+const output = path.join(root, 'artifacts', remote ? 'frontend_review_hosted' : 'frontend_review');
 
 function playwright() {
   try { return require('playwright'); } catch {}
@@ -22,12 +28,12 @@ function playwright() {
 async function main() {
   const {chromium} = playwright();
   fs.mkdirSync(output, {recursive: true});
-  const server = spawn('bash', [path.join(root, 'scripts/start_frontend.sh'), '--no-open', '--port', '8016'], {cwd: root});
+  const server = remote ? null : spawn('bash', [path.join(root, 'scripts/start_frontend.sh'), '--no-open', '--port', '8016'], {cwd: root});
   let browser;
   let startup = '';
   const errors = [];
   try {
-    await new Promise((resolve, reject) => {
+    if (server) await new Promise((resolve, reject) => {
       const timeout = setTimeout(() => reject(new Error('The model service did not become ready.\n' + startup)), 40000);
       server.stdout.on('data', chunk => { startup += chunk.toString(); if (startup.includes('Aircast is ready:')) { clearTimeout(timeout); resolve(); } });
       server.stderr.on('data', chunk => { startup += chunk.toString(); });
@@ -37,10 +43,10 @@ async function main() {
     browser = await chromium.launch({headless: true});
     const page = await browser.newPage({viewport: {width: 1440, height: 1050}, deviceScaleFactor: 1});
     page.on('pageerror', error => errors.push(error.message));
-    await page.goto('http://127.0.0.1:8016', {waitUntil: 'networkidle'});
+    await page.goto(baseURL, {waitUntil: 'networkidle'});
     await page.locator('#connection-text').filter({hasText: 'Models connected'}).waitFor();
     await page.locator('#forecast-button:not([disabled])').waitFor();
-    const bootstrap = await (await page.request.get('http://127.0.0.1:8016/api/bootstrap')).json();
+    const bootstrap = await (await page.request.get(baseURL + '/api/bootstrap')).json();
     const availableModels = Object.keys(bootstrap.models);
     assert.equal(await page.locator('#model option').count(), availableModels.length);
     assert((await page.locator('#upload-requirements').innerText()).includes(String(bootstrap.required_hours)));
@@ -84,6 +90,10 @@ async function main() {
 
     await page.click('.nav-item[data-view="performance"]');
     assert.equal(await page.locator('#metrics-body tr').count(), bootstrap.metrics.length);
+    assert((await page.locator('#performance-description').innerText()).includes(`${bootstrap.metrics.length} methods`));
+    assert((await page.locator('#performance-model-label').innerText()).includes(bootstrap.models[bootstrap.forecast.selected_model]));
+    assert((await page.locator('#metrics-body tr.main-model').innerText()).includes(bootstrap.models[bootstrap.forecast.selected_model]));
+    assert((await page.locator('#peak-explanation').innerText()).includes(bootstrap.models[bootstrap.forecast.selected_model]));
     for (const name of ['bilstm', 'lstm', 'hybrid'].filter(name => availableModels.includes(name))) {
       assert((await page.locator('#metrics-body').innerText()).includes(bootstrap.models[name]));
     }
@@ -117,15 +127,17 @@ async function main() {
     assert(await page.locator('#performance-title').isVisible());
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await page.screenshot({path: path.join(output, 'mobile-performance.png'), fullPage: true});
-    const report = await page.request.get('http://127.0.0.1:8016/report');
+    const report = await page.request.get(baseURL + '/report');
     assert.equal(report.status(), 200);
     assert(report.headers()['content-type'].includes('application/pdf'));
+    const reportPath = bootstrap.models.lstm ? 'reports/phase2/Aircast_Phase2_Report.pdf' : 'reports/ieee/main.pdf';
+    assert.deepEqual(await report.body(), fs.readFileSync(path.join(root, reportPath)));
     assert.deepEqual(errors, []);
     fs.writeFileSync(path.join(output, 'browser_checks.json'), JSON.stringify({status: 'passed', checks: ['real model forecast', 'chart ranges and tooltips', 'manual changes', 'model selection', 'invalid input', 'measured metrics', 'CSV upload', 'CSV export', 'mobile layout', 'mobile navigation', 'report link', 'no JavaScript errors'], screenshots: ['desktop-forecast.png', 'desktop-performance.png', 'desktop-upload.png', 'mobile-forecast.png', 'mobile-performance.png']}, null, 2) + '\n');
     console.log('Browser checks passed. Screenshots saved to ' + output);
   } finally {
     if (browser) await browser.close();
-    server.kill('SIGTERM');
+    if (server) server.kill('SIGTERM');
   }
 }
 

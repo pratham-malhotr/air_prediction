@@ -1,6 +1,6 @@
 # Aircast forecast workspace
 
-Aircast is the interface for the project's saved XGBoost and Ridge pipelines and, locally, completed Phase 2 Bi-LSTM/hybrid models. It can run locally or use the prepared Vercel deployment. It uses the original Python feature construction and preprocessing; the browser does not approximate the models or replace their predictions with a formula.
+Aircast is the interface for the project's saved XGBoost and Ridge pipelines and, locally, completed Phase 2 LSTM, Bi-LSTM and hybrid models. It can run locally or use the prepared Vercel deployment. It uses the original Python feature construction and preprocessing; the browser does not approximate the models or replace their predictions with a formula.
 
 ## Open the app
 
@@ -15,11 +15,12 @@ The launcher opens `http://127.0.0.1:8000` in the default browser. Leave its Ter
 On a fresh checkout, install the Python package with its optional web dependencies first:
 
 ```bash
-python -m pip install -e '.[web]'
+python -S scripts/restore_phase2_runtime.py
+python -m pip install -r requirements-phase2.txt
 python scripts/serve_frontend.py
 ```
 
-The real dataset and trained artifacts must be present under `data/raw/` and `artifacts/phase1/`. They are included in the downloadable project ZIP. Training and the measured Phase 1 scores are separate from running this interface.
+Use Python 3.13 for the saved Phase 2 weights. The restorer supplies the dataset, classical and neural artifacts, comparison tables and report after verifying the pinned release. It preserves conflicting existing runs. The full downloadable research ZIP also includes training/evaluation evidence; the inference restore is smaller. Training and the measured scores are separate from running this interface.
 
 ## Enter new readings
 
@@ -27,7 +28,7 @@ The form adds one new hour to the selected history. PM2.5 is required; unknown w
 
 The initial context is the final 169 hourly slots (192 when the 24-step Phase 2 models are loaded) of the Beijing archive. The form starts with example values copied from the last recorded hour. Since the archive ends at 23:00 on 31 December 2014, those example inputs represent a new scenario at 00:00 on 1 January 2015. Its forecast is for 01:00. The interface labels this as a historical scenario, rather than live air quality.
 
-All available trained models run on the same observed inputs. The selected model supplies the main forecast; the other appears as a comparison. Editing a field marks the old result as stale until another forecast is generated. The app does not alter the recorded history or retrain the models.
+All available trained models run on the same observed inputs. The selected model supplies the main forecast, with another available model shown for comparison. Editing a field marks the old result as stale until another forecast is generated. Repeated manual requests explore the next hour after the selected history; they do not advance a stored observation stream or retrain the models.
 
 ## Upload a history
 
@@ -66,7 +67,7 @@ node scripts/check_frontend_browser.cjs
 
 It starts a temporary service on port 8016, uses the actual saved models, exercises the main interactions, and saves screenshots/results under `artifacts/frontend_review/`. The temporary service is stopped afterward.
 
-The dashboard has 28 passing Python tests within the 101-test project suite. Phase 2 checks verify CLI parity for both saved sequence models, complete feature history, optional PyTorch behavior and artifact integrity. The browser check also exercises the available Phase 2 models and the six-model comparison.
+The dashboard has 28 Python tests within the complete project suite. Phase 2 checks verify CLI parity for all three saved neural/hybrid models, complete feature history, optional PyTorch behavior and artifact integrity. The browser check exercises the available models and all seven comparison methods when Phase 2 is loaded. Performance counts, default-model badges, summary scores and peak errors follow the loaded run. The classical deployment has four comparison methods.
 
 See [the Vercel deployment guide](deployment.md) for the inference-only bundle and production command.
 
