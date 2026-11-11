@@ -25,7 +25,7 @@ We use this checklist to keep the implementation, report, and presentation align
 | Feature engineering | Historical features, observed fractions and explicit target alignment | 70 documented input columns; worked preview and validation feature comparison |
 | Theoretical rigor | Baseline formulas, Ridge/boosting objectives, regularization, metric definitions and split logic | Explanations complete; individual justification assessed in the viva |
 | Model application | XGBoost, required naive references, Ridge comparator and chronological selection/backtests | Real four-model backtests, quarterly/peak errors and interpretation complete |
-| Repository and code quality | Modular Python source, configuration, tests, CI and provenance | Local implementation verified; GitHub publication and contribution evidence not verified |
+| Repository and code quality | Modular Python source, configuration, tests, CI and provenance | Public repository/release and successful classical/neural/container CI verified on 7 November 2026; individual contribution evidence requires the team |
 | Presentation | Editable PowerPoint, matching PDF, thirteen graph assets, Python sources and presenter guide | Ten detailed slides covering completed Phase 1 work, with team names/enrollment numbers on the final thank-you slide |
 | Individual viva | `viva_guide.md` | Preparation guide complete; individual assessment remains to be done |
 | LaTeX/IEEE report | IEEEtran source, bibliography and print-sized figures | Expanded to seven pages with measured findings, implementation details and all five team names/enrollment numbers |
@@ -42,3 +42,5 @@ We use this checklist to keep the implementation, report, and presentation align
 The one-hour horizon, daily seasonal period, 2013 validation, 2014 evaluation, quarterly refits, Ridge comparator and three-candidate grid are design choices. The faculty did not prescribe those exact values or a minimum paper/model/slide count.
 
 Aircast is an additional local demonstration interface for the saved models. Its interactive forecasts are separate from the chronological backtests used as evaluation evidence.
+
+The [self-contained Phase 1 notebook](../Air_Prediction_Phase1_Colab.ipynb) is generated from the current source by `scripts/build_phase1_notebook.py`. It verifies its embedded snapshot, checks completed results or trains into a new directory, recomputes metrics and runs the classical tests. See the [final submission checklist](submission_checklist.md) for the actual deliverables and faculty-dependent checks.
